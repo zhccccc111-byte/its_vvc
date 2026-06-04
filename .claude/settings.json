@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd D:/Workspace/its_vvc*)",
+      "Bash(vlog *)",
+      "Bash(vsim *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(py *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(diff *)",
+      "Bash(find *)",
+      "Bash(wc *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Bash(grep *)",
+      "Bash(echo *)",
+      "Bash(pwd *)",
+      "Bash(which *)",
+      "Bash(git *)",
+      "Edit(D:/Workspace/its_vvc/**)",
+      "Write(D:/Workspace/its_vvc/**)",
+      "Read(D:/Workspace/its_vvc/**)"
+    ]
+  }
+}

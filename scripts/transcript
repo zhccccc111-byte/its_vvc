@@ -1,0 +1,629 @@
+# do D:/Workspace/its_vvc/sim/run.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_mac.v 
+# -- Compiling module its_mac
+# 
+# Top level modules:
+# 	its_mac
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_rom.v 
+# -- Compiling module its_rom
+# 
+# Top level modules:
+# 	its_rom
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_lfnst_rom.v 
+# -- Compiling module its_lfnst_rom
+# 
+# Top level modules:
+# 	its_lfnst_rom
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_ctrl.v 
+# -- Compiling module its_ctrl
+# 
+# Top level modules:
+# 	its_ctrl
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_input_buf.v 
+# -- Compiling module its_input_buf
+# 
+# Top level modules:
+# 	its_input_buf
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_transpose.v 
+# -- Compiling module its_transpose
+# 
+# Top level modules:
+# 	its_transpose
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_transform_engine.v 
+# -- Compiling module its_transform_engine
+# 
+# Top level modules:
+# 	its_transform_engine
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_lfnst.v 
+# -- Compiling module its_lfnst
+# 
+# Top level modules:
+# 	its_lfnst
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_output_ctrl.v 
+# -- Compiling module its_output_ctrl
+# 
+# Top level modules:
+# 	its_output_ctrl
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../rtl/its_top.v 
+# -- Compiling module its_top
+# 
+# Top level modules:
+# 	its_top
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 19:00:37 on May 20,2026
+# vlog ../tb/its_tb.v 
+# -- Compiling module its_tb
+# 
+# Top level modules:
+# 	its_tb
+# End time: 19:00:37 on May 20,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -t 1ps work.its_tb 
+# Start time: 19:00:37 on May 20,2026
+# ** Note: (vsim-8009) Loading existing optimized design _opt1
+# //  ModelSim SE-64 10.6e Jun 23 2018
+# //
+# //  Copyright 1991-2018 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.its_tb(fast)
+# 
+# === Test 1: DCT2 4x4 DC Input ===
+#   Info sent: 4x4, tr_hor=0, tr_ver=0, lfnst=0, info=000204
+#   State after info: 1, total_points=16
+#   Data sent: addr=0, data=64, last=1, state=1, wr_cnt=0
+#   Entering wait_output, it_data_out_vld=0
+#   [1] top_st=2, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [2] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [3] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [4] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [5] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [6] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [7] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [8] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [9] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [10] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [11] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [12] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=0, row_out_vld=0, tp_wr=0
+#   [13] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [14] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [15] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [16] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [17] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [18] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [19] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=1, row_out_vld=0, tp_wr=0
+#   [20] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [21] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [22] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [23] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [24] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [25] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [26] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=2, row_out_vld=0, tp_wr=0
+#   [27] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [28] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [29] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [30] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [31] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [32] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [33] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=3, row_out_vld=0, tp_wr=0
+#   [34] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=0
+#   [35] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=0
+#   [36] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=0
+#   [37] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=1
+#   [38] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=2
+#   [39] top_st=3, row_idx=0, row_eng.st=4, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=3
+#   [40] top_st=2, row_idx=1, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=4
+#   [41] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [42] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [43] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [44] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [45] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [46] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [47] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [48] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [49] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [50] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=4
+#   [60] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=4
+#   [80] top_st=3, row_idx=2, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=8
+#   [100] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=8
+#   [120] top_st=3, row_idx=3, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=12
+#   [140] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=12
+#   [160] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [180] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [200] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [220] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [240] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [260] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [280] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [300] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   Output (hex): 1004010040
+#   Output (dec): 64 64 64 64
+#   Done!
+# 
+# === Test 2: DCT2 4x4 Multi Input ===
+#   Info sent: 4x4, tr_hor=0, tr_ver=0, lfnst=0, info=000204
+#   State after info: 1, total_points=16
+#   Data sent: addr=0, data=100, last=0, state=1, wr_cnt=0
+#   Data sent: addr=1, data=50, last=0, state=1, wr_cnt=1
+#   Data sent: addr=4, data=30, last=0, state=1, wr_cnt=2
+#   Data sent: addr=5, data=20, last=1, state=1, wr_cnt=3
+#   Entering wait_output, it_data_out_vld=0
+#   [1] top_st=2, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [2] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [3] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [4] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [5] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [6] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [7] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [8] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [9] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [10] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [11] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [12] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=0, row_out_vld=0, tp_wr=16
+#   [13] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [14] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [15] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [16] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [17] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [18] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [19] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=1, row_out_vld=0, tp_wr=16
+#   [20] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [21] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [22] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [23] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [24] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [25] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [26] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=2, row_out_vld=0, tp_wr=16
+#   [27] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [28] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [29] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [30] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [31] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [32] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [33] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=3, row_out_vld=0, tp_wr=16
+#   [34] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [35] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=16
+#   [36] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=16
+#   [37] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=17
+#   [38] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=18
+#   [39] top_st=3, row_idx=0, row_eng.st=4, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=19
+#   [40] top_st=2, row_idx=1, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=20
+#   [41] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [42] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [43] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [44] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [45] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [46] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [47] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [48] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [49] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [50] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=20
+#   [60] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=20
+#   [80] top_st=3, row_idx=2, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=24
+#   [100] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=24
+#   [120] top_st=3, row_idx=3, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=28
+#   [140] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=28
+#   [160] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [180] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [200] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [220] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [240] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [260] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [280] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [300] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   Output (hex): 0a0612d4ee
+#   Output (dec): 238 181 97 40
+#   Entering wait_output, it_data_out_vld=1
+#   [1] top_st=6, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   Output (hex): 0945325cc5
+#   Output (dec): 197 151 83 37
+#   Done!
+# 
+# === Test 3: DCT8 4x4 ===
+#   Info sent: 4x4, tr_hor=1, tr_ver=1, lfnst=0, info=014204
+#   State after info: 1, total_points=16
+#   Data sent: addr=0, data=80, last=0, state=1, wr_cnt=0
+#   Data sent: addr=1, data=40, last=0, state=1, wr_cnt=1
+#   Data sent: addr=2, data=20, last=0, state=1, wr_cnt=2
+#   Data sent: addr=3, data=10, last=1, state=1, wr_cnt=3
+#   Entering wait_output, it_data_out_vld=0
+#   [1] top_st=2, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [2] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [3] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [4] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [5] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [6] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [7] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [8] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [9] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [10] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [11] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [12] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=0, row_out_vld=0, tp_wr=32
+#   [13] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [14] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [15] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [16] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [17] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [18] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [19] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=1, row_out_vld=0, tp_wr=32
+#   [20] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [21] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [22] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [23] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [24] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [25] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [26] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=2, row_out_vld=0, tp_wr=32
+#   [27] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [28] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [29] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [30] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [31] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [32] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [33] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=3, row_out_vld=0, tp_wr=32
+#   [34] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [35] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=32
+#   [36] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=32
+#   [37] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=33
+#   [38] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=34
+#   [39] top_st=3, row_idx=0, row_eng.st=4, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=35
+#   [40] top_st=2, row_idx=1, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=36
+#   [41] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [42] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [43] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [44] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [45] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [46] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [47] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [48] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [49] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [50] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=36
+#   [60] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=36
+#   [80] top_st=3, row_idx=2, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=40
+#   [100] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=40
+#   [120] top_st=3, row_idx=3, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=44
+#   [140] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=44
+#   [160] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [180] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [200] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [220] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [240] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [260] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [280] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [300] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   Output (hex): 00021100eb
+#   Output (dec): 235 64 33 0
+#   Done!
+# 
+# === Test 4: DST7 4x4 ===
+#   Info sent: 4x4, tr_hor=2, tr_ver=2, lfnst=0, info=028204
+#   State after info: 1, total_points=16
+#   Data sent: addr=0, data=60, last=0, state=1, wr_cnt=0
+#   Data sent: addr=1, data=30, last=1, state=1, wr_cnt=1
+#   Entering wait_output, it_data_out_vld=0
+#   [1] top_st=2, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [2] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [3] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [4] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [5] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [6] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [7] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [8] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [9] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [10] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [11] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [12] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=0, row_out_vld=0, tp_wr=48
+#   [13] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [14] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [15] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [16] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [17] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [18] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [19] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=1, row_out_vld=0, tp_wr=48
+#   [20] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [21] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [22] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [23] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [24] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [25] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [26] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=2, row_out_vld=0, tp_wr=48
+#   [27] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [28] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [29] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [30] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [31] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [32] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [33] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=3, row_out_vld=0, tp_wr=48
+#   [34] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [35] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=48
+#   [36] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=48
+#   [37] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=49
+#   [38] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=50
+#   [39] top_st=3, row_idx=0, row_eng.st=4, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=1, tp_wr=51
+#   [40] top_st=2, row_idx=1, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=52
+#   [41] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [42] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [43] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [44] top_st=3, row_idx=1, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [45] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [46] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [47] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [48] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [49] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [50] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=52
+#   [60] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=52
+#   [80] top_st=3, row_idx=2, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=56
+#   [100] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=56
+#   [120] top_st=3, row_idx=3, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=60
+#   [140] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=60
+#   [160] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [180] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [200] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [220] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [240] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [260] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [280] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [300] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   Output (hex): fe038f7bfc
+#   Output (dec): -4 -34 56 -8
+#   Done!
+# 
+# === Test 5: DCT2 8x8 ===
+#   Info sent: 8x8, tr_hor=0, tr_ver=0, lfnst=0, info=000408
+#   State after info: 1, total_points=64
+#   Data sent: addr=0, data=200, last=0, state=1, wr_cnt=0
+#   Data sent: addr=1, data=100, last=0, state=1, wr_cnt=1
+#   Data sent: addr=8, data=50, last=0, state=1, wr_cnt=2
+#   Data sent: addr=9, data=25, last=1, state=1, wr_cnt=3
+#   Entering wait_output, it_data_out_vld=0
+#   [1] top_st=2, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [2] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [3] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [4] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [5] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [6] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [7] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [8] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [9] top_st=3, row_idx=0, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [10] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [11] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [12] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [13] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [14] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [15] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [16] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [17] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [18] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [19] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [20] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=0, row_out_vld=0, tp_wr=64
+#   [21] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [22] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [23] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [24] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [25] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [26] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [27] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [28] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [29] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [30] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [31] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=1, row_out_vld=0, tp_wr=64
+#   [32] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [33] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [34] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [35] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [36] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [37] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [38] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [39] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [40] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [41] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [42] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=2, row_out_vld=0, tp_wr=64
+#   [43] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [44] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [45] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [46] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [47] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [48] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [49] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [50] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=64
+#   [60] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=4, row_out_vld=0, tp_wr=64
+#   [80] top_st=3, row_idx=0, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=6, row_out_vld=0, tp_wr=64
+#   [100] top_st=3, row_idx=0, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=1, tp_wr=64
+#   [120] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=72
+#   [140] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=2, row_out_vld=0, tp_wr=72
+#   [160] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=3, row_out_vld=0, tp_wr=72
+#   [180] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=5, row_out_vld=0, tp_wr=72
+#   [200] top_st=3, row_idx=1, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=7, row_out_vld=0, tp_wr=72
+#   [220] top_st=3, row_idx=2, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=80
+#   [240] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=80
+#   [260] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=80
+#   [280] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=5, row_out_vld=0, tp_wr=80
+#   [300] top_st=3, row_idx=2, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=6, row_out_vld=0, tp_wr=80
+#   [320] top_st=3, row_idx=2, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=1, tp_wr=86
+#   [340] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=88
+#   [360] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=88
+#   [380] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=4, row_out_vld=0, tp_wr=88
+#   [400] top_st=3, row_idx=3, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=6, row_out_vld=0, tp_wr=88
+#   [420] top_st=3, row_idx=3, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=88
+#   [440] top_st=3, row_idx=4, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=96
+#   [460] top_st=3, row_idx=4, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=2, row_out_vld=0, tp_wr=96
+#   [480] top_st=3, row_idx=4, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=96
+#   [500] top_st=3, row_idx=4, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=5, row_out_vld=0, tp_wr=96
+#   [520] top_st=3, row_idx=4, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=7, row_out_vld=0, tp_wr=96
+#   [540] top_st=3, row_idx=5, row_eng.st=1, row_eng.calc_st=1, row_eng.res_wr=0, row_out_vld=0, tp_wr=104
+#   [560] top_st=3, row_idx=5, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=1, row_out_vld=0, tp_wr=104
+#   [580] top_st=3, row_idx=5, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=104
+#   [600] top_st=3, row_idx=5, row_eng.st=2, row_eng.calc_st=1, row_eng.res_wr=5, row_out_vld=0, tp_wr=104
+#   [620] top_st=3, row_idx=5, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=6, row_out_vld=0, tp_wr=104
+#   [640] top_st=3, row_idx=5, row_eng.st=3, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=1, tp_wr=109
+#   [660] top_st=3, row_idx=6, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=0, row_out_vld=0, tp_wr=112
+#   [680] top_st=3, row_idx=6, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=2, row_out_vld=0, tp_wr=112
+#   [700] top_st=3, row_idx=6, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=4, row_out_vld=0, tp_wr=112
+#   [720] top_st=3, row_idx=6, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=6, row_out_vld=0, tp_wr=112
+#   [740] top_st=3, row_idx=6, row_eng.st=2, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=112
+#   [760] top_st=3, row_idx=7, row_eng.st=2, row_eng.calc_st=2, row_eng.res_wr=0, row_out_vld=0, tp_wr=120
+#   [780] top_st=3, row_idx=7, row_eng.st=2, row_eng.calc_st=4, row_eng.res_wr=1, row_out_vld=0, tp_wr=120
+#   [800] top_st=3, row_idx=7, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=3, row_out_vld=0, tp_wr=120
+#   [820] top_st=3, row_idx=7, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=5, row_out_vld=0, tp_wr=120
+#   [840] top_st=3, row_idx=7, row_eng.st=2, row_eng.calc_st=3, row_eng.res_wr=7, row_out_vld=0, tp_wr=120
+#   [860] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [880] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [900] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [920] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [940] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [960] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [980] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [1000] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   TIMEOUT waiting for output!
+#   Entering wait_output, it_data_out_vld=0
+#   [1] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [2] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [3] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [4] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [5] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [6] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [7] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [8] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [9] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [10] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [11] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [12] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [13] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [14] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [15] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [16] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [17] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [18] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [19] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [20] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [21] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [22] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [23] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [24] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [25] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [26] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [27] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [28] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [29] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [30] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [31] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [32] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [33] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [34] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [35] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [36] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [37] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [38] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [39] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [40] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [41] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [42] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [43] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [44] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [45] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [46] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [47] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [48] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [49] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [50] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [60] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [80] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [100] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [120] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [140] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [160] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [180] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [200] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [220] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [240] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [260] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [280] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [300] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [320] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [340] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [360] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [380] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [400] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [420] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [440] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [460] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [480] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [500] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [520] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [540] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [560] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [580] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [600] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [620] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [640] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [660] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [680] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   [700] top_st=5, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   Output (hex): 4cd776adc9
+#   Output (dec): 457 427 375 307
+#   Entering wait_output, it_data_out_vld=1
+#   [1] top_st=6, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   Output (hex): 14870290e8
+#   Output (dec): 232 164 112 82
+#   Entering wait_output, it_data_out_vld=1
+#   [1] top_st=6, row_idx=0, row_eng.st=0, row_eng.calc_st=0, row_eng.res_wr=8, row_out_vld=0, tp_wr=128
+#   Output (hex): 49d68669b7
+#   Output (dec): 439 410 360 295
+#   Done!
+# 
+# ========================================
+# Test Summary: 8 passed, 1 failed
+# ========================================
+# SOME TESTS FAILED!
+# ** Note: $finish    : ../tb/its_tb.v(277)
+#    Time: 6243 ns  Iteration: 1  Instance: /its_tb
+# End time: 19:00:38 on May 20,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0

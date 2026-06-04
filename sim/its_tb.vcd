@@ -1,0 +1,52 @@
+$date
+	Wed May 20 23:45:31 2026
+$end
+$version
+	ModelSim Version 10.6e
+$end
+$timescale
+	1ps
+$end
+
+$scope module its_tb $end
+
+$scope task send_info $end
+$upscope $end
+
+$scope task clear_in_mem $end
+$upscope $end
+
+$scope task send_data $end
+$upscope $end
+
+$scope task wait_output $end
+$upscope $end
+
+$scope task wait_done $end
+$upscope $end
+
+$scope module u_dut $end
+
+$scope module u_row_rom $end
+$upscope $end
+
+$scope module u_col_rom $end
+$upscope $end
+
+$scope module u_lfnst_rom $end
+$upscope $end
+
+$scope module u_lfnst $end
+$upscope $end
+
+$scope module u_row_engine $end
+$upscope $end
+
+$scope module u_col_engine $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+$end

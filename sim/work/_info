@@ -1,0 +1,176 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/Workspace/its_vvc
+T_opt
+!s110 1780545058
+V=Gh2bS?0NFQ[jL0Nh<SgX1
+Z1 04 6 4 work its_tb fast 0
+=1-c87f5401b9fb-6a20f622-6-8724
+o-quiet -auto_acc_if_foreign -work sim/work
+Z2 tCvgOpt 0
+n@_opt
+Z3 OL;O;10.6e;65
+R0
+T_opt1
+Z4 !s110 1780552711
+V83U=T@_U[n;S_5_fJFX3e0
+R1
+=1-c87f5401b9fb-6a211407-27a-c7bc
+o-quiet -auto_acc_if_foreign -work work
+R2
+n@_opt1
+R3
+vits_lfnst
+R4
+!i10b 1
+!s100 4L=26M?JJbenXg;@WInDN2
+ITOcgODzfQ;I>Qj=2JY4Ma3
+Z5 VDg1SIo80bB@j0V0VzS_@n1
+Z6 dD:/Workspace/its_vvc/sim
+w1780551253
+8../rtl/its_lfnst.v
+F../rtl/its_lfnst.v
+L0 16
+Z7 OL;L;10.6e;65
+r1
+!s85 0
+31
+Z8 !s108 1780552711.000000
+!s107 ../rtl/its_lfnst.v|
+!s90 ../rtl/its_lfnst.v|
+!i113 0
+Z9 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R2
+vits_lfnst_rom
+R4
+!i10b 1
+!s100 `d_ef]P9<hAWOUOJK=__T2
+I>2<Ndb@M<6PG:0LGQGoCe1
+R5
+R6
+w1780499959
+8../rtl/its_lfnst_rom.v
+F../rtl/its_lfnst_rom.v
+L0 7
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../rtl/its_lfnst_rom.v|
+!s90 ../rtl/its_lfnst_rom.v|
+!i113 0
+R9
+R2
+vits_mac
+R4
+!i10b 1
+!s100 e_]?X2OWM;>X3^bIiFKXF0
+IF73PT1<81Ek[NO3U2H^=j2
+R5
+R6
+w1779246167
+8../rtl/its_mac.v
+F../rtl/its_mac.v
+L0 6
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../rtl/its_mac.v|
+!s90 ../rtl/its_mac.v|
+!i113 0
+R9
+R2
+vits_rom
+R4
+!i10b 1
+!s100 2n;:8YB^cmJ657BF0U8RH1
+I?U=:d`UBY8Nk48K2mYB3P3
+R5
+R6
+w1780498757
+8../rtl/its_rom.v
+F../rtl/its_rom.v
+L0 7
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../rtl/its_rom.v|
+!s90 ../rtl/its_rom.v|
+!i113 0
+R9
+R2
+vits_tb
+R4
+!i10b 1
+!s100 fK07<ZJD:?5dbnVKhP_C>3
+I;g8EKR>fNmOM?AD?XRZcd1
+R5
+R6
+w1780550975
+8../tb/its_tb.v
+F../tb/its_tb.v
+L0 7
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../tb/its_tb.v|
+!s90 ../tb/its_tb.v|
+!i113 0
+R9
+R2
+vits_top
+R4
+!i10b 1
+!s100 ca<_PHEGEVd3nnEa75=O]1
+IRF_lOSKJgZPel>l?oNULB2
+R5
+R6
+w1780552706
+8../rtl/its_top.v
+F../rtl/its_top.v
+L0 6
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../rtl/its_top.v|
+!s90 ../rtl/its_top.v|
+!i113 0
+R9
+R2
+vits_transform_engine
+R4
+!i10b 1
+!s100 EBm6g`GzdoJ?>><V9h^b_3
+I_^Wm_`YYmf3B6eekg2h]]0
+R5
+R6
+w1780551231
+8../rtl/its_transform_engine.v
+F../rtl/its_transform_engine.v
+L0 11
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../rtl/its_transform_engine.v|
+!s90 ../rtl/its_transform_engine.v|
+!i113 0
+R9
+R2

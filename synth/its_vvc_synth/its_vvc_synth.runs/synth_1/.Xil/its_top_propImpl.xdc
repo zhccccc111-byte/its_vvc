@@ -1,0 +1,5 @@
+set_property SRC_FILE_INFO {cfile:D:/WorkSpace/its_vvc/synth/timing.xdc rfile:../../../../timing.xdc id:1} [current_design]
+set_property src_info {type:XDC file:1 line:21 export:INPUT save:INPUT read:READ} [current_design]
+set_clock_uncertainty -setup 0.100 [get_clocks clk]
+set_property src_info {type:XDC file:1 line:22 export:INPUT save:INPUT read:READ} [current_design]
+set_clock_uncertainty -hold 0.050 [get_clocks clk]

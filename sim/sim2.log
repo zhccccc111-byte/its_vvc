@@ -1,0 +1,96 @@
+# do run.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:16 on Jun 03,2026
+# vlog ../rtl/its_mac.v 
+# -- Compiling module its_mac
+# 
+# Top level modules:
+# 	its_mac
+# End time: 21:36:16 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:16 on Jun 03,2026
+# vlog ../rtl/its_rom.v 
+# -- Compiling module its_rom
+# 
+# Top level modules:
+# 	its_rom
+# End time: 21:36:16 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:16 on Jun 03,2026
+# vlog ../rtl/its_lfnst_rom.v 
+# -- Compiling module its_lfnst_rom
+# 
+# Top level modules:
+# 	its_lfnst_rom
+# End time: 21:36:16 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:16 on Jun 03,2026
+# vlog ../rtl/its_ctrl.v 
+# -- Compiling module its_ctrl
+# 
+# Top level modules:
+# 	its_ctrl
+# End time: 21:36:16 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:16 on Jun 03,2026
+# vlog ../rtl/its_input_buf.v 
+# -- Compiling module its_input_buf
+# 
+# Top level modules:
+# 	its_input_buf
+# End time: 21:36:16 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:16 on Jun 03,2026
+# vlog ../rtl/its_transpose.v 
+# -- Compiling module its_transpose
+# 
+# Top level modules:
+# 	its_transpose
+# End time: 21:36:17 on Jun 03,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:17 on Jun 03,2026
+# vlog ../rtl/its_transform_engine.v 
+# -- Compiling module its_transform_engine
+# 
+# Top level modules:
+# 	its_transform_engine
+# End time: 21:36:17 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:17 on Jun 03,2026
+# vlog ../rtl/its_lfnst.v 
+# -- Compiling module its_lfnst
+# 
+# Top level modules:
+# 	its_lfnst
+# End time: 21:36:17 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:17 on Jun 03,2026
+# vlog ../rtl/its_output_ctrl.v 
+# -- Compiling module its_output_ctrl
+# 
+# Top level modules:
+# 	its_output_ctrl
+# End time: 21:36:17 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:17 on Jun 03,2026
+# vlog ../rtl/its_top.v 
+# -- Compiling module its_top
+# 
+# Top level modules:
+# 	its_top
+# End time: 21:36:17 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:17 on Jun 03,2026
+# vlog ../tb/its_tb.v 
+# -- Compiling module its_tb

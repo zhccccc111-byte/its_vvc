@@ -1,0 +1,565 @@
+// ===================================================================
+// ITS Top Level Module - With LFNST integration
+// 22-bit it_info interface per competition spec
+// ===================================================================
+
+module its_top (
+    input  wire        clk,
+    input  wire        rst_n,
+
+    // Info interface (22-bit per competition spec)
+    input  wire [21:0] it_info,
+    input  wire        it_info_vld,
+
+    // Data input
+    input  wire [15:0] it_data_in,
+    input  wire [11:0] it_data_addr,
+    input  wire        it_data_in_vld,
+    output wire        it_data_in_req,
+
+    // Data output
+    output wire [39:0] it_data_out,
+    output wire        it_data_out_vld,
+    input  wire        it_data_out_req,
+
+    // Done
+    output wire        it_done
+);
+
+    // ========================================
+    // Control signals
+    // ========================================
+    reg [6:0]  tu_width;
+    reg [6:0]  tu_height;
+    reg [1:0]  tr_type_hor;
+    reg [1:0]  tr_type_ver;
+    reg [1:0]  lfnst_tr_set_idx;
+    reg [1:0]  lfnst_idx;
+    reg [12:0] total_points;
+
+    // State machine
+    localparam S_IDLE      = 4'd0;
+    localparam S_LOAD      = 4'd1;
+    localparam S_ROW_START = 4'd2;
+    localparam S_ROW_RUN   = 4'd3;
+    localparam S_COL_START = 4'd4;
+    localparam S_COL_RUN   = 4'd5;
+    localparam S_OUT       = 4'd6;
+    localparam S_DONE      = 4'd7;
+    localparam S_LFNST     = 4'd8;
+
+    reg [3:0] state;
+
+    // Input buffer
+    reg signed [15:0] in_mem [0:4095];
+    reg [11:0] in_wr_cnt;
+
+    // Timeout counter for input end detection
+    reg [3:0]  idle_cnt;
+    wire       input_timeout = (idle_cnt >= 4'd15);
+
+    // Row/Column loop counters
+    reg [6:0]  row_idx;
+    reg [6:0]  col_idx;
+    reg [11:0] row_base_addr;
+
+    // Engine address signals
+    reg [11:0] row_eng_rd_addr;
+    reg [11:0] col_eng_rd_addr;
+
+    // Row engine signals
+    wire [15:0] row_out_data;
+    wire        row_out_vld;
+    wire        row_done;
+    wire        row_data_in_req;
+    wire [13:0] row_rom_addr;
+    wire [15:0] row_rom_coeff;
+
+    // Column engine signals
+    wire [15:0] col_out_data;
+    wire        col_out_vld;
+    wire        col_done;
+    wire        col_data_in_req;
+    wire [13:0] col_rom_addr;
+    wire [15:0] col_rom_coeff;
+
+    // Transpose buffer
+    reg signed [15:0] tp_buf [0:4095];
+    reg [11:0] tp_wr_cnt;
+    reg [11:0] tp_rd_base;
+
+    // Output reorder buffer
+    reg signed [9:0] out_mem [0:4095];
+    reg [11:0] out_mem_wr_cnt;
+    reg [6:0]  out_row_cnt;
+    reg [6:0]  out_col_cnt;
+    reg [11:0] out_mem_rd_base;
+
+    // Output control
+    reg [12:0] out_cnt;
+    reg        out_vld_r;
+
+    // ========================================
+    // LFNST signals
+    // ========================================
+    // Trigger LFNST when input times out and lfnst_idx != 0
+    wire        lfnst_start = (state == S_LOAD && input_timeout && in_wr_cnt > 12'd0 && lfnst_idx != 2'd0);
+    wire [15:0] lfnst_data_out;
+    wire        lfnst_data_out_vld;
+    wire        lfnst_data_out_wr_en;
+    wire        lfnst_done;
+    wire        lfnst_data_in_req;
+
+    // LFNST sub-block parameters (official VVC definition)
+    // nTrs = (tu_width >= 8 && tu_height >= 8) ? 48 : 16
+    wire        lfnst_ntrs_is_48 = (tu_width >= 7'd8 && tu_height >= 7'd8);
+    wire [5:0]  lfnst_ntrs = lfnst_ntrs_is_48 ? 6'd48 : 6'd16;
+
+    // LFNST read/write addresses (6-bit for nTrs=48)
+    reg [5:0]  lfnst_rd_addr;
+    reg [5:0]  lfnst_wr_addr;
+
+    // LFNST read address: top-left 4x4 of TU
+    // For nTrs=16: tu_width=4, sequential read = rd_addr[3:0]
+    // For nTrs=48: tu_width>=8, read 16 elements row-major from top-left 4x4
+    //   row = rd_addr[3:2], col = rd_addr[1:0], addr = row * tu_width + col
+    wire [1:0]  lfnst_rd_row = lfnst_rd_addr[3:2];
+    wire [1:0]  lfnst_rd_col = lfnst_rd_addr[1:0];
+    wire [11:0] lfnst_rd_mem_addr = lfnst_ntrs_is_48 ?
+                    ({6'd0, lfnst_rd_row} * {5'd0, tu_width} + {10'd0, lfnst_rd_col}) :
+                    {6'd0, lfnst_rd_addr[3:0]};
+
+    // LFNST write-back address computation for nTrs=48
+    // 3 sub-blocks: blk0(rows 0-3, cols 0-3), blk1(rows 0-3, cols 4-7), blk2(rows 4-7, cols 0-3)
+    wire [1:0]  lfnst_blk = lfnst_wr_addr[5:4];
+    wire [1:0]  lfnst_row_in_blk = lfnst_wr_addr[3:2];
+    wire [1:0]  lfnst_col_in_blk = lfnst_wr_addr[1:0];
+    wire [2:0]  lfnst_row48 = {1'b0, lfnst_row_in_blk} + (lfnst_blk == 2'd2 ? 3'd4 : 3'd0);
+    wire [2:0]  lfnst_col48 = {1'b0, lfnst_col_in_blk} + (lfnst_blk == 2'd1 ? 3'd4 : 3'd0);
+    wire [11:0] lfnst_wr_mem_addr = lfnst_ntrs_is_48 ?
+                    ({6'd0, lfnst_row48} * {5'd0, tu_width} + {9'd0, lfnst_col48}) :
+                    {6'd0, lfnst_wr_addr};
+
+    // LFNST ROM signals (13-bit for 8192 entries)
+    wire [12:0] lfnst_rom_addr;
+    wire [15:0] lfnst_rom_coeff;
+
+    // ========================================
+    // Info decode (22-bit interface)
+    // ========================================
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            tu_width         <= 7'd0;
+            tu_height        <= 7'd0;
+            tr_type_hor      <= 2'd0;
+            tr_type_ver      <= 2'd0;
+            lfnst_tr_set_idx <= 2'd0;
+            lfnst_idx        <= 2'd0;
+            total_points     <= 13'd0;
+        end else if (it_info_vld) begin
+            tu_width         <= it_info[6:0];
+            tu_height        <= it_info[13:7];
+            tr_type_hor      <= it_info[15:14];
+            tr_type_ver      <= it_info[17:16];
+            lfnst_tr_set_idx <= it_info[19:18];
+            lfnst_idx        <= it_info[21:20];
+            total_points     <= it_info[6:0] * it_info[13:7];
+        end
+    end
+
+    // ========================================
+    // Input buffer
+    // ========================================
+    assign it_data_in_req = (state == S_LOAD);
+
+    integer i;
+    initial begin
+        for (i = 0; i < 4096; i = i + 1)
+            in_mem[i] = 16'sd0;
+        for (i = 0; i < 4096; i = i + 1)
+            tp_buf[i] = 16'sd0;
+        for (i = 0; i < 4096; i = i + 1)
+            out_mem[i] = 10'sd0;
+    end
+
+    // Clear memories on reset to prevent stale data between test cases
+    // TEMPORARILY DISABLED for debugging
+    // reg [11:0] clr_cnt;
+    // reg        clearing;
+    // always @(posedge clk or negedge rst_n) begin
+    //     if (!rst_n) begin
+    //         clr_cnt  <= 12'd0;
+    //         clearing <= 1'b1;
+    //     end else if (clearing) begin
+    //         in_mem[clr_cnt]  <= 16'sd0;
+    //         tp_buf[clr_cnt]  <= 16'sd0;
+    //         out_mem[clr_cnt] <= 10'sd0;
+    //         clr_cnt <= clr_cnt + 12'd1;
+    //         if (clr_cnt == 12'd4095)
+    //             clearing <= 1'b0;
+    //     end
+    // end
+
+    // in_mem write port (no async reset for Block RAM inference)
+    // Write sources: S_LOAD (input data), S_LFNST (LFNST write-back)
+    // These are mutually exclusive states.
+    always @(posedge clk) begin
+        if (state == S_LOAD && it_data_in_vld && it_data_in_req) begin
+            in_mem[it_data_addr] <= it_data_in;
+        end else if (lfnst_data_out_wr_en) begin
+            in_mem[lfnst_wr_mem_addr] <= lfnst_data_out;
+        end
+    end
+
+    // Input write counter and timeout detection
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            in_wr_cnt <= 12'd0;
+            idle_cnt  <= 4'd0;
+        end else if (it_info_vld) begin
+            in_wr_cnt <= 12'd0;
+            idle_cnt  <= 4'd0;
+        end else if (state == S_LOAD) begin
+            if (it_data_in_vld && it_data_in_req) begin
+                in_wr_cnt <= in_wr_cnt + 12'd1;
+                idle_cnt  <= 4'd0;
+            end else if (in_wr_cnt > 12'd0) begin
+                // No data received, increment timeout counter
+                idle_cnt <= idle_cnt + 4'd1;
+            end
+        end else begin
+            idle_cnt <= 4'd0;
+        end
+    end
+
+    // ========================================
+    // ROM Instantiation
+    // ========================================
+
+    // Row engine ROM
+    its_rom u_row_rom (
+        .clk   (clk),
+        .addr  (row_rom_addr),
+        .coeff (row_rom_coeff)
+    );
+
+    // Column engine ROM
+    its_rom u_col_rom (
+        .clk   (clk),
+        .addr  (col_rom_addr),
+        .coeff (col_rom_coeff)
+    );
+
+    // LFNST ROM
+    its_lfnst_rom u_lfnst_rom (
+        .clk   (clk),
+        .addr  (lfnst_rom_addr),
+        .coeff (lfnst_rom_coeff)
+    );
+
+    // ========================================
+    // LFNST Module
+    // ========================================
+    its_lfnst u_lfnst (
+        .clk             (clk),
+        .rst_n           (rst_n),
+        .start           (lfnst_start),
+        .lfnst_idx       (lfnst_idx),
+        .lfnst_tr_set_idx(lfnst_tr_set_idx),
+        .tu_width        (tu_width),
+        .tu_height       (tu_height),
+        .data_in         (in_mem[lfnst_rd_mem_addr]),
+        .data_in_vld     (state == S_LFNST && lfnst_data_in_req),
+        .data_in_req     (lfnst_data_in_req),
+        .data_out        (lfnst_data_out),
+        .data_out_vld    (lfnst_data_out_vld),
+        .data_out_wr_en  (lfnst_data_out_wr_en),
+        .data_out_req    (1'b1),
+        .done            (lfnst_done),
+        // LFNST ROM interface
+        .rom_addr        (lfnst_rom_addr),
+        .rom_coeff       (lfnst_rom_coeff)
+    );
+
+    // LFNST read address (6-bit for nTrs=48 support)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            lfnst_rd_addr <= 6'd0;
+        else if (state == S_LFNST && lfnst_data_in_req)
+            lfnst_rd_addr <= lfnst_rd_addr + 6'd1;
+        else if (state != S_LFNST)
+            lfnst_rd_addr <= 6'd0;
+    end
+
+    // LFNST write-back address counter
+    // (in_mem write is in the merged write block above)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            lfnst_wr_addr <= 6'd0;
+        else if (lfnst_data_out_wr_en)
+            lfnst_wr_addr <= lfnst_wr_addr + 6'd1;
+        else if (state != S_LFNST)
+            lfnst_wr_addr <= 6'd0;
+    end
+
+    // ========================================
+    // Main state machine
+    // ========================================
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            state <= S_IDLE;
+        else case (state)
+            S_IDLE: begin
+                if (it_info_vld) state <= S_LOAD;
+            end
+            S_LOAD: begin
+                if (input_timeout && in_wr_cnt > 12'd0) begin
+                    if (lfnst_idx != 2'd0)
+                        state <= S_LFNST;
+                    else
+                        state <= S_ROW_START;
+                end
+            end
+            S_LFNST: begin
+                if (lfnst_done) state <= S_ROW_START;
+            end
+            S_ROW_START: begin
+                state <= S_ROW_RUN;
+            end
+            S_ROW_RUN: begin
+                if (row_done) begin
+                    if (row_idx + 7'd1 >= tu_height[6:0])
+                        state <= S_COL_START;
+                    else
+                        state <= S_ROW_START;
+                end
+            end
+            S_COL_START: begin
+                state <= S_COL_RUN;
+            end
+            S_COL_RUN: begin
+                if (col_done) begin
+                    if (col_idx + 7'd1 >= tu_width[6:0]) begin
+                        state <= S_OUT;
+                    end else
+                        state <= S_COL_START;
+                end
+            end
+            S_OUT: begin
+                if (out_cnt >= total_points)
+                    state <= S_DONE;
+                else if (total_points == 0)
+                    state <= S_DONE;
+            end
+            S_DONE: state <= S_IDLE;
+            default: state <= S_IDLE;
+        endcase
+    end
+
+    // ========================================
+    // Row/Column loop counters
+    // ========================================
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            row_idx       <= 7'd0;
+            row_base_addr <= 12'd0;
+        end else if (state == S_LFNST && lfnst_done) begin
+            row_idx       <= 7'd0;
+            row_base_addr <= 12'd0;
+        end else if (state == S_LOAD && input_timeout && in_wr_cnt > 12'd0 && lfnst_idx == 2'd0) begin
+            row_idx       <= 7'd0;
+            row_base_addr <= 12'd0;
+        end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 < tu_height[6:0]) begin
+            row_idx       <= row_idx + 7'd1;
+            row_base_addr <= row_base_addr + {5'd0, tu_width[6:0]};
+        end else if (state != S_ROW_START && state != S_ROW_RUN && state != S_LFNST) begin
+            row_idx       <= 7'd0;
+            row_base_addr <= 12'd0;
+        end
+    end
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            col_idx     <= 7'd0;
+            tp_rd_base  <= 12'd0;
+        end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 >= tu_height[6:0]) begin
+            col_idx     <= 7'd0;
+            tp_rd_base  <= 12'd0;
+        end else if (state == S_COL_RUN && col_done && col_idx + 7'd1 < tu_width[6:0]) begin
+            col_idx    <= col_idx + 7'd1;
+            tp_rd_base <= 12'd0;  // column offset handled by col_eng_rd_addr
+        end else if (state != S_COL_START && state != S_COL_RUN) begin
+            col_idx     <= 7'd0;
+            tp_rd_base  <= 12'd0;
+        end
+    end
+
+    // ========================================
+    // Row Transform Engine
+    // ========================================
+    its_transform_engine u_row_engine (
+        .clk        (clk),
+        .rst_n      (rst_n),
+        .start      (state == S_ROW_START),
+        .tr_type    (tr_type_hor),
+        .size       (tu_width[6:0]),
+        .data_in    (in_mem[row_base_addr + row_eng_rd_addr]),
+        .data_in_vld(state == S_ROW_RUN),
+        .data_in_req(row_data_in_req),
+        .rom_addr   (row_rom_addr),
+        .rom_coeff  (row_rom_coeff),
+        .data_out   (row_out_data),
+        .data_out_vld(row_out_vld),
+        .data_out_req(1'b1),
+        .done       (row_done)
+    );
+
+    // Row engine read address
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            row_eng_rd_addr <= 12'd0;
+        else if (state == S_ROW_START)
+            row_eng_rd_addr <= 12'd0;
+        else if (state == S_ROW_RUN && row_data_in_req)
+            row_eng_rd_addr <= row_eng_rd_addr + 12'd1;
+        else if (state != S_ROW_RUN)
+            row_eng_rd_addr <= 12'd0;
+    end
+
+    // ========================================
+    // Transpose Buffer Write
+    // Row engine outputs row-major: result[row][0..W-1]
+    // Write SEQUENTIALLY to tp_buf (row-major layout):
+    //   Row 0 at [0..W-1], Row 1 at [W..2W-1], etc.
+    // Column engine reads with stride W to get column data.
+    // ========================================
+    reg [5:0] tp_col_cnt;  // for debug display only
+
+    // tp_buf write (no async reset for Block RAM inference)
+    always @(posedge clk) begin
+        if (state == S_ROW_RUN && row_out_vld)
+            tp_buf[tp_wr_cnt] <= row_out_data;
+    end
+
+    // tp_buf write pointer (control reg, async reset OK)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            tp_wr_cnt <= 12'd0;
+            tp_col_cnt <= 6'd0;
+        end else if (state == S_ROW_START) begin
+            tp_col_cnt <= 6'd0;
+        end else if (state == S_ROW_RUN && row_out_vld) begin
+            tp_col_cnt <= tp_col_cnt + 6'd1;
+            tp_wr_cnt <= tp_wr_cnt + 12'd1;
+        end else if (state != S_ROW_START && state != S_ROW_RUN) begin
+            tp_col_cnt <= 6'd0;
+        end
+    end
+
+    // ========================================
+    // Column Transform Engine
+    // ========================================
+    its_transform_engine u_col_engine (
+        .clk        (clk),
+        .rst_n      (rst_n),
+        .start      (state == S_COL_START),
+        .tr_type    (tr_type_ver),
+        .size       (tu_height[6:0]),
+        .data_in    (tp_buf[tp_rd_base + col_eng_rd_addr]),
+        .data_in_vld(state == S_COL_RUN),
+        .data_in_req(col_data_in_req),
+        .rom_addr   (col_rom_addr),
+        .rom_coeff  (col_rom_coeff),
+        .data_out   (col_out_data),
+        .data_out_vld(col_out_vld),
+        .data_out_req(1'b1),
+        .done       (col_done)
+    );
+
+    // Column engine read address
+    // Row engine writes sequentially (row-major): result[row][col] at row*W+col
+    // Column c data at tp_buf[c, c+W, c+2W, ...] (stride = tu_width)
+    // tp_rd_base = col_idx * tu_height (unused with sequential layout)
+    // Read with stride tu_width to get column data
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            col_eng_rd_addr <= 12'd0;
+        else if (state == S_COL_START)
+            col_eng_rd_addr <= {6'd0, col_idx[6:0]};  // start at column offset
+        else if (state == S_COL_RUN && col_data_in_req)
+            col_eng_rd_addr <= col_eng_rd_addr + {5'd0, tu_width[6:0]};
+        else if (state != S_COL_RUN)
+            col_eng_rd_addr <= 12'd0;
+    end
+
+    // ========================================
+    // Output Control
+    // out_mem is written sequentially by column engine (column-major):
+    //   col 0 at [0..H-1], col 1 at [H..2H-1], etc.
+    // Read sequentially: 4 values per cycle from consecutive addresses.
+    // ========================================
+
+    wire [11:0] out_rd0 = out_cnt;
+    wire [11:0] out_rd1 = out_cnt + 12'd1;
+    wire [11:0] out_rd2 = out_cnt + 12'd2;
+    wire [11:0] out_rd3 = out_cnt + 12'd3;
+
+    assign it_data_out = {out_mem[out_rd3], out_mem[out_rd2], out_mem[out_rd1], out_mem[out_rd0]};
+    assign it_data_out_vld = out_vld_r;
+    assign it_done = (state == S_DONE);
+
+    // out_mem write (no async reset for Block RAM inference)
+    always @(posedge clk) begin
+        if (state == S_COL_RUN && col_out_vld)
+            out_mem[out_mem_wr_cnt] <= col_out_data[9:0];
+    end
+
+    // out_mem write pointer
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            out_mem_wr_cnt <= 12'd0;
+        else if (it_info_vld)
+            out_mem_wr_cnt <= 12'd0;
+        else if (state == S_COL_RUN && col_out_vld)
+            out_mem_wr_cnt <= out_mem_wr_cnt + 12'd1;
+    end
+
+    // Raster scan address generation
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            out_row_cnt <= 7'd0;
+            out_col_cnt <= 7'd0;
+        end else if (state == S_OUT && out_vld_r && it_data_out_req) begin
+            if (out_col_cnt + 7'd4 >= {1'b0, tu_width[6:0]}) begin
+                out_col_cnt <= 7'd0;
+                out_row_cnt <= out_row_cnt + 7'd1;
+            end else begin
+                out_col_cnt <= out_col_cnt + 7'd4;
+            end
+        end else if (state != S_OUT) begin
+            out_row_cnt <= 7'd0;
+            out_col_cnt <= 7'd0;
+        end
+    end
+
+    // Output valid (gated by it_data_out_req for backpressure)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            out_vld_r <= 1'b0;
+        else if (state == S_OUT && out_cnt < total_points && it_data_out_req)
+            out_vld_r <= 1'b1;
+        else
+            out_vld_r <= 1'b0;
+    end
+
+    // Output counter
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            out_cnt <= 13'd0;
+        else if (state == S_OUT && out_vld_r && it_data_out_req)
+            out_cnt <= out_cnt + 13'd4;
+        else if (state != S_OUT)
+            out_cnt <= 13'd0;
+    end
+
+endmodule

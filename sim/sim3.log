@@ -1,0 +1,572 @@
+# do run.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_mac.v 
+# -- Compiling module its_mac
+# 
+# Top level modules:
+# 	its_mac
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_rom.v 
+# -- Compiling module its_rom
+# 
+# Top level modules:
+# 	its_rom
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_lfnst_rom.v 
+# -- Compiling module its_lfnst_rom
+# 
+# Top level modules:
+# 	its_lfnst_rom
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_ctrl.v 
+# -- Compiling module its_ctrl
+# 
+# Top level modules:
+# 	its_ctrl
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_input_buf.v 
+# -- Compiling module its_input_buf
+# 
+# Top level modules:
+# 	its_input_buf
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_transpose.v 
+# -- Compiling module its_transpose
+# 
+# Top level modules:
+# 	its_transpose
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_transform_engine.v 
+# -- Compiling module its_transform_engine
+# 
+# Top level modules:
+# 	its_transform_engine
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_lfnst.v 
+# -- Compiling module its_lfnst
+# 
+# Top level modules:
+# 	its_lfnst
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_output_ctrl.v 
+# -- Compiling module its_output_ctrl
+# 
+# Top level modules:
+# 	its_output_ctrl
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../rtl/its_top.v 
+# -- Compiling module its_top
+# 
+# Top level modules:
+# 	its_top
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:36:32 on Jun 03,2026
+# vlog ../tb/its_tb.v 
+# -- Compiling module its_tb
+# 
+# Top level modules:
+# 	its_tb
+# End time: 21:36:32 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -t 1ps work.its_tb 
+# Start time: 21:36:32 on Jun 03,2026
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# //  ModelSim SE-64 10.6e Jun 23 2018
+# //
+# //  Copyright 1991-2018 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.its_tb(fast)
+# [11000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [13000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [15000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [17000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [19000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# 
+# === DCT2 8x8 ===
+#   Loaded 2 inputs, 64 expected outputs
+# [21000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [23000] top=0 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [25000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [27000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [29000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [31000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [33000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [35000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [37000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [39000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [41000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [43000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [45000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [47000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [49000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [51000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [53000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [55000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [57000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [59000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [61000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [63000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [65000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [67000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [69000] top=1 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [71000] top=2 row_eng=0 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [73000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [75000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [77000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [79000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [81000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [83000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [85000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [87000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [89000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [91000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=1 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [93000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=2 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [95000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=3 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [97000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=4 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [99000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=5 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [101000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=6 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [103000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [105000] top=3 row_eng=2 row_done=0 pf_row=1 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [107000] top=3 row_eng=2 row_done=0 pf_row=2 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [109000] top=3 row_eng=2 row_done=0 pf_row=3 pf_col=7 pf2c=1 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [111000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=1 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [113000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [115000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=2 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [117000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=3 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [119000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=4 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [121000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=5 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [123000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=6 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [125000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=7 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [127000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=1 out_cnt=0 out_vld=0 col_out_vld=0
+# [129000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=1 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [131000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=2 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [133000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=3 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [135000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=4 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [137000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=5 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [139000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=6 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [141000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [143000] top=3 row_eng=2 row_done=0 pf_row=1 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [145000] top=3 row_eng=2 row_done=0 pf_row=2 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [147000] top=3 row_eng=2 row_done=0 pf_row=3 pf_col=7 pf2c=1 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [149000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=1 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [151000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [153000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=2 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [155000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=3 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [157000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=4 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [159000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=5 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [161000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=6 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [163000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=7 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [165000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=1 out_cnt=0 out_vld=0 col_out_vld=0
+# [167000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [169000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=1 out_vld=1 col_out_vld=0
+# [171000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=2 out_vld=1 col_out_vld=0
+# [173000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=3 out_vld=1 col_out_vld=0
+# [175000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=4 out_vld=1 col_out_vld=0
+# [177000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=5 out_vld=1 col_out_vld=0
+# [179000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=6 out_vld=1 col_out_vld=0
+# [181000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=7 out_vld=1 col_out_vld=0
+# [183000] top=3 row_eng=0 row_done=1 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=8 out_vld=1 col_out_vld=0
+# [185000] top=2 row_eng=0 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=8 out_vld=0 col_out_vld=0
+# [187000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [189000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [191000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [193000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [195000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [197000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [199000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [201000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [203000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [205000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=1 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [207000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=2 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [209000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=3 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [211000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=4 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [213000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=5 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [215000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=6 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [217000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [219000] top=3 row_eng=2 row_done=0 pf_row=1 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [221000] top=3 row_eng=2 row_done=0 pf_row=2 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [223000] top=3 row_eng=2 row_done=0 pf_row=3 pf_col=7 pf2c=1 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [225000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=1 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [227000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [229000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=2 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [231000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=3 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [233000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=4 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [235000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=5 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [237000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=6 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [239000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=7 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [241000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=1 out_cnt=0 out_vld=0 col_out_vld=0
+# [243000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=1 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [245000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=2 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [247000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=3 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [249000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=4 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [251000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=5 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [253000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=6 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [255000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [257000] top=3 row_eng=2 row_done=0 pf_row=1 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [259000] top=3 row_eng=2 row_done=0 pf_row=2 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [261000] top=3 row_eng=2 row_done=0 pf_row=3 pf_col=7 pf2c=1 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [263000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=1 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [265000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [267000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=2 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [269000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=3 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [271000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=4 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [273000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=5 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [275000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=6 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [277000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=7 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [279000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=1 out_cnt=0 out_vld=0 col_out_vld=0
+# [281000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [283000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=1 out_vld=1 col_out_vld=0
+# [285000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=2 out_vld=1 col_out_vld=0
+# [287000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=3 out_vld=1 col_out_vld=0
+# [289000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=4 out_vld=1 col_out_vld=0
+# [291000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=5 out_vld=1 col_out_vld=0
+# [293000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=6 out_vld=1 col_out_vld=0
+# [295000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=7 out_vld=1 col_out_vld=0
+# [297000] top=3 row_eng=0 row_done=1 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=8 out_vld=1 col_out_vld=0
+# [299000] top=2 row_eng=0 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=8 out_vld=0 col_out_vld=0
+# [301000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [303000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [305000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [307000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [309000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [311000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [313000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [315000] top=3 row_eng=1 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [317000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [319000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=1 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [321000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=2 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [323000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=3 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [325000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=4 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [327000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=5 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [329000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=6 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [331000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [333000] top=3 row_eng=2 row_done=0 pf_row=1 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [335000] top=3 row_eng=2 row_done=0 pf_row=2 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [337000] top=3 row_eng=2 row_done=0 pf_row=3 pf_col=7 pf2c=1 pf2c_d=0 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [339000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=1 comp_col=0 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [341000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [343000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=2 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [345000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=3 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [347000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=4 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [349000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=5 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [351000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=6 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [353000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=7 comp_base=0 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [355000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=0 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=1 out_cnt=0 out_vld=0 col_out_vld=0
+# [357000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=1 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [359000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=2 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [361000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=3 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [363000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=4 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [365000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=5 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [367000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=6 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [369000] top=3 row_eng=2 row_done=0 pf_row=0 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [371000] top=3 row_eng=2 row_done=0 pf_row=1 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [373000] top=3 row_eng=2 row_done=0 pf_row=2 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [375000] top=3 row_eng=2 row_done=0 pf_row=3 pf_col=7 pf2c=1 pf2c_d=0 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [377000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=1 comp_col=0 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [379000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [381000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=2 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [383000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=3 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [385000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=4 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [387000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=5 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [389000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=6 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [391000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=7 comp_base=4 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [393000] top=3 row_eng=3 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=1 out_cnt=0 out_vld=0 col_out_vld=0
+# [395000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=1 comp_base=8 mac_final=0 out_cnt=0 out_vld=0 col_out_vld=0
+# [397000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=1 out_vld=1 col_out_vld=0
+# [399000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=2 out_vld=1 col_out_vld=0
+# [401000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=3 out_vld=1 col_out_vld=0
+# [403000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=4 out_vld=1 col_out_vld=0
+# [405000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=5 out_vld=1 col_out_vld=0
+# [407000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=6 out_vld=1 col_out_vld=0
+# [409000] top=3 row_eng=4 row_done=0 pf_row=3 pf_col=7 pf2c=0 pf2c_d=0 comp_col=0 comp_base=8 mac_final=0 out_cnt=7 out_vld=1 col_out_vld=0
+#   MISMATCH at output 1: expected=-168 got=x
+#   MISMATCH at output 2: expected=-107 got=x
+#   MISMATCH at output 3: expected=-28 got=x
+#   MISMATCH at output 4: expected=46 got=135
+#   MISMATCH at output 5: expected=91 got=x
+#   MISMATCH at output 6: expected=94 got=x
+#   MISMATCH at output 7: expected=58 got=x
+#   MISMATCH at output 8: expected=54 got=x
+#   MISMATCH at output 9: expected=52 got=x
+#   MISMATCH at output 10: expected=-10 got=x
+#   MISMATCH at output 11: expected=-88 got=x
+#   MISMATCH at output 12: expected=-156 got=x
+#   MISMATCH at output 13: expected=-184 got=x
+#   MISMATCH at output 14: expected=-163 got=x
+#   MISMATCH at output 15: expected=-95 got=x
+#   MISMATCH at output 16: expected=-73 got=x
+#   MISMATCH at output 17: expected=-89 got=x
+#   MISMATCH at output 18: expected=-57 got=x
+#   MISMATCH at output 19: expected=-15 got=x
+#   MISMATCH at output 20: expected=25 got=x
+#   FAIL: 62/64 value mismatches
+# 
+# === DCT2 16x16 ===
+#   Loaded 4 inputs, 256 expected outputs
+#   MISMATCH at output 0: expected=178 got=41
+#   MISMATCH at output 1: expected=77 got=x
+#   MISMATCH at output 2: expected=6 got=x
+#   MISMATCH at output 3: expected=165 got=x
+#   MISMATCH at output 4: expected=226 got=116
+#   MISMATCH at output 5: expected=43 got=x
+#   MISMATCH at output 6: expected=-49 got=x
+#   MISMATCH at output 7: expected=185 got=x
+#   MISMATCH at output 9: expected=-6 got=x
+#   MISMATCH at output 10: expected=-1 got=x
+#   MISMATCH at output 11: expected=143 got=x
+#   MISMATCH at output 12: expected=95 got=109
+#   MISMATCH at output 13: expected=-112 got=x
+#   MISMATCH at output 14: expected=28 got=x
+#   MISMATCH at output 15: expected=149 got=x
+#   MISMATCH at output 16: expected=183 got=x
+#   MISMATCH at output 17: expected=37 got=x
+#   MISMATCH at output 18: expected=-143 got=x
+#   MISMATCH at output 19: expected=76 got=x
+#   MISMATCH at output 20: expected=202 got=x
+#   FAIL: 254/256 value mismatches
+# 
+# === DCT8 4x4 ===
+#   Loaded 4 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=-6 got=-4
+#   MISMATCH at output 1: expected=111 got=43
+#   MISMATCH at output 2: expected=-105 got=-43
+#   MISMATCH at output 3: expected=-145 got=43
+#   MISMATCH at output 4: expected=-2 got=341
+#   MISMATCH at output 5: expected=-19 got=-149
+#   MISMATCH at output 6: expected=20 got=149
+#   MISMATCH at output 7: expected=33 got=-149
+#   MISMATCH at output 8: expected=-112 got=-341
+#   MISMATCH at output 9: expected=78 got=149
+#   MISMATCH at output 10: expected=80 got=-149
+#   MISMATCH at output 11: expected=5 got=149
+#   MISMATCH at output 12: expected=-94 got=341
+#   MISMATCH at output 13: expected=97 got=-149
+#   MISMATCH at output 14: expected=35 got=149
+#   MISMATCH at output 15: expected=-42 got=-149
+#   FAIL: 16/16 value mismatches
+# 
+# === DST7 4x4 ===
+#   Loaded 2 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=-8 got=85
+#   MISMATCH at output 1: expected=-58 got=8
+#   MISMATCH at output 2: expected=5 got=-7
+#   MISMATCH at output 3: expected=93 got=8
+#   MISMATCH at output 4: expected=-108 got=174
+#   MISMATCH at output 5: expected=-34 got=136
+#   MISMATCH at output 6: expected=67 got=-136
+#   MISMATCH at output 7: expected=54 got=136
+#   MISMATCH at output 8: expected=-108 got=-174
+#   MISMATCH at output 9: expected=-34 got=-136
+#   MISMATCH at output 10: expected=67 got=136
+#   MISMATCH at output 11: expected=54 got=-136
+#   MISMATCH at output 12: expected=-8 got=174
+#   MISMATCH at output 13: expected=-58 got=136
+#   MISMATCH at output 14: expected=5 got=-136
+#   MISMATCH at output 15: expected=93 got=136
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT8 8x8 ===
+#   Loaded 4 inputs, 64 expected outputs
+#   MISMATCH at output 0: expected=-46 got=-111
+#   MISMATCH at output 1: expected=59 got=182
+#   MISMATCH at output 2: expected=-16 got=x
+#   MISMATCH at output 3: expected=-23 got=x
+#   MISMATCH at output 4: expected=11 got=-32
+#   MISMATCH at output 5: expected=54 got=182
+#   MISMATCH at output 6: expected=-40 got=x
+#   MISMATCH at output 7: expected=20 got=x
+#   MISMATCH at output 8: expected=32 got=36
+#   MISMATCH at output 9: expected=-28 got=-117
+#   MISMATCH at output 10: expected=68 got=x
+#   MISMATCH at output 11: expected=-60 got=x
+#   MISMATCH at output 12: expected=-16 got=134
+#   MISMATCH at output 13: expected=-13 got=-117
+#   MISMATCH at output 14: expected=32 got=x
+#   MISMATCH at output 15: expected=-127 got=x
+#   MISMATCH at output 16: expected=-48 got=x
+#   MISMATCH at output 17: expected=26 got=x
+#   MISMATCH at output 18: expected=-39 got=x
+#   MISMATCH at output 19: expected=25 got=x
+#   FAIL: 64/64 value mismatches
+# 
+# === DCT2 4x4 LFNST idx=1 ===
+#   Loaded 4 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=270 got=14
+#   MISMATCH at output 1: expected=145 got=510
+#   MISMATCH at output 2: expected=142 got=2
+#   MISMATCH at output 3: expected=23 got=-2
+#   MISMATCH at output 4: expected=63 got=9
+#   MISMATCH at output 5: expected=68 got=-492
+#   MISMATCH at output 6: expected=-127 got=31
+#   MISMATCH at output 7: expected=106 got=-31
+#   MISMATCH at output 8: expected=-197 got=21
+#   MISMATCH at output 9: expected=173 got=-120
+#   MISMATCH at output 10: expected=-29 got=-482
+#   MISMATCH at output 11: expected=159 got=482
+#   MISMATCH at output 12: expected=106 got=-21
+#   MISMATCH at output 13: expected=-144 got=120
+#   MISMATCH at output 14: expected=-187 got=482
+#   MISMATCH at output 15: expected=-153 got=-482
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT2 4x4 LFNST idx=2 ===
+#   Loaded 6 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=279 got=-5
+#   MISMATCH at output 1: expected=-52 got=-95
+#   MISMATCH at output 2: expected=62 got=-481
+#   MISMATCH at output 3: expected=-88 got=481
+#   MISMATCH at output 4: expected=75 got=49
+#   MISMATCH at output 5: expected=-252 got=196
+#   MISMATCH at output 6: expected=3 got=473
+#   MISMATCH at output 7: expected=-258 got=-473
+#   MISMATCH at output 8: expected=66 got=-289
+#   MISMATCH at output 9: expected=195 got=284
+#   MISMATCH at output 10: expected=-31 got=102
+#   MISMATCH at output 11: expected=55 got=-102
+#   MISMATCH at output 12: expected=163 got=289
+#   MISMATCH at output 13: expected=-185 got=-284
+#   MISMATCH at output 14: expected=40 got=-102
+#   MISMATCH at output 15: expected=-192 got=102
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT2 4x4 LFNST set=1 idx=1 ===
+#   Loaded 6 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=-137 got=-9
+#   MISMATCH at output 1: expected=-148 got=-509
+#   MISMATCH at output 2: expected=-111 got=-3
+#   MISMATCH at output 3: expected=-59 got=3
+#   MISMATCH at output 4: expected=5 got=-510
+#   MISMATCH at output 5: expected=-91 got=-313
+#   MISMATCH at output 6: expected=-194 got=177
+#   MISMATCH at output 7: expected=-42 got=-177
+#   MISMATCH at output 8: expected=173 got=-2
+#   MISMATCH at output 9: expected=121 got=177
+#   MISMATCH at output 10: expected=-318 got=31
+#   MISMATCH at output 11: expected=152 got=-31
+#   MISMATCH at output 12: expected=206 got=2
+#   MISMATCH at output 13: expected=-108 got=-177
+#   MISMATCH at output 14: expected=-128 got=-31
+#   MISMATCH at output 15: expected=66 got=31
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT2 8x8 LFNST idx=1 ===
+#   Loaded 5 inputs, 64 expected outputs
+#   MISMATCH at output 0: expected=39 got=-7
+#   MISMATCH at output 1: expected=108 got=224
+#   MISMATCH at output 2: expected=104 got=x
+#   MISMATCH at output 3: expected=-57 got=x
+#   MISMATCH at output 4: expected=46 got=25
+#   MISMATCH at output 5: expected=193 got=224
+#   MISMATCH at output 6: expected=-23 got=x
+#   MISMATCH at output 7: expected=-99 got=x
+#   MISMATCH at output 8: expected=-40 got=-46
+#   MISMATCH at output 9: expected=13 got=204
+#   MISMATCH at output 10: expected=62 got=x
+#   MISMATCH at output 11: expected=-19 got=x
+#   MISMATCH at output 12: expected=39 got=-244
+#   MISMATCH at output 13: expected=100 got=204
+#   MISMATCH at output 14: expected=32 got=x
+#   MISMATCH at output 15: expected=79 got=x
+#   MISMATCH at output 16: expected=-70 got=x
+#   MISMATCH at output 17: expected=-98 got=x
+#   MISMATCH at output 18: expected=-85 got=x
+#   MISMATCH at output 19: expected=13 got=x
+#   FAIL: 64/64 value mismatches
+# 
+# === DCT2 8x8 LFNST idx=2 ===
+#   Loaded 6 inputs, 64 expected outputs
+#   MISMATCH at output 0: expected=-103 got=73
+#   MISMATCH at output 1: expected=-120 got=345
+#   MISMATCH at output 2: expected=242 got=x
+#   MISMATCH at output 3: expected=-117 got=x
+#   MISMATCH at output 4: expected=249 got=-209
+#   MISMATCH at output 5: expected=-63 got=345
+#   MISMATCH at output 6: expected=-110 got=x
+#   MISMATCH at output 7: expected=68 got=x
+#   MISMATCH at output 8: expected=340 got=-272
+#   MISMATCH at output 9: expected=-190 got=275
+#   MISMATCH at output 10: expected=-1 got=x
+#   MISMATCH at output 11: expected=-30 got=x
+#   MISMATCH at output 12: expected=0 got=-61
+#   MISMATCH at output 13: expected=-24 got=275
+#   MISMATCH at output 14: expected=291 got=x
+#   MISMATCH at output 15: expected=-169 got=x
+#   MISMATCH at output 16: expected=-26 got=x
+#   MISMATCH at output 17: expected=93 got=x
+#   MISMATCH at output 18: expected=203 got=x
+#   MISMATCH at output 19: expected=-138 got=x
+#   FAIL: 64/64 value mismatches
+# 
+# === DCT2 16x16 LFNST idx=1 ===
+#   Loaded 3 inputs, 256 expected outputs
+#   MISMATCH at output 0: expected=113 got=-334
+#   MISMATCH at output 1: expected=12 got=x
+#   MISMATCH at output 2: expected=-8 got=x
+#   MISMATCH at output 3: expected=-103 got=x
+#   MISMATCH at output 4: expected=-90 got=240
+#   MISMATCH at output 5: expected=55 got=x
+#   MISMATCH at output 6: expected=27 got=x
+#   MISMATCH at output 7: expected=120 got=x
+#   MISMATCH at output 8: expected=-32 got=247
+#   MISMATCH at output 9: expected=-37 got=x
+#   MISMATCH at output 10: expected=-45 got=x
+#   MISMATCH at output 11: expected=-49 got=x
+#   MISMATCH at output 12: expected=72 got=349
+#   MISMATCH at output 13: expected=-22 got=x
+#   MISMATCH at output 14: expected=58 got=x
+#   MISMATCH at output 15: expected=-24 got=x
+#   MISMATCH at output 16: expected=-46 got=x
+#   MISMATCH at output 17: expected=-71 got=x
+#   MISMATCH at output 18: expected=30 got=x
+#   MISMATCH at output 19: expected=73 got=x
+#   FAIL: 256/256 value mismatches
+# 
+# ========================================
+# Test Summary: 0 passed, 11 failed
+# Total value mismatches: 844
+# ========================================
+# SOME TESTS FAILED!
+# ** Note: $finish    : ../tb/its_tb.v(347)
+#    Time: 39599 ns  Iteration: 1  Instance: /its_tb
+# End time: 21:36:33 on Jun 03,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0

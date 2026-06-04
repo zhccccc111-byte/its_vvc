@@ -1,0 +1,25 @@
+$date
+	Wed May 20 18:43:59 2026
+$end
+$version
+	ModelSim Version 10.6e
+$end
+$timescale
+	1ps
+$end
+
+$scope module its_tb_simple $end
+
+$scope task run_test $end
+$upscope $end
+
+$scope module u_dut $end
+
+$scope module u_rom $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+$end

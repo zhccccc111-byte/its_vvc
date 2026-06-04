@@ -1,0 +1,372 @@
+# do run.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_mac.v 
+# -- Compiling module its_mac
+# 
+# Top level modules:
+# 	its_mac
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_rom.v 
+# -- Compiling module its_rom
+# 
+# Top level modules:
+# 	its_rom
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_lfnst_rom.v 
+# -- Compiling module its_lfnst_rom
+# 
+# Top level modules:
+# 	its_lfnst_rom
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_ctrl.v 
+# -- Compiling module its_ctrl
+# 
+# Top level modules:
+# 	its_ctrl
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_input_buf.v 
+# -- Compiling module its_input_buf
+# 
+# Top level modules:
+# 	its_input_buf
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_transpose.v 
+# -- Compiling module its_transpose
+# 
+# Top level modules:
+# 	its_transpose
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_transform_engine.v 
+# -- Compiling module its_transform_engine
+# 
+# Top level modules:
+# 	its_transform_engine
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_lfnst.v 
+# -- Compiling module its_lfnst
+# 
+# Top level modules:
+# 	its_lfnst
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_output_ctrl.v 
+# -- Compiling module its_output_ctrl
+# 
+# Top level modules:
+# 	its_output_ctrl
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../rtl/its_top.v 
+# -- Compiling module its_top
+# 
+# Top level modules:
+# 	its_top
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6e Compiler 2018.06 Jun 23 2018
+# Start time: 21:34:27 on Jun 03,2026
+# vlog ../tb/its_tb.v 
+# -- Compiling module its_tb
+# 
+# Top level modules:
+# 	its_tb
+# End time: 21:34:27 on Jun 03,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -t 1ps work.its_tb 
+# Start time: 21:34:27 on Jun 03,2026
+# ** Note: (vsim-3812) Design is being optimized...
+# //  ModelSim SE-64 10.6e Jun 23 2018
+# //
+# //  Copyright 1991-2018 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading work.its_tb(fast)
+# 
+# === DCT2 8x8 ===
+#   Loaded 2 inputs, 64 expected outputs
+#   MISMATCH at output 1: expected=-168 got=x
+#   MISMATCH at output 2: expected=-107 got=x
+#   MISMATCH at output 3: expected=-28 got=x
+#   MISMATCH at output 4: expected=46 got=135
+#   MISMATCH at output 5: expected=91 got=x
+#   MISMATCH at output 6: expected=94 got=x
+#   MISMATCH at output 7: expected=58 got=x
+#   MISMATCH at output 8: expected=54 got=x
+#   MISMATCH at output 9: expected=52 got=x
+#   MISMATCH at output 10: expected=-10 got=x
+#   MISMATCH at output 11: expected=-88 got=x
+#   MISMATCH at output 12: expected=-156 got=x
+#   MISMATCH at output 13: expected=-184 got=x
+#   MISMATCH at output 14: expected=-163 got=x
+#   MISMATCH at output 15: expected=-95 got=x
+#   MISMATCH at output 16: expected=-73 got=x
+#   MISMATCH at output 17: expected=-89 got=x
+#   MISMATCH at output 18: expected=-57 got=x
+#   MISMATCH at output 19: expected=-15 got=x
+#   MISMATCH at output 20: expected=25 got=x
+#   FAIL: 62/64 value mismatches
+# 
+# === DCT2 16x16 ===
+#   Loaded 4 inputs, 256 expected outputs
+#   MISMATCH at output 0: expected=178 got=41
+#   MISMATCH at output 1: expected=77 got=x
+#   MISMATCH at output 2: expected=6 got=x
+#   MISMATCH at output 3: expected=165 got=x
+#   MISMATCH at output 4: expected=226 got=116
+#   MISMATCH at output 5: expected=43 got=x
+#   MISMATCH at output 6: expected=-49 got=x
+#   MISMATCH at output 7: expected=185 got=x
+#   MISMATCH at output 9: expected=-6 got=x
+#   MISMATCH at output 10: expected=-1 got=x
+#   MISMATCH at output 11: expected=143 got=x
+#   MISMATCH at output 12: expected=95 got=109
+#   MISMATCH at output 13: expected=-112 got=x
+#   MISMATCH at output 14: expected=28 got=x
+#   MISMATCH at output 15: expected=149 got=x
+#   MISMATCH at output 16: expected=183 got=x
+#   MISMATCH at output 17: expected=37 got=x
+#   MISMATCH at output 18: expected=-143 got=x
+#   MISMATCH at output 19: expected=76 got=x
+#   MISMATCH at output 20: expected=202 got=x
+#   FAIL: 254/256 value mismatches
+# 
+# === DCT8 4x4 ===
+#   Loaded 4 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=-6 got=-4
+#   MISMATCH at output 1: expected=111 got=43
+#   MISMATCH at output 2: expected=-105 got=-43
+#   MISMATCH at output 3: expected=-145 got=43
+#   MISMATCH at output 4: expected=-2 got=341
+#   MISMATCH at output 5: expected=-19 got=-149
+#   MISMATCH at output 6: expected=20 got=149
+#   MISMATCH at output 7: expected=33 got=-149
+#   MISMATCH at output 8: expected=-112 got=-341
+#   MISMATCH at output 9: expected=78 got=149
+#   MISMATCH at output 10: expected=80 got=-149
+#   MISMATCH at output 11: expected=5 got=149
+#   MISMATCH at output 12: expected=-94 got=341
+#   MISMATCH at output 13: expected=97 got=-149
+#   MISMATCH at output 14: expected=35 got=149
+#   MISMATCH at output 15: expected=-42 got=-149
+#   FAIL: 16/16 value mismatches
+# 
+# === DST7 4x4 ===
+#   Loaded 2 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=-8 got=85
+#   MISMATCH at output 1: expected=-58 got=8
+#   MISMATCH at output 2: expected=5 got=-7
+#   MISMATCH at output 3: expected=93 got=8
+#   MISMATCH at output 4: expected=-108 got=174
+#   MISMATCH at output 5: expected=-34 got=136
+#   MISMATCH at output 6: expected=67 got=-136
+#   MISMATCH at output 7: expected=54 got=136
+#   MISMATCH at output 8: expected=-108 got=-174
+#   MISMATCH at output 9: expected=-34 got=-136
+#   MISMATCH at output 10: expected=67 got=136
+#   MISMATCH at output 11: expected=54 got=-136
+#   MISMATCH at output 12: expected=-8 got=174
+#   MISMATCH at output 13: expected=-58 got=136
+#   MISMATCH at output 14: expected=5 got=-136
+#   MISMATCH at output 15: expected=93 got=136
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT8 8x8 ===
+#   Loaded 4 inputs, 64 expected outputs
+#   MISMATCH at output 0: expected=-46 got=-111
+#   MISMATCH at output 1: expected=59 got=182
+#   MISMATCH at output 2: expected=-16 got=x
+#   MISMATCH at output 3: expected=-23 got=x
+#   MISMATCH at output 4: expected=11 got=-32
+#   MISMATCH at output 5: expected=54 got=182
+#   MISMATCH at output 6: expected=-40 got=x
+#   MISMATCH at output 7: expected=20 got=x
+#   MISMATCH at output 8: expected=32 got=36
+#   MISMATCH at output 9: expected=-28 got=-117
+#   MISMATCH at output 10: expected=68 got=x
+#   MISMATCH at output 11: expected=-60 got=x
+#   MISMATCH at output 12: expected=-16 got=134
+#   MISMATCH at output 13: expected=-13 got=-117
+#   MISMATCH at output 14: expected=32 got=x
+#   MISMATCH at output 15: expected=-127 got=x
+#   MISMATCH at output 16: expected=-48 got=x
+#   MISMATCH at output 17: expected=26 got=x
+#   MISMATCH at output 18: expected=-39 got=x
+#   MISMATCH at output 19: expected=25 got=x
+#   FAIL: 64/64 value mismatches
+# 
+# === DCT2 4x4 LFNST idx=1 ===
+#   Loaded 4 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=270 got=14
+#   MISMATCH at output 1: expected=145 got=510
+#   MISMATCH at output 2: expected=142 got=2
+#   MISMATCH at output 3: expected=23 got=-2
+#   MISMATCH at output 4: expected=63 got=9
+#   MISMATCH at output 5: expected=68 got=-492
+#   MISMATCH at output 6: expected=-127 got=31
+#   MISMATCH at output 7: expected=106 got=-31
+#   MISMATCH at output 8: expected=-197 got=21
+#   MISMATCH at output 9: expected=173 got=-120
+#   MISMATCH at output 10: expected=-29 got=-482
+#   MISMATCH at output 11: expected=159 got=482
+#   MISMATCH at output 12: expected=106 got=-21
+#   MISMATCH at output 13: expected=-144 got=120
+#   MISMATCH at output 14: expected=-187 got=482
+#   MISMATCH at output 15: expected=-153 got=-482
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT2 4x4 LFNST idx=2 ===
+#   Loaded 6 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=279 got=-5
+#   MISMATCH at output 1: expected=-52 got=-95
+#   MISMATCH at output 2: expected=62 got=-481
+#   MISMATCH at output 3: expected=-88 got=481
+#   MISMATCH at output 4: expected=75 got=49
+#   MISMATCH at output 5: expected=-252 got=196
+#   MISMATCH at output 6: expected=3 got=473
+#   MISMATCH at output 7: expected=-258 got=-473
+#   MISMATCH at output 8: expected=66 got=-289
+#   MISMATCH at output 9: expected=195 got=284
+#   MISMATCH at output 10: expected=-31 got=102
+#   MISMATCH at output 11: expected=55 got=-102
+#   MISMATCH at output 12: expected=163 got=289
+#   MISMATCH at output 13: expected=-185 got=-284
+#   MISMATCH at output 14: expected=40 got=-102
+#   MISMATCH at output 15: expected=-192 got=102
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT2 4x4 LFNST set=1 idx=1 ===
+#   Loaded 6 inputs, 16 expected outputs
+#   MISMATCH at output 0: expected=-137 got=-9
+#   MISMATCH at output 1: expected=-148 got=-509
+#   MISMATCH at output 2: expected=-111 got=-3
+#   MISMATCH at output 3: expected=-59 got=3
+#   MISMATCH at output 4: expected=5 got=-510
+#   MISMATCH at output 5: expected=-91 got=-313
+#   MISMATCH at output 6: expected=-194 got=177
+#   MISMATCH at output 7: expected=-42 got=-177
+#   MISMATCH at output 8: expected=173 got=-2
+#   MISMATCH at output 9: expected=121 got=177
+#   MISMATCH at output 10: expected=-318 got=31
+#   MISMATCH at output 11: expected=152 got=-31
+#   MISMATCH at output 12: expected=206 got=2
+#   MISMATCH at output 13: expected=-108 got=-177
+#   MISMATCH at output 14: expected=-128 got=-31
+#   MISMATCH at output 15: expected=66 got=31
+#   FAIL: 16/16 value mismatches
+# 
+# === DCT2 8x8 LFNST idx=1 ===
+#   Loaded 5 inputs, 64 expected outputs
+#   MISMATCH at output 0: expected=39 got=-7
+#   MISMATCH at output 1: expected=108 got=224
+#   MISMATCH at output 2: expected=104 got=x
+#   MISMATCH at output 3: expected=-57 got=x
+#   MISMATCH at output 4: expected=46 got=25
+#   MISMATCH at output 5: expected=193 got=224
+#   MISMATCH at output 6: expected=-23 got=x
+#   MISMATCH at output 7: expected=-99 got=x
+#   MISMATCH at output 8: expected=-40 got=-46
+#   MISMATCH at output 9: expected=13 got=204
+#   MISMATCH at output 10: expected=62 got=x
+#   MISMATCH at output 11: expected=-19 got=x
+#   MISMATCH at output 12: expected=39 got=-244
+#   MISMATCH at output 13: expected=100 got=204
+#   MISMATCH at output 14: expected=32 got=x
+#   MISMATCH at output 15: expected=79 got=x
+#   MISMATCH at output 16: expected=-70 got=x
+#   MISMATCH at output 17: expected=-98 got=x
+#   MISMATCH at output 18: expected=-85 got=x
+#   MISMATCH at output 19: expected=13 got=x
+#   FAIL: 64/64 value mismatches
+# 
+# === DCT2 8x8 LFNST idx=2 ===
+#   Loaded 6 inputs, 64 expected outputs
+#   MISMATCH at output 0: expected=-103 got=73
+#   MISMATCH at output 1: expected=-120 got=345
+#   MISMATCH at output 2: expected=242 got=x
+#   MISMATCH at output 3: expected=-117 got=x
+#   MISMATCH at output 4: expected=249 got=-209
+#   MISMATCH at output 5: expected=-63 got=345
+#   MISMATCH at output 6: expected=-110 got=x
+#   MISMATCH at output 7: expected=68 got=x
+#   MISMATCH at output 8: expected=340 got=-272
+#   MISMATCH at output 9: expected=-190 got=275
+#   MISMATCH at output 10: expected=-1 got=x
+#   MISMATCH at output 11: expected=-30 got=x
+#   MISMATCH at output 12: expected=0 got=-61
+#   MISMATCH at output 13: expected=-24 got=275
+#   MISMATCH at output 14: expected=291 got=x
+#   MISMATCH at output 15: expected=-169 got=x
+#   MISMATCH at output 16: expected=-26 got=x
+#   MISMATCH at output 17: expected=93 got=x
+#   MISMATCH at output 18: expected=203 got=x
+#   MISMATCH at output 19: expected=-138 got=x
+#   FAIL: 64/64 value mismatches
+# 
+# === DCT2 16x16 LFNST idx=1 ===
+#   Loaded 3 inputs, 256 expected outputs
+#   MISMATCH at output 0: expected=113 got=-334
+#   MISMATCH at output 1: expected=12 got=x
+#   MISMATCH at output 2: expected=-8 got=x
+#   MISMATCH at output 3: expected=-103 got=x
+#   MISMATCH at output 4: expected=-90 got=240
+#   MISMATCH at output 5: expected=55 got=x
+#   MISMATCH at output 6: expected=27 got=x
+#   MISMATCH at output 7: expected=120 got=x
+#   MISMATCH at output 8: expected=-32 got=247
+#   MISMATCH at output 9: expected=-37 got=x
+#   MISMATCH at output 10: expected=-45 got=x
+#   MISMATCH at output 11: expected=-49 got=x
+#   MISMATCH at output 12: expected=72 got=349
+#   MISMATCH at output 13: expected=-22 got=x
+#   MISMATCH at output 14: expected=58 got=x
+#   MISMATCH at output 15: expected=-24 got=x
+#   MISMATCH at output 16: expected=-46 got=x
+#   MISMATCH at output 17: expected=-71 got=x
+#   MISMATCH at output 18: expected=30 got=x
+#   MISMATCH at output 19: expected=73 got=x
+#   FAIL: 256/256 value mismatches
+# 
+# ========================================
+# Test Summary: 0 passed, 11 failed
+# Total value mismatches: 844
+# ========================================
+# SOME TESTS FAILED!
+# ** Note: $finish    : ../tb/its_tb.v(325)
+#    Time: 39599 ns  Iteration: 1  Instance: /its_tb
+# End time: 21:34:28 on Jun 03,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0

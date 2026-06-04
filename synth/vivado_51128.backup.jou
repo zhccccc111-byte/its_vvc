@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:37:14 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Thu Jun  4 13:34:59 2026
+# Process ID: 51128
+# Current directory: D:/WorkSpace/its_vvc/synth
+# Command line: vivado.exe -mode batch -source its_synth.tcl
+# Log file: D:/WorkSpace/its_vvc/synth/vivado.log
+# Journal file: D:/WorkSpace/its_vvc/synth\vivado.jou
+# Running On        :lab
+# Platform          :Windows Server 2016 or Windows 10
+# Operating System  :26200
+# Processor Detail  :12th Gen Intel(R) Core(TM) i5-12400
+# CPU Frequency     :2496 MHz
+# CPU Physical cores:6
+# CPU Logical cores :12
+# Host memory       :16908 MB
+# Swap memory       :30848 MB
+# Total Virtual     :47757 MB
+# Available Virtual :9551 MB
+#-----------------------------------------------------------
+source its_synth.tcl
