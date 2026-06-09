@@ -7,6 +7,10 @@ Transform formulas (VVC standard, 64x scaling):
   DCT8: T(i,j) = round(64 * cos(pi*(2i+1)*(2j+1)/(4N)))
   DST7: T(i,j) = round(64 * sin(pi*(i+1)*(j+1)/(N+1)))
 
+LFNST: 16 scenarios from official document
+  nTrs=16 (tu_width<8 or tu_height<8): 16x16 matrix, 16 outputs
+  nTrs=48 (tu_width>=8 and tu_height>=8): 16x16 matrix, 16 outputs rearranged into 3 blocks
+
 Address mapping:
   addr = base_addr(tr_type, size) + row * size + col
 
@@ -16,6 +20,8 @@ Address mapping:
 """
 
 import math
+import os
+import re
 from typing import List, Tuple, Dict
 
 # ============================================================
@@ -56,72 +62,118 @@ def gen_dst7(N: int) -> List[List[int]]:
 
 
 # ============================================================
-# LFNST matrices (VVC standard values)
+# LFNST matrix parsing from official document
 # ============================================================
 
-# nonZeroSize=8, lfnst_idx=1
-LFNST_8_1 = [
-    [29,  48,  48,  42,  33,  22,  12,   0],
-    [-33, -42, -12,  22,  48,  48,  29,   0],
-    [48,  12, -42, -29,  22, -33, -48,   0],
-    [-22, -48,  33, -12, -29,  48, -22,   0],
-    [42, -29, -48,  33,  12, -22,  48,   0],
-    [-48,  33,  22, -48,  42,  12, -29,   0],
-    [12, -22,  29, -33,  42, -48,  48,   0],
-    [-22,  48, -48,  22, -48,  48, -22,   0],
-]
+def parse_lfnst_matrix_rows(text: str) -> List[List[int]]:
+    """Parse matrix rows from text like { 1 2 3 } { 4 5 6 } ..."""
+    rows = []
+    for match in re.finditer(r'\{([^{}]+)\}', text):
+        row_str = match.group(1).strip()
+        if row_str:
+            # Replace Unicode minus variants with regular minus
+            row_str = row_str.replace('−', '-')  # U+2212
+            row_str = row_str.replace('–', '-')  # en-dash
+            row_str = row_str.replace('—', '-')  # em-dash
+            try:
+                vals = [int(x) for x in row_str.split()]
+                rows.append(vals)
+            except ValueError:
+                pass
+    return rows
 
-# nonZeroSize=8, lfnst_idx=2
-LFNST_8_2 = [
-    [29,  48,  48,  42,  33,  22,  12,   0],
-    [-48, -22,  33,  48,  12, -42, -29,   0],
-    [42, -29, -48,  33,  12, -22,  48,   0],
-    [-12,  42, -22, -33,  48, -29,  12,   0],
-    [48, -48,  12, -22,  29, -33,  42,   0],
-    [-33,  12,  42, -48,  22,  48, -48,   0],
-    [22, -48,  48, -22,  48, -48,  22,   0],
-    [-48,  48, -22,  48, -48,  22, -48,   0],
-]
 
-# nonZeroSize=16, lfnst_idx=1 (16x8 matrix)
-LFNST_16_1 = [
-    [29,  52,  48,  37,  33,  22,  12,   0],
-    [-33, -44, -12,  20,  48,  48,  29,   0],
-    [48,  12, -44, -29,  22, -33, -48,   0],
-    [-22, -48,  33, -12, -29,  48, -22,   0],
-    [42, -29, -48,  33,  12, -22,  48,   0],
-    [-48,  33,  22, -48,  42,  12, -29,   0],
-    [12, -22,  29, -33,  42, -48,  48,   0],
-    [-22,  48, -48,  22, -48,  48, -22,   0],
-    [36, -18, -42,  48, -12, -33,  48,   0],
-    [-48,  29,  22, -48,  42, -12, -29,   0],
-    [22, -42,  33,  12, -48,  48, -22,   0],
-    [-12,  33, -48,  42, -22, -12,  48,   0],
-    [48, -48,  12, -22,  29, -33,  42,   0],
-    [-33,  12,  42, -48,  22,  48, -48,   0],
-    [22, -48,  48, -22,  48, -48,  22,   0],
-    [-48,  48, -22,  48, -48,  22, -48,   0],
-]
+def parse_lfnst_from_document(doc_path: str) -> Dict[Tuple[int, int, int], List[List[int]]]:
+    """Parse all 16 LFNST scenarios from the official document.
 
-# nonZeroSize=16, lfnst_idx=2 (16x8 matrix)
-LFNST_16_2 = [
-    [29,  52,  48,  37,  33,  22,  12,   0],
-    [-48, -22,  33,  48,  12, -42, -29,   0],
-    [42, -29, -48,  33,  12, -22,  48,   0],
-    [-12,  42, -22, -33,  48, -29,  12,   0],
-    [48, -48,  12, -22,  29, -33,  42,   0],
-    [-33,  12,  42, -48,  22,  48, -48,   0],
-    [22, -48,  48, -22,  48, -48,  22,   0],
-    [-48,  48, -22,  48, -48,  22, -48,   0],
-    [36, -18, -42,  48, -12, -33,  48,   0],
-    [-48,  42,  12, -29,  33, -22, -48,   0],
-    [12, -33,  48, -42,  22,  12, -48,   0],
-    [-22,  42, -33, -12,  48, -48,  22,   0],
-    [48, -48,  12, -22,  29, -33,  42,   0],
-    [-33,  12,  42, -48,  22,  48, -48,   0],
-    [22, -48,  48, -22,  48, -48,  22,   0],
-    [-48,  48, -22,  48, -48,  22, -48,   0],
-]
+    Returns dict: (nTrs, lfnstTrSetIdx, lfnst_idx) -> Nx16 matrix
+      nTrs=16: 16x16 matrix
+      nTrs=48: 48x16 matrix (3 Col blocks of 16x16)
+    """
+    with open(doc_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    matrices = {}
+
+    # Find all scenario headers
+    pattern = r'nTrs\s*=\s*(\d+)\D+lfnstTrSetIdx\s*=\s*(\d+)\D+lfnst_idx\s*=\s*(\d+)'
+    all_matches = list(re.finditer(pattern, content))
+
+    for idx, m in enumerate(all_matches):
+        ntrs = int(m.group(1))
+        set_idx = int(m.group(2))
+        lfnst_idx = int(m.group(3))
+
+        # Limit search to this scenario's section
+        section_end = all_matches[idx + 1].start() if idx + 1 < len(all_matches) else len(content)
+        section = content[m.end():section_end]
+
+        if ntrs == 16:
+            # nTrs=16: single 16x16 matrix
+            block_start = section.find('{')
+            if block_start == -1:
+                continue
+            depth = 0
+            end = -1
+            for i in range(block_start, len(section)):
+                if section[i] == '{':
+                    depth += 1
+                elif section[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        end = i
+                        break
+            if end == -1:
+                continue
+            block = section[block_start:end + 1]
+            matrix = parse_lfnst_matrix_rows(block)
+            if matrix:
+                key = (ntrs, set_idx, lfnst_idx)
+                matrices[key] = matrix
+                print(f"  Parsed nTrs={ntrs}, lfnstTrSetIdx={set_idx}, "
+                      f"lfnst_idx={lfnst_idx}: {len(matrix)}x{len(matrix[0])}")
+
+        elif ntrs == 48:
+            # nTrs=48: three 16x16 Col blocks -> 48x16 matrix
+            # Find all { ... } matrix blocks in this section
+            blocks = []
+            pos = 0
+            while pos < len(section):
+                block_start = section.find('{', pos)
+                if block_start == -1:
+                    break
+                # Check if this is a matrix row block (starts with "{  " or "{ -")
+                # Skip lone "{" that are part of text like "lowFreqTransMatrixCol0to15 ="
+                depth = 0
+                end = -1
+                for i in range(block_start, len(section)):
+                    if section[i] == '{':
+                        depth += 1
+                    elif section[i] == '}':
+                        depth -= 1
+                        if depth == 0:
+                            end = i
+                            break
+                if end == -1:
+                    break
+                block = section[block_start:end + 1]
+                rows = parse_lfnst_matrix_rows(block)
+                if rows and len(rows) >= 16 and len(rows[0]) >= 16:
+                    blocks.append(rows)
+                pos = end + 1
+
+            if len(blocks) >= 3:
+                # Combine 3 Col blocks into 48x16 matrix
+                matrix = blocks[0][:16] + blocks[1][:16] + blocks[2][:16]
+                key = (ntrs, set_idx, lfnst_idx)
+                matrices[key] = matrix
+                print(f"  Parsed nTrs={ntrs}, lfnstTrSetIdx={set_idx}, "
+                      f"lfnst_idx={lfnst_idx}: {len(matrix)}x{len(matrix[0])}")
+            else:
+                print(f"  WARNING: nTrs={ntrs}, lfnstTrSetIdx={set_idx}, "
+                      f"lfnst_idx={lfnst_idx}: found {len(blocks)} blocks, expected 3")
+
+    return matrices
 
 
 # ============================================================
@@ -215,39 +267,78 @@ def generate_rom_hex(filename: str):
 # Generate LFNST hex file
 # ============================================================
 
-def generate_lfnst_hex(filename: str):
-    """Generate lfnst_coeffs.hex for LFNST matrices."""
-    # Layout: 8x8 idx1 (64) + 8x8 idx2 (64) + 16x8 idx1 (128) + 16x8 idx2 (128) = 384 entries
-    coeffs = []
+def generate_lfnst_hex(filename: str, doc_path: str):
+    """Generate lfnst_coeffs.hex for LFNST matrices from official document.
 
-    # nonZeroSize=8, lfnst_idx=1: 8x8 = 64 entries
-    for row in LFNST_8_1:
-        coeffs.extend(row)
+    ROM layout (8192 entries, 13-bit address):
+      nTrs=16 [0..2047]:   4 setIdx x 2 idx x 16x16 = 8 x 256
+      nTrs=48 [2048..8191]: 4 setIdx x 2 idx x 48x16 = 8 x 768
 
-    # nonZeroSize=8, lfnst_idx=2: 8x8 = 64 entries
-    for row in LFNST_8_2:
-        coeffs.extend(row)
+    Address formula (must match RTL in its_lfnst.v):
+      nTrs=16: lfnstTrSetIdx * 512 + (lfnst_idx - 1) * 256 + row * 16 + col
+      nTrs=48: 2048 + (lfnstTrSetIdx * 2 + (lfnst_idx - 1)) * 768 + row * 16 + col
+    """
+    print("\nParsing LFNST matrices from official document...")
+    matrices = parse_lfnst_from_document(doc_path)
 
-    # nonZeroSize=16, lfnst_idx=1: 16x8 = 128 entries
-    for row in LFNST_16_1:
-        coeffs.extend(row)
+    # Verify all 16 scenarios present
+    expected = []
+    for ntrs in [16, 48]:
+        for set_idx in range(4):
+            for idx in [1, 2]:
+                expected.append((ntrs, set_idx, idx))
 
-    # nonZeroSize=16, lfnst_idx=2: 16x8 = 128 entries
-    for row in LFNST_16_2:
-        coeffs.extend(row)
+    missing = [k for k in expected if k not in matrices]
+    if missing:
+        print(f"WARNING: Missing {len(missing)} scenarios: {missing}")
+        return
 
+    # Build ROM array (8192 entries)
+    coeffs = [0] * 8192
+
+    for (ntrs, set_idx, lfnst_idx), matrix in matrices.items():
+        if ntrs == 16:
+            base = set_idx * 512 + (lfnst_idx - 1) * 256
+            num_rows = 16
+        else:  # ntrs == 48
+            base = 2048 + (set_idx * 2 + (lfnst_idx - 1)) * 768
+            num_rows = 48
+
+        for row in range(num_rows):
+            for col in range(16):
+                addr = base + row * 16 + col
+                coeffs[addr] = matrix[row][col]
+
+    # Write hex file
     with open(filename, 'w') as f:
-        f.write(f"// VVC LFNST ROM coefficients\n")
-        f.write(f"// Total entries: {len(coeffs)}\n\n")
-        f.write(f"// nonZeroSize=8, lfnst_idx=1: addr 0..63\n")
-        f.write(f"// nonZeroSize=8, lfnst_idx=2: addr 64..127\n")
-        f.write(f"// nonZeroSize=16, lfnst_idx=1: addr 128..255\n")
-        f.write(f"// nonZeroSize=16, lfnst_idx=2: addr 256..383\n\n")
+        f.write(f"// VVC LFNST ROM coefficients (from official document)\n")
+        f.write(f"// Total entries: 8192\n\n")
+        f.write(f"// nTrs=16 region [0..2047] (8 scenarios x 256 entries):\n")
+        for set_idx in range(4):
+            for idx in [1, 2]:
+                base = set_idx * 512 + (idx - 1) * 256
+                f.write(f"//   lfnstTrSetIdx={set_idx}, lfnst_idx={idx}: "
+                        f"addr {base}..{base + 255}\n")
+        f.write(f"\n// nTrs=48 region [2048..8191] (8 scenarios x 768 entries):\n")
+        for set_idx in range(4):
+            for idx in [1, 2]:
+                base = 2048 + (set_idx * 2 + (idx - 1)) * 768
+                f.write(f"//   lfnstTrSetIdx={set_idx}, lfnst_idx={idx}: "
+                        f"addr {base}..{base + 767}\n")
+        f.write(f"\n")
 
         for val in coeffs:
             f.write(f"{to_signed_16bit(val):04X}\n")
 
-    print(f"Generated {filename}: {len(coeffs)} entries ({len(coeffs) * 2} bytes)")
+    print(f"Generated {filename}: 8192 entries (16384 bytes)")
+
+    # Verify address mapping matches RTL
+    print("\nAddress map verification (must match RTL rom_base):")
+    for set_idx in range(4):
+        for idx in [1, 2]:
+            base16 = set_idx * 512 + (idx - 1) * 256
+            base48 = 2048 + (set_idx * 2 + (idx - 1)) * 768
+            print(f"  setIdx={set_idx} idx={idx}: nTrs=16 base={base16}, nTrs=48 base={base48}")
 
 
 # ============================================================
@@ -297,17 +388,17 @@ def generate_lfnst_rom_verilog(filename: str):
 // ===================================================================
 // ITS LFNST Transform Kernel ROM
 // Auto-generated by gen_rom_coeffs.py
-// Supports nonZeroSize=8 and 16, lfnst_idx=1 and 2
+// 8192 entries: nTrs=16 (8x256) + nTrs=48 (8x768)
 // ===================================================================
 
 module its_lfnst_rom (
     input  wire        clk,
-    input  wire [8:0]  addr,      // Address (0-383)
+    input  wire [12:0] addr,      // Address (0-8191)
     output reg  [15:0] coeff      // Coefficient output (signed)
 );
 
-    // ROM storage: 8x8x2 + 16x8x2 = 384 entries
-    reg [15:0] rom [0:383];
+    // ROM storage: 8192 entries
+    reg [15:0] rom [0:8191];
 
     // Load coefficients from hex file
     initial begin
@@ -333,11 +424,11 @@ endmodule
 # ============================================================
 
 if __name__ == "__main__":
-    import os
-
     # Output directory (same as script directory, or rtl/)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    rtl_dir = os.path.join(os.path.dirname(script_dir), 'rtl')
+    project_dir = os.path.dirname(script_dir)
+    rtl_dir = os.path.join(project_dir, 'rtl')
+    doc_path = os.path.join(project_dir, 'output', 'lfnst_doc.txt')
 
     print("=" * 60)
     print("VVC ITS ROM Coefficient Generator")
@@ -348,10 +439,10 @@ if __name__ == "__main__":
     hex_path = os.path.join(rtl_dir, 'rom_coeffs.hex')
     base_addrs, total_size = generate_rom_hex(hex_path)
 
-    # Generate LFNST ROM
-    print("\n--- LFNST ROM ---")
+    # Generate LFNST ROM (from official document)
+    print("\n--- LFNST ROM (from official document) ---")
     lfnst_hex_path = os.path.join(rtl_dir, 'lfnst_coeffs.hex')
-    generate_lfnst_hex(lfnst_hex_path)
+    generate_lfnst_hex(lfnst_hex_path, doc_path)
 
     # Generate Verilog modules
     print("\n--- Verilog Modules ---")

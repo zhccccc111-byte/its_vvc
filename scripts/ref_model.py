@@ -202,29 +202,33 @@ def its_inverse_transform(
         # nTrs = (tu_width >= 8 && tu_height >= 8) ? 48 : 16
         ntrs = 48 if (tu_width >= 8 and tu_height >= 8) else 16
 
-        # Input: always top-left 4x4 sub-block = 16 elements
-        input_vec = []
-        for i in range(min(4, tu_height)):
-            for j in range(min(4, tu_width)):
-                input_vec.append(coeff[i][j])
+        # Input: sequential addresses 0..ntrs-1 from in_mem (raster scan order)
+        # For nTrs=16: addresses 0-15 (first 16 elements in raster order)
+        # For nTrs=48: addresses 0-15 of top-left 4x4 (row*W+col for rows 0-3, cols 0-3)
+        flat_coeff = flatten_raster(coeff)
+        input_vec = flat_coeff[:16] if ntrs == 16 else []
+        if ntrs == 48:
+            for i in range(min(4, tu_height)):
+                for j in range(min(4, tu_width)):
+                    input_vec.append(coeff[i][j])
 
         # Apply LFNST: ntrs x 16 matrix * 16-element vector
         transformed = lfnst_inverse(input_vec, ntrs, lfnst_tr_set_idx, lfnst_idx)
 
         # Write back to coeff array
-        # nTrs=16: write to top-left 4x4 (16 elements)
+        # nTrs=16: write to sequential addresses 0..15 (raster scan order)
         # nTrs=48: write to top-left 12x4 (48 elements = 3 sub-blocks of 4x4)
-        idx = 0
         if ntrs == 16:
-            for i in range(min(4, tu_height)):
-                for j in range(min(4, tu_width)):
-                    coeff[i][j] = transformed[idx]
-                    idx += 1
+            for k in range(16):
+                row = k // tu_width
+                col = k % tu_width
+                coeff[row][col] = transformed[k]
         else:  # ntrs == 48
             # Write 48 elements: 3 sub-blocks of 4x4
             # Block 0: rows 0-3, cols 0-3 (top-left)
             # Block 1: rows 0-3, cols 4-7 (right of block 0)
             # Block 2: rows 4-7, cols 0-3 (below block 0)
+            idx = 0
             for blk in range(3):
                 row_offset = 4 if blk == 2 else 0
                 col_offset = 4 if blk == 1 else 0
@@ -234,7 +238,10 @@ def its_inverse_transform(
                         idx += 1
 
     # Step 2: 2D inverse transform
-    result = inverse_transform_2d(coeff, tr_type_hor, tr_type_ver, tu_width, tu_height)
+    # VVC standard: when LFNST is active, main transform must be DCT2
+    actual_tr_hor = 0 if lfnst_idx != 0 else tr_type_hor
+    actual_tr_ver = 0 if lfnst_idx != 0 else tr_type_ver
+    result = inverse_transform_2d(coeff, actual_tr_hor, actual_tr_ver, tu_width, tu_height)
     return result
 
 

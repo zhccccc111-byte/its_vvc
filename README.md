@@ -40,8 +40,13 @@ its_vvc/
 │   ├── its_lfnst_rom.v             # LFNST 系数 ROM (8192 系数)
 │   ├── rom_coeffs.hex              # 变换核系数数据
 │   └── lfnst_coeffs.hex            # LFNST 系数数据
+├── doc/
+│   ├── design_doc.md               # 设计文档
+│   ├── verification_report.md      # 验证报告
+│   ├── ppa_report.md               # PPA 报告
+│   └── fix_log.md                  # 修复记录
 ├── tb/
-│   ├── its_tb.v                    # 测试平台 (11 个测试用例)
+│   ├── its_tb.v                    # 测试平台 (95 个测试用例)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
 │   ├── run.do                      # ModelSim 仿真脚本
@@ -72,6 +77,7 @@ its_vvc/
 | `it_data_in` | 16 | I | 输入系数 (有符号，只送非零点) |
 | `it_data_addr` | 12 | I | 系数在 TU 内的光栅扫描地址 |
 | `it_data_in_vld` | 1 | I | 输入数据有效 |
+| `it_data_end` | 1 | I | 输入数据结束，脉冲（赛题 4/24 更新） |
 | `it_data_in_req` | 1 | O | 输入请求 (为 1 时才允许送数据) |
 | `it_data_out` | 40 | O | 输出结果，4 个 10-bit 有符号值拼接 |
 | `it_data_out_vld` | 1 | O | 输出有效 |
@@ -172,23 +178,22 @@ cd sim
 vsim -c -do "do run.do"
 ```
 
-预期输出: `ALL TESTS PASSED!`，11 个测试用例全部通过。
+预期输出: `ALL TESTS PASSED!`，95 个测试用例全部通过。
 
-### 5.2 测试用例覆盖
+### 5.2 测试用例覆盖 (共 95 个)
 
-| 编号 | 变换类型 | 块大小 | LFNST set/idx | 说明 |
-|------|---------|--------|--------------|------|
-| 1 | DCT2 | 8x8 | - | 基础 DCT2 |
-| 2 | DCT2 | 16x16 | - | 大块 DCT2 |
-| 3 | DCT8 | 4x4 | - | DCT8 变换 |
-| 4 | DST7 | 4x4 | - | DST7 变换 |
-| 5 | DCT8 | 8x8 | - | 大块 DCT8 |
-| 6 | DCT2 | 4x4 | 0/1 | LFNST nTrs=16 |
-| 7 | DCT2 | 4x4 | 0/2 | LFNST nTrs=16 |
-| 8 | DCT2 | 4x4 | 1/1 | LFNST 不同 setIdx |
-| 9 | DCT2 | 8x8 | 0/1 | LFNST nTrs=48 |
-| 10 | DCT2 | 8x8 | 0/2 | LFNST nTrs=48 |
-| 11 | DCT2 | 16x16 | 0/1 | LFNST nTrs=48 |
+| 类别 | 数量 | 覆盖范围 |
+|------|------|---------|
+| DCT2 | 25 | 4x4 ~ 64x64 全部 25 种块大小 |
+| DCT8 | 16 | 4x4 ~ 32x32 全部 16 种块大小 |
+| DST7 | 16 | 4x4 ~ 32x32 全部 16 种块大小 |
+| LFNST (nTrs=16) | 8 | 4 setIdx x 2 idx |
+| LFNST (nTrs=48) | 8 | 4 setIdx x 2 idx |
+| LFNST+DCT2 | 6 | 8x16, 16x8, 16x16, 16x32, 32x16, 32x32 |
+| 连续 TU | 8 | 无复位连续处理，覆盖 DCT2/DCT8/DST7/LFNST |
+| 反压 | 8 | 输出反压 (3高/2低)，覆盖 DCT2/DCT8/DST7/LFNST |
+
+每个测试用例与 Python 参考模型 (ref_model.py) 逐点比对输出值。
 
 ---
 
@@ -196,22 +201,23 @@ vsim -c -do "do run.do"
 
 ### 6.1 综合结果
 
-**目标器件**: Artix-7 xc7a200tfbg484-1
-**时钟约束**: 500MHz (2ns)
+**目标器件**: Artix-7 xc7a200tfbg484-3
+**时钟约束**: 100MHz (10ns)
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| LUTs | 82,632 | 134,600 | 61.39% |
-| Registers | 192,924 | 269,200 | 71.67% |
-| Block RAM | 4 | 365 | 1.10% |
+| LUTs | 6,568 | 133,800 | 4.91% |
+| Registers | 2,328 | 267,600 | 0.87% |
+| Block RAM | 10.5 | 365 | 2.88% |
 | DSPs | 9 | 740 | 1.22% |
 
 | 指标 | 值 |
 |------|-----|
-| 总功耗 | 3.286 W |
-| WNS (Setup) | -9.531 ns |
+| 总功耗 | 0.222 W |
+| WNS (Setup) @ 100MHz | -0.421 ns |
+| 实际最高频率 | ~96 MHz |
 
-**说明**: 寄存器数偏高是因为多个 RAM 数组因异步复位被综合为触发器而非 Block RAM。时序不满足 500MHz 是原型阶段预期行为。
+**说明**: 资源利用率低，设计轻量。500MHz (2ns) 在 Artix-7 上不可行（OBUF + BRAM 固定延迟 > 2ns）。详细分析见 doc/ppa_report.md。
 
 ### 6.2 运行综合
 
@@ -234,11 +240,13 @@ vivado -mode batch -source its_synth.tcl
 | 一拍 4 点计算 | ✅ | 4 MAC 并行 |
 | 一拍 4 点输出 | ✅ | 光栅扫描顺序 |
 | 输入反压 | ✅ | it_data_in_req |
-| 输出反压 | ✅ | it_data_out_req |
+| 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
-| 500MHz 主频 | ⏳ | 综合时序待优化 |
-| PPA 优化 | ⏳ | 面积/功耗待优化 |
-| 设计文档 | ⏳ | 待编写 |
+| it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
+| 500MHz 主频 | ⚠️ | Artix-7 物理限制，实际 ~96MHz；500MHz 为 ASIC 目标，详见 doc/design_doc.md 第 8 节 |
+| 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
+| PPA 报告 | ✅ | 见 doc/ppa_report.md |
+| 设计文档 | ✅ | 见 doc/design_doc.md |
 
 ---
 

@@ -77,3 +77,7 @@ dct2_16x16_lfnst1
 dct2_16x32_lfnst1
 dct2_32x16_lfnst1
 dct2_32x32_lfnst1
+dct2_4x64_lfnst1
+dct2_64x4_lfnst1
+dct2_8x64_lfnst1
+dct2_64x8_lfnst1

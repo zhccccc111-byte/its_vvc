@@ -1,0 +1,1092 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
+| Date         : Tue Jun  9 22:11:53 2026
+| Host         : lab running 64-bit major release  (build 9200)
+| Command      : report_methodology -file methodology_impl.rpt
+| Design       : its_top
+| Device       : xc7a200tfbg484-3
+| Speed File   : -3
+| Design State : Fully Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Report Methodology
+
+Table of Contents
+-----------------
+1. REPORT SUMMARY
+2. REPORT DETAILS
+
+1. REPORT SUMMARY
+-----------------
+            Netlist: netlist
+          Floorplan: checkpoint_its_top_routed
+      Design limits: <entire design considered>
+             Max violations: <unlimited>
+             Violations found: 211
++---------+----------+-----------------------------------------------------------+------------+
+| Rule    | Severity | Description                                               | Violations |
++---------+----------+-----------------------------------------------------------+------------+
+| DPIR-1  | Warning  | Asynchronous driver check                                 | 30         |
+| SYNTH-5 | Warning  | Mapped onto distributed RAM because of timing constraints | 172        |
+| SYNTH-9 | Warning  | Small multiplier                                          | 9          |
++---------+----------+-----------------------------------------------------------+------------+
+
+2. REPORT DETAILS
+-----------------
+DPIR-1#1 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[0] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#2 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[10] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#3 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[11] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#4 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[12] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#5 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[13] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#6 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[14] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#7 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[15] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#8 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[16] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#9 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[17] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#10 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[18] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#11 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[19] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#12 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[1] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#13 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[20] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#14 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[21] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#15 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[22] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#16 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[23] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#17 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[24] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#18 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[25] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#19 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[26] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#20 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[27] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#21 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[28] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#22 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[29] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#23 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[2] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#24 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[3] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#25 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[4] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#26 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[5] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#27 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[6] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#28 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[7] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#29 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[8] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+DPIR-1#30 Warning
+Asynchronous driver check  
+DSP u_lfnst/u_mac/product0 input pin u_lfnst/u_mac/product0/A[9] is connected to registers with an asynchronous reset. This is preventing the possibility of merging these registers in to the DSP Block since the DSP block registers only possess synchronous reset capability.  It is suggested to recode or change these registers to remove the reset or use a synchronous reset to get the best optimization for performance, power and area.
+Related violations: <none>
+
+SYNTH-5#1 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_0_0 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#2 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_10_10 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#3 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_11_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#4 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_12_12 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#5 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_13_13 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#6 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_14_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#7 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#8 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_1_1 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#9 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_2_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#10 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_3_3 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#11 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_4_4 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#12 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_5_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#13 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_6_6 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#14 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_7_7 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#15 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_8_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#16 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_0_127_9_9 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#17 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_0_0 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#18 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_10_10 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#19 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_11_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#20 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_12_12 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#21 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_13_13 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#22 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_14_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#23 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#24 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_1_1 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#25 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_2_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#26 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_3_3 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#27 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_4_4 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#28 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_5_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#29 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_6_6 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#30 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_7_7 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#31 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_8_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#32 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_128_255_9_9 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#33 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_0_63_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#34 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_0_63_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#35 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_0_63_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#36 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_0_63_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#37 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_0_63_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#38 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_0_63_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#39 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_128_191_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#40 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_128_191_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#41 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_128_191_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#42 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_128_191_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#43 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_128_191_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#44 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_128_191_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#45 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_192_255_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#46 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_192_255_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#47 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_192_255_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#48 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_192_255_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#49 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_192_255_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#50 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_192_255_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#51 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_64_127_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#52 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_64_127_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#53 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_64_127_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#54 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_64_127_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#55 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_64_127_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#56 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r2_64_127_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#57 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_0_63_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#58 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_0_63_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#59 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_0_63_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#60 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_0_63_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#61 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_0_63_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#62 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_0_63_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#63 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_128_191_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#64 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_128_191_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#65 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_128_191_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#66 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_128_191_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#67 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_128_191_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#68 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_128_191_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#69 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_192_255_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#70 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_192_255_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#71 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_192_255_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#72 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_192_255_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#73 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_192_255_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#74 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_192_255_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#75 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_64_127_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#76 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_64_127_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#77 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_64_127_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#78 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_64_127_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#79 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_64_127_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#80 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r3_64_127_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#81 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r4_0_63_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#82 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r4_0_63_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#83 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r4_0_63_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#84 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r4_0_63_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#85 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r4_0_63_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#86 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_col_engine/coeff_buf_reg_r4_0_63_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#87 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_0_0 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#88 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_10_10 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#89 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_11_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#90 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_12_12 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#91 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_13_13 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#92 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_14_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#93 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#94 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_1_1 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#95 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_2_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#96 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_3_3 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#97 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_4_4 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#98 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_5_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#99 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_6_6 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#100 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_7_7 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#101 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_8_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#102 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_0_127_9_9 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#103 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_0_0 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#104 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_10_10 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#105 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_11_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#106 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_12_12 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#107 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_13_13 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#108 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_14_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#109 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#110 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_1_1 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#111 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_2_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#112 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_3_3 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#113 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_4_4 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#114 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_5_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#115 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_6_6 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#116 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_7_7 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#117 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_8_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#118 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_128_255_9_9 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#119 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_0_63_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#120 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_0_63_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#121 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_0_63_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#122 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_0_63_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#123 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_0_63_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#124 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_0_63_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#125 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_128_191_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#126 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_128_191_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#127 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_128_191_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#128 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_128_191_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#129 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_128_191_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#130 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_128_191_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#131 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_192_255_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#132 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_192_255_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#133 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_192_255_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#134 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_192_255_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#135 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_192_255_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#136 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_192_255_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#137 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_64_127_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#138 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_64_127_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#139 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_64_127_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#140 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_64_127_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#141 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_64_127_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#142 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r2_64_127_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#143 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_0_63_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#144 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_0_63_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#145 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_0_63_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#146 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_0_63_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#147 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_0_63_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#148 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_0_63_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#149 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_128_191_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#150 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_128_191_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#151 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_128_191_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#152 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_128_191_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#153 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_128_191_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#154 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_128_191_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#155 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_192_255_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#156 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_192_255_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#157 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_192_255_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#158 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_192_255_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#159 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_192_255_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#160 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_192_255_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#161 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_64_127_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#162 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_64_127_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#163 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_64_127_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#164 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_64_127_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#165 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_64_127_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#166 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r3_64_127_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#167 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r4_0_63_0_2 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#168 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r4_0_63_12_14 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#169 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r4_0_63_15_15 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#170 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r4_0_63_3_5 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#171 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r4_0_63_6_8 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-5#172 Warning
+Mapped onto distributed RAM because of timing constraints  
+The instance u_row_engine/coeff_buf_reg_r4_0_63_9_11 is implemented as distributed LUT RAM for the following reason: The timing constraints suggest that the chosen mapping will yield a better timing.
+Related violations: <none>
+
+SYNTH-9#1 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[10]_i_1 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#2 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[10]_i_10 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#3 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[10]_i_11 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#4 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[12]_i_1 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#5 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[12]_i_5 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#6 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[12]_i_6 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#7 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[2]_i_1 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#8 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[6]_i_1 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+SYNTH-9#9 Warning
+Small multiplier  
+Detected multiplier at total_points_reg[6]_i_3 of size 7x7, it is implemented as LUTs due to its small size. To force the multiplier onto a DSP block, use the USE_DSP48 attribute.
+Related violations: <none>
+
+

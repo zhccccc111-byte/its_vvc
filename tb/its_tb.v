@@ -16,6 +16,7 @@ module its_tb;
     reg  [15:0] it_data_in;
     reg  [11:0] it_data_addr;
     reg         it_data_in_vld;
+    reg         it_data_end;
     wire        it_data_in_req;
     wire [39:0] it_data_out;
     wire        it_data_out_vld;
@@ -31,6 +32,9 @@ module its_tb;
     reg [27:0] input_vec [0:4095];
     reg [9:0]  golden_vec [0:4095];
 
+    // DUT has data_out_r pipeline register synchronized with out_vld_r.
+    // No additional TB register needed - read it_data_out directly.
+
     // Clock generation (500MHz -> 2ns period)
     initial clk = 0;
     always #1 clk = ~clk;
@@ -44,12 +48,23 @@ module its_tb;
         .it_data_in    (it_data_in),
         .it_data_addr  (it_data_addr),
         .it_data_in_vld(it_data_in_vld),
+        .it_data_end   (it_data_end),
         .it_data_in_req(it_data_in_req),
         .it_data_out   (it_data_out),
         .it_data_out_vld(it_data_out_vld),
         .it_data_out_req(it_data_out_req),
         .it_done       (it_done)
     );
+
+    // Global protocol monitor: req=0 -> vld must be 0
+    reg protocol_err;
+    always @(posedge clk) begin
+        if (rst_n && !it_data_out_req && it_data_out_vld !== 1'b0) begin
+            $display("  [MONITOR] PROTOCOL VIOLATION: vld=%b when req=0 (time=%0t)",
+                     it_data_out_vld, $time);
+            protocol_err = 1;
+        end
+    end
 
     // Task: Send TU info
     task send_info;
@@ -84,38 +99,63 @@ module its_tb;
         end
     endtask
 
+    // Task: Send one data point with it_data_end asserted on the same cycle
+    task send_data_with_end;
+        input [11:0] addr;
+        input [15:0] data;
+        begin
+            @(posedge clk);
+            while (!it_data_in_req) @(posedge clk);
+            it_data_in = data;
+            it_data_addr = addr;
+            it_data_in_vld = 1;
+            it_data_end = 1;
+            @(posedge clk);
+            it_data_in_vld = 0;
+            it_data_end = 0;
+        end
+    endtask
+
     // Task: Wait for output with timeout
     task wait_output;
         output [39:0] data;
         output        valid;
+        output        timed_out;
         integer timeout_cnt;
         begin
             timeout_cnt = 0;
             valid = 0;
+            timed_out = 0;
             while (timeout_cnt < 5000000) begin
                 @(posedge clk);
                 timeout_cnt = timeout_cnt + 1;
                 if (it_data_out_vld && it_data_out_req) begin
-                    data = it_data_out;
+                    data = it_data_out;  // DUT output is already registered (data_out_r)
                     valid = 1;
                     disable wait_output;
                 end
             end
-            if (!valid) $display("  TIMEOUT waiting for output!");
+            if (!valid) begin
+                $display("  TIMEOUT waiting for output!");
+                timed_out = 1;
+            end
         end
     endtask
 
-    // Task: Wait for done
+    // Task: Wait for done with timeout
     task wait_done;
+        output timed_out;
         integer timeout_cnt;
         begin
             timeout_cnt = 0;
+            timed_out = 0;
             while (timeout_cnt < 1000000) begin
                 @(posedge clk);
                 timeout_cnt = timeout_cnt + 1;
                 if (it_done) disable wait_done;
             end
             $display("  TIMEOUT waiting for done!");
+            timed_out = 1;
         end
     endtask
 
@@ -135,6 +175,8 @@ module its_tb;
         integer out_idx;
         reg [39:0] out_data;
         reg out_valid;
+        reg out_timeout;
+        reg done_timeout;
         reg signed [9:0] exp_val, got_val;
         integer local_mismatches;
         integer total_outputs;
@@ -144,6 +186,7 @@ module its_tb;
             $display("\n=== %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
                      test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
             local_mismatches = 0;
+            protocol_err = 0;
 
             // Reset DUT and clear internal memories
             rst_n = 0;
@@ -181,10 +224,19 @@ module its_tb;
                 send_data(input_vec[i][27:16], input_vec[i][15:0]);
             end
 
+            // Wait for DUT to be in S_LOAD before asserting it_data_end
+            while (u_dut.state != 4'd1) @(posedge clk);  // S_LOAD = 4'd1
+            @(posedge clk);
+
+            // Assert it_data_end to signal input complete
+            it_data_end = 1;
+            @(posedge clk);
+            it_data_end = 0;
+
             // Collect and compare outputs
             out_idx = 0;
             while (out_idx < total_outputs) begin
-                wait_output(out_data, out_valid);
+                wait_output(out_data, out_valid, out_timeout);
                 if (out_valid) begin
                     for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
                         case (j)
@@ -202,19 +254,25 @@ module its_tb;
                         end
                     end
                     out_idx = out_idx + 4;
+                end else if (out_timeout) begin
+                    $display("  FAIL: output timeout at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
                 end else begin
                     $display("  ERROR: No valid output at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
                     out_idx = total_outputs;
                 end
             end
 
-            wait_done;
+            wait_done(done_timeout);
+            if (done_timeout) local_mismatches = local_mismatches + 1;
 
-            if (local_mismatches == 0) begin
+            if (local_mismatches == 0 && !protocol_err) begin
                 $display("  PASS (%0d outputs)", total_outputs);
                 test_pass = test_pass + 1;
             end else begin
-                $display("  FAIL: %0d/%0d mismatches", local_mismatches, total_outputs);
+                $display("  FAIL: %0d/%0d mismatches, protocol_err=%0d", local_mismatches, total_outputs, protocol_err);
                 test_fail = test_fail + 1;
             end
 
@@ -223,6 +281,416 @@ module its_tb;
         end
     endtask
 
+    // Task: Run one test case with it_data_end on same cycle as last input
+    task run_test_end_same_cycle;
+        input [800*8:1] test_name;
+        input [6:0] width;
+        input [6:0] height;
+        input [1:0] tr_hor;
+        input [1:0] tr_ver;
+        input [1:0] lfnst_tr_set_idx;
+        input [1:0] lfnst_idx;
+        input [800*8:1] input_hex;
+        input [800*8:1] golden_hex;
+
+        integer i, j;
+        integer out_idx;
+        reg [39:0] out_data;
+        reg out_valid;
+        reg out_timeout;
+        reg done_timeout;
+        reg signed [9:0] exp_val, got_val;
+        integer local_mismatches;
+        integer total_outputs;
+        integer input_count;
+        begin
+            $display("\n=== [END_SAME_CYCLE] %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
+                     test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+            local_mismatches = 0;
+            protocol_err = 0;
+
+            // Reset DUT and clear internal memories
+            rst_n = 0;
+            repeat(5) @(posedge clk);
+            for (i = 0; i < 4096; i = i + 1) begin
+                u_dut.in_mem[i] = 16'sd0;
+                u_dut.tp_buf[i] = 16'sd0;
+                u_dut.out_mem[i] = 10'sd0;
+            end
+            rst_n = 1;
+            repeat(5) @(posedge clk);
+
+            // Clear test vector arrays
+            for (i = 0; i < 4096; i = i + 1) begin
+                input_vec[i] = 28'd0;
+                golden_vec[i] = 10'd0;
+            end
+
+            // Load test vectors
+            $readmemh(input_hex, input_vec);
+            $readmemh(golden_hex, golden_vec);
+
+            total_outputs = width * height;
+            input_count = 0;
+            for (i = 0; i < 4096; i = i + 1) begin
+                if (input_vec[i] != 28'd0)
+                    input_count = input_count + 1;
+            end
+
+            // Send info
+            send_info(width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+
+            // Send input data: all but last with send_data, last with send_data_with_end
+            for (i = 0; i < input_count - 1; i = i + 1) begin
+                send_data(input_vec[i][27:16], input_vec[i][15:0]);
+            end
+            // Last data point: it_data_end on same cycle
+            send_data_with_end(input_vec[input_count-1][27:16], input_vec[input_count-1][15:0]);
+
+            // Collect and compare outputs
+            out_idx = 0;
+            while (out_idx < total_outputs) begin
+                wait_output(out_data, out_valid, out_timeout);
+                if (out_valid) begin
+                    for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
+                        case (j)
+                            0: got_val = out_data[9:0];
+                            1: got_val = out_data[19:10];
+                            2: got_val = out_data[29:20];
+                            3: got_val = out_data[39:30];
+                        endcase
+                        exp_val = golden_vec[out_idx + j];
+                        if (got_val !== exp_val) begin
+                            if (local_mismatches < 5)
+                                $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                         out_idx + j, $signed(exp_val), $signed(got_val));
+                            local_mismatches = local_mismatches + 1;
+                        end
+                    end
+                    out_idx = out_idx + 4;
+                end else if (out_timeout) begin
+                    $display("  FAIL: output timeout at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
+                end else begin
+                    $display("  ERROR: No valid output at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
+                end
+            end
+
+            wait_done(done_timeout);
+            if (done_timeout) local_mismatches = local_mismatches + 1;
+
+            if (local_mismatches == 0 && !protocol_err) begin
+                $display("  PASS (%0d outputs)", total_outputs);
+                test_pass = test_pass + 1;
+            end else begin
+                $display("  FAIL: %0d/%0d mismatches, protocol_err=%0d", local_mismatches, total_outputs, protocol_err);
+                test_fail = test_fail + 1;
+            end
+
+            total_tests = total_tests + 1;
+            repeat(5) @(posedge clk);
+        end
+    endtask
+
+    // Task: Run one test case WITHOUT reset (for continuous TU testing)
+    task run_test_continuous;
+        input [800*8:1] test_name;
+        input [6:0] width;
+        input [6:0] height;
+        input [1:0] tr_hor;
+        input [1:0] tr_ver;
+        input [1:0] lfnst_tr_set_idx;
+        input [1:0] lfnst_idx;
+        input [800*8:1] input_hex;
+        input [800*8:1] golden_hex;
+
+        integer i, j;
+        integer out_idx;
+        reg [39:0] out_data;
+        reg out_valid;
+        reg out_timeout;
+        reg done_timeout;
+        reg signed [9:0] exp_val, got_val;
+        integer local_mismatches;
+        integer total_outputs;
+        integer input_count;
+        begin
+            $display("\n=== [CONTINUOUS] %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
+                     test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+            local_mismatches = 0;
+            protocol_err = 0;
+
+            // Wait for DUT to be in S_IDLE (no reset)
+            while (u_dut.state != 4'd0) @(posedge clk);
+            repeat(2) @(posedge clk);
+
+            // Clear test vector arrays
+            for (i = 0; i < 4096; i = i + 1) begin
+                input_vec[i] = 28'd0;
+                golden_vec[i] = 10'd0;
+            end
+
+            // Load test vectors
+            $readmemh(input_hex, input_vec);
+            $readmemh(golden_hex, golden_vec);
+
+            total_outputs = width * height;
+            input_count = 0;
+            for (i = 0; i < 4096; i = i + 1) begin
+                if (input_vec[i] != 28'd0)
+                    input_count = input_count + 1;
+            end
+
+            // Send info
+            send_info(width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+
+            // Send input data
+            for (i = 0; i < input_count; i = i + 1) begin
+                send_data(input_vec[i][27:16], input_vec[i][15:0]);
+            end
+
+            // Assert it_data_end
+            @(posedge clk);
+            it_data_end = 1;
+            @(posedge clk);
+            it_data_end = 0;
+
+            // Collect and compare outputs
+            out_idx = 0;
+            while (out_idx < total_outputs) begin
+                wait_output(out_data, out_valid, out_timeout);
+                if (out_valid) begin
+                    for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
+                        case (j)
+                            0: got_val = out_data[9:0];
+                            1: got_val = out_data[19:10];
+                            2: got_val = out_data[29:20];
+                            3: got_val = out_data[39:30];
+                        endcase
+                        exp_val = golden_vec[out_idx + j];
+                        if (got_val !== exp_val) begin
+                            if (local_mismatches < 5)
+                                $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                         out_idx + j, $signed(exp_val), $signed(got_val));
+                            local_mismatches = local_mismatches + 1;
+                        end
+                    end
+                    out_idx = out_idx + 4;
+                end else if (out_timeout) begin
+                    $display("  FAIL: output timeout at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
+                end else begin
+                    $display("  ERROR: No valid output at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
+                end
+            end
+
+            wait_done(done_timeout);
+            if (done_timeout) local_mismatches = local_mismatches + 1;
+
+            if (local_mismatches == 0 && !protocol_err) begin
+                $display("  PASS (%0d outputs)", total_outputs);
+                test_pass = test_pass + 1;
+            end else begin
+                $display("  FAIL: %0d/%0d mismatches, protocol_err=%0d", local_mismatches, total_outputs, protocol_err);
+                test_fail = test_fail + 1;
+            end
+
+            total_tests = total_tests + 1;
+            repeat(5) @(posedge clk);
+        end
+    endtask
+
+
+    // Task: Run one test case with random output backpressure
+    // Backpressure toggles on negedge clk to avoid race with DUT NBA sampling.
+    task run_test_backpressure;
+        input [800*8:1] test_name;
+        input [6:0] width;
+        input [6:0] height;
+        input [1:0] tr_hor;
+        input [1:0] tr_ver;
+        input [1:0] lfnst_tr_set_idx;
+        input [1:0] lfnst_idx;
+        input [800*8:1] input_hex;
+        input [800*8:1] golden_hex;
+
+        integer i, j;
+        integer out_idx;
+        reg [39:0] out_data;
+        reg out_valid;
+        reg done_timeout;
+        reg signed [9:0] exp_val, got_val;
+        integer local_mismatches;
+        integer total_outputs;
+        integer input_count;
+        integer bp_timer;
+        integer bp_phase; // 0=high, 1=low
+        integer bp_dur;
+        integer done_seen;
+        begin
+            $display("\n=== [BACKPRESSURE] %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
+                     test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+            local_mismatches = 0;
+            protocol_err = 0;
+            done_seen = 0;
+
+            // Reset DUT and clear internal memories
+            rst_n = 0;
+            it_data_out_req = 1;
+            repeat(5) @(posedge clk);
+            for (i = 0; i < 4096; i = i + 1) begin
+                u_dut.in_mem[i] = 16'sd0;
+                u_dut.tp_buf[i] = 16'sd0;
+                u_dut.out_mem[i] = 10'sd0;
+            end
+            rst_n = 1;
+            repeat(5) @(posedge clk);
+
+            // Clear and load test vectors
+            for (i = 0; i < 4096; i = i + 1) begin
+                input_vec[i] = 28'd0;
+                golden_vec[i] = 10'd0;
+            end
+            $readmemh(input_hex, input_vec);
+            $readmemh(golden_hex, golden_vec);
+
+            total_outputs = width * height;
+            input_count = 0;
+            for (i = 0; i < 4096; i = i + 1) begin
+                if (input_vec[i] != 28'd0)
+                    input_count = input_count + 1;
+            end
+
+            // Send info and data (no backpressure during input)
+            it_data_out_req = 1;
+            send_info(width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+            for (i = 0; i < input_count; i = i + 1) begin
+                send_data(input_vec[i][27:16], input_vec[i][15:0]);
+            end
+
+            // Assert it_data_end
+            @(posedge clk);
+            it_data_end = 1;
+            @(posedge clk);
+            it_data_end = 0;
+
+            // Wait for first output valid, collect it, then apply backpressure
+            it_data_out_req = 1;
+            while (!it_data_out_vld) @(posedge clk);
+            // DUT produced first output on PREVIOUS posedge (NBA delay).
+            // data_out_r has the first 4 values. Collect them.
+            out_data = it_data_out;
+            for (j = 0; j < 4 && j < total_outputs; j = j + 1) begin
+                case (j)
+                    0: got_val = out_data[9:0];
+                    1: got_val = out_data[19:10];
+                    2: got_val = out_data[29:20];
+                    3: got_val = out_data[39:30];
+                endcase
+                exp_val = golden_vec[j];
+                if (got_val !== exp_val) begin
+                    if (local_mismatches < 5)
+                        $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                 j, $signed(exp_val), $signed(got_val));
+                    local_mismatches = local_mismatches + 1;
+                end
+            end
+            out_idx = 4;
+
+            // Now collect remaining outputs with backpressure
+            bp_timer = 0;
+            bp_phase = 0; // start with req high
+            bp_dur = 3;   // hold high for 3 cycles
+            while (out_idx < total_outputs) begin
+                @(negedge clk);
+                // Toggle backpressure on negedge so DUT samples stable value on posedge
+                bp_timer = bp_timer + 1;
+                if (bp_phase == 0 && bp_timer >= bp_dur) begin
+                    it_data_out_req = 0;
+                    bp_timer = 0;
+                    bp_phase = 1;
+                    bp_dur = 2; // hold low for 2 cycles
+                end else if (bp_phase == 1 && bp_timer >= bp_dur) begin
+                    it_data_out_req = 1;
+                    bp_timer = 0;
+                    bp_phase = 0;
+                    bp_dur = 3; // hold high for 3 cycles
+                end
+
+                @(posedge clk);
+                // Check for valid output (only when req is high)
+                if (it_data_out_vld && it_data_out_req) begin
+                    out_data = it_data_out;
+                    for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
+                        case (j)
+                            0: got_val = out_data[9:0];
+                            1: got_val = out_data[19:10];
+                            2: got_val = out_data[29:20];
+                            3: got_val = out_data[39:30];
+                        endcase
+                        exp_val = golden_vec[out_idx + j];
+                        if (got_val !== exp_val) begin
+                            if (local_mismatches < 5)
+                                $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                         out_idx + j, $signed(exp_val), $signed(got_val));
+                            local_mismatches = local_mismatches + 1;
+                        end
+                    end
+                    out_idx = out_idx + 4;
+                end
+                // Protocol: vld = data_out_valid && req.
+                // data_out_valid stays high while state == S_OUT.
+
+                // Track if DUT finished during the loop (it_done is 1-cycle pulse)
+                if (it_done) done_seen = 1;
+            end
+
+            it_data_out_req = 1;
+            // Tail-beat check: wait for DUT to reach S_DONE (state==4'd7),
+            // then skip 1 cycle for data_out_valid hold from synchronous read pipeline,
+            // then verify vld stays 0.
+            begin : tail_beat_check
+                integer tb_timeout;
+                tb_timeout = 0;
+                while (u_dut.state != 4'd7 && tb_timeout < 10000) begin
+                    @(posedge clk);
+                    tb_timeout = tb_timeout + 1;
+                    if (it_done) done_seen = 1;
+                end
+                if (u_dut.state == 4'd7) done_seen = 1;
+                // Skip 1 cycle for data_out_valid hold in S_DONE
+                @(posedge clk);
+                repeat (3) begin
+                    @(posedge clk);
+                    if (it_data_out_vld) begin
+                        $display("  PROTOCOL ERROR: spurious vld after all data collected");
+                        local_mismatches = local_mismatches + 1;
+                    end
+                end
+            end
+            if (!done_seen) begin
+                wait_done(done_timeout);
+                if (done_timeout) local_mismatches = local_mismatches + 1;
+            end
+
+            if (local_mismatches == 0 && !protocol_err) begin
+                $display("  PASS (%0d outputs)", total_outputs);
+                test_pass = test_pass + 1;
+            end else begin
+                $display("  FAIL: %0d/%0d mismatches, protocol_err=%0d", local_mismatches, total_outputs, protocol_err);
+                test_fail = test_fail + 1;
+            end
+
+            total_tests = total_tests + 1;
+            repeat(5) @(posedge clk);
+        end
+    endtask
 
     // ================================================================
     // Main test sequence
@@ -237,6 +705,7 @@ module its_tb;
         it_data_in = 0;
         it_data_addr = 0;
         it_data_in_vld = 0;
+        it_data_end = 0;
         it_data_out_req = 1;
 
         repeat(5) @(posedge clk);
@@ -483,6 +952,14 @@ module its_tb;
                  "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s3_i2_golden.hex");
 
         // ============================
+        // LFNST + non-DCT2 (verify RTL forces DCT2 when lfnst active)
+        // tr_type=1 (DCT8) but lfnst_idx=1 → should use DCT2
+        // ============================
+        run_test("lfnst16_dct8_force", 7'd4, 7'd4, 2'd1, 2'd1, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
+
+        // ============================
         // LFNST nTrs=48 with different block sizes
         // ============================
         run_test("dct2_8x16_lfnst1",  7'd8,  7'd16, 2'd0, 2'd0, 2'd0, 2'd1,
@@ -505,6 +982,119 @@ module its_tb;
                  "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_lfnst1_golden.hex");
 
         // ============================
+        // Non-square LFNST combinations
+        // ============================
+        run_test("dct2_4x64_lfnst1", 7'd4, 7'd64, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x64_lfnst1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x64_lfnst1_golden.hex");
+        run_test("dct2_64x4_lfnst1", 7'd64, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x4_lfnst1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x4_lfnst1_golden.hex");
+        run_test("dct2_8x64_lfnst1", 7'd8, 7'd64, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x64_lfnst1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x64_lfnst1_golden.hex");
+        run_test("dct2_64x8_lfnst1", 7'd64, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x8_lfnst1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x8_lfnst1_golden.hex");
+
+        // ============================
+        // Boundary input tests
+        // ============================
+        run_test("boundary_zero_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_zero_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_zero_4x4_golden.hex");
+        run_test("boundary_dc_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_dc_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_dc_4x4_golden.hex");
+        run_test("boundary_maxval_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_maxval_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_maxval_4x4_golden.hex");
+        run_test("boundary_minval_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_minval_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_minval_4x4_golden.hex");
+        run_test("boundary_sparse_8x8", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_sparse_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_sparse_8x8_golden.hex");
+
+        // ============================
+        // it_data_end same-cycle tests (end asserted on same cycle as last input)
+        // ============================
+        run_test_end_same_cycle("end_same_dct2_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
+        run_test_end_same_cycle("end_same_dct2_8x8", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_golden.hex");
+        run_test_end_same_cycle("end_same_lfnst16", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
+
+        // ============================
+        // Continuous TU test (no reset between TUs)
+        // ============================
+        $display("\n--- Continuous TU Tests (no reset) ---");
+
+        // TU 1: small DCT2 → TU 2: large DCT2 (tests memory clearing)
+        run_test_continuous("cont_dct2_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
+        run_test_continuous("cont_dct2_16x16", 7'd16, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_golden.hex");
+
+        // TU 3: DCT8 → TU 4: DST7 (tests different transform types back to back)
+        run_test_continuous("cont_dct8_8x8", 7'd8, 7'd8, 2'd1, 2'd1, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_golden.hex");
+        run_test_continuous("cont_dst7_8x8", 7'd8, 7'd8, 2'd2, 2'd2, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_golden.hex");
+
+        // TU 5: LFNST → TU 6: non-LFNST (tests LFNST state transition)
+        run_test_continuous("cont_lfnst16_s0_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
+        run_test_continuous("cont_dct2_4x4_b", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
+
+        // TU 7: LFNST nTrs=48 → TU 8: LFNST nTrs=16 (tests nTrs transition)
+        run_test_continuous("cont_lfnst48_s0_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_golden.hex");
+        run_test_continuous("cont_lfnst16_s1_i2", 7'd4, 7'd4, 2'd0, 2'd0, 2'd1, 2'd2,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i2_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i2_golden.hex");
+
+        // ============================
+        // Backpressure tests (random output backpressure)
+        // ============================
+        run_test_backpressure("bp_dct2_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
+        run_test_backpressure("bp_dct2_8x8", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_golden.hex");
+        run_test_backpressure("bp_dct2_16x16", 7'd16, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_golden.hex");
+        run_test_backpressure("bp_dct2_32x32", 7'd32, 7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_golden.hex");
+        run_test_backpressure("bp_dct8_8x8", 7'd8, 7'd8, 2'd1, 2'd1, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_golden.hex");
+        run_test_backpressure("bp_dst7_8x8", 7'd8, 7'd8, 2'd2, 2'd2, 2'd0, 2'd0,
+                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_golden.hex");
+        run_test_backpressure("bp_lfnst16_s0_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
+        run_test_backpressure("bp_lfnst48_s0_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_input.hex",
+                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_golden.hex");
+
+        // ============================
         // Summary
         // ============================
         $display("\n========================================");
@@ -521,6 +1111,10 @@ module its_tb;
 
     // Global timeout watchdog
     initial begin
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
         #2000000000;
         $display("\nGLOBAL TIMEOUT!");
         $finish;

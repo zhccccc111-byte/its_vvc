@@ -1,0 +1,30 @@
+# ModelSim
+sim/work/
+sim/msim/
+sim/*.wlf
+sim/*.vcd
+sim/*.log
+sim/transcript
+sim/vish_stacktrace.vstf
+sim/sim_*.txt
+sim/capture_*.do
+tb/work/
+tb/transcript
+tb/vish_stacktrace.vstf
+work/
+transcript
+vsim.wlf
+
+# Vivado
+synth/its_vvc_synth/
+synth/*.jou
+synth/*.log
+synth/vivado_*.backup.*
+
+# Python
+scripts/__pycache__/
+output/
+
+# OS
+Thumbs.db
+.DS_Store

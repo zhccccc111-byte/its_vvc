@@ -19,21 +19,9 @@ def to_hex(val, bits):
     return format(val & ((1 << bits) - 1), f'0{bits // 4}X')
 
 
-def flatten_column_major(matrix):
-    if not matrix:
-        return []
-    height = len(matrix)
-    width = len(matrix[0])
-    result = []
-    for col in range(width):
-        for row in range(height):
-            result.append(matrix[row][col])
-    return result
-
-
 def generate_test_case(tv_dir, width, height, tr_hor, tr_ver, set_idx, lfnst, desc, input_data):
     output = its_inverse_transform(input_data, width, height, tr_hor, tr_ver, set_idx, lfnst)
-    flat_out = flatten_column_major(output)
+    flat_out = flatten_raster(output)
     flat_in = flatten_raster(input_data)
 
     input_path = os.path.join(tv_dir, f"{desc}_input.hex")
@@ -119,6 +107,12 @@ def main():
         desc = f"dct2_{w}x{h}_lfnst1"
         test_cases.append((w, h, 0, 0, 0, 1, desc))
 
+    # === Non-square LFNST combinations ===
+    lfnst_nonsquare = [(4,64),(64,4),(8,64),(64,8)]
+    for w, h in lfnst_nonsquare:
+        desc = f"dct2_{w}x{h}_lfnst1"
+        test_cases.append((w, h, 0, 0, 0, 1, desc))
+
     print(f"Generating {len(test_cases)} test cases...")
 
     config_lines = []
@@ -129,6 +123,44 @@ def main():
         n_in, n_out = generate_test_case(tv_dir, w, h, tr_h, tr_v, sidx, lfnst, desc, data)
         print(f"  {desc}: {n_in} in -> {n_out} out")
         config_lines.append(f"{desc}")
+
+    # === Boundary input tests ===
+    # All-zero input
+    zero_data = [[0]*4 for _ in range(4)]
+    n_in, n_out = generate_test_case(tv_dir, 4, 4, 0, 0, 0, 0, "boundary_zero_4x4", zero_data)
+    print(f"  boundary_zero_4x4: {n_in} in -> {n_out} out")
+
+    # Single DC coefficient
+    dc_data = [[0]*4 for _ in range(4)]
+    dc_data[0][0] = 64
+    n_in, n_out = generate_test_case(tv_dir, 4, 4, 0, 0, 0, 0, "boundary_dc_4x4", dc_data)
+    print(f"  boundary_dc_4x4: {n_in} in -> {n_out} out")
+
+    # Max positive value (32767)
+    max_data = [[0]*4 for _ in range(4)]
+    max_data[0][0] = 32767
+    max_data[0][1] = 32767
+    max_data[1][0] = 32767
+    n_in, n_out = generate_test_case(tv_dir, 4, 4, 0, 0, 0, 0, "boundary_maxval_4x4", max_data)
+    print(f"  boundary_maxval_4x4: {n_in} in -> {n_out} out")
+
+    # Min negative value (-32768)
+    min_data = [[0]*4 for _ in range(4)]
+    min_data[0][0] = -32768
+    min_data[0][1] = -32768
+    min_data[1][0] = -32768
+    n_in, n_out = generate_test_case(tv_dir, 4, 4, 0, 0, 0, 0, "boundary_minval_4x4", min_data)
+    print(f"  boundary_minval_4x4: {n_in} in -> {n_out} out")
+
+    # Sparse random with more non-zero points (16 out of 64 for 8x8)
+    random.seed(123)
+    sparse_data = [[0]*8 for _ in range(8)]
+    for _ in range(16):
+        r = random.randint(0, 7)
+        c = random.randint(0, 7)
+        sparse_data[r][c] = random.randint(-200, 200)
+    n_in, n_out = generate_test_case(tv_dir, 8, 8, 0, 0, 0, 0, "boundary_sparse_8x8", sparse_data)
+    print(f"  boundary_sparse_8x8: {n_in} in -> {n_out} out")
 
     # Write config file listing all test case names
     config_path = os.path.join(tv_dir, "test_config.txt")

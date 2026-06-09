@@ -15,6 +15,7 @@ module its_top (
     input  wire [15:0] it_data_in,
     input  wire [11:0] it_data_addr,
     input  wire        it_data_in_vld,
+    input  wire        it_data_end,
     output wire        it_data_in_req,
 
     // Data output
@@ -47,16 +48,18 @@ module its_top (
     localparam S_OUT       = 4'd6;
     localparam S_DONE      = 4'd7;
     localparam S_LFNST     = 4'd8;
+    localparam S_CLEAR     = 4'd9;
 
     reg [3:0] state;
+    reg        out_pipe_flush;  // delays S_OUT→S_DONE by 1 cycle for sync read
+
+    // Memory clear control
+    reg        clearing;
+    reg [11:0] clr_cnt;
 
     // Input buffer
     reg signed [15:0] in_mem [0:4095];
     reg [11:0] in_wr_cnt;
-
-    // Timeout counter for input end detection
-    reg [3:0]  idle_cnt;
-    wire       input_timeout = (idle_cnt >= 4'd15);
 
     // Row/Column loop counters
     reg [6:0]  row_idx;
@@ -90,20 +93,18 @@ module its_top (
 
     // Output reorder buffer
     reg signed [9:0] out_mem [0:4095];
-    reg [11:0] out_mem_wr_cnt;
     reg [6:0]  out_row_cnt;
     reg [6:0]  out_col_cnt;
-    reg [11:0] out_mem_rd_base;
 
     // Output control
     reg [12:0] out_cnt;
-    reg        out_vld_r;
+    reg [39:0] data_out_r;  // pipeline register for out_mem read
 
     // ========================================
     // LFNST signals
     // ========================================
     // Trigger LFNST when input times out and lfnst_idx != 0
-    wire        lfnst_start = (state == S_LOAD && input_timeout && in_wr_cnt > 12'd0 && lfnst_idx != 2'd0);
+    wire        lfnst_start = (state == S_LOAD && it_data_end && lfnst_idx != 2'd0);
     wire [15:0] lfnst_data_out;
     wire        lfnst_data_out_vld;
     wire        lfnst_data_out_wr_en;
@@ -144,6 +145,11 @@ module its_top (
     wire [12:0] lfnst_rom_addr;
     wire [15:0] lfnst_rom_coeff;
 
+    // VVC standard: when LFNST is active, main transform must be DCT2
+    wire        lfnst_active = (lfnst_idx != 2'd0);
+    wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_hor;
+    wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_ver;
+
     // ========================================
     // Info decode (22-bit interface)
     // ========================================
@@ -180,55 +186,31 @@ module its_top (
             tp_buf[i] = 16'sd0;
         for (i = 0; i < 4096; i = i + 1)
             out_mem[i] = 10'sd0;
+        clearing = 1'b0;
+        clr_cnt  = 12'd0;
     end
 
-    // Clear memories on reset to prevent stale data between test cases
-    // TEMPORARILY DISABLED for debugging
-    // reg [11:0] clr_cnt;
-    // reg        clearing;
-    // always @(posedge clk or negedge rst_n) begin
-    //     if (!rst_n) begin
-    //         clr_cnt  <= 12'd0;
-    //         clearing <= 1'b1;
-    //     end else if (clearing) begin
-    //         in_mem[clr_cnt]  <= 16'sd0;
-    //         tp_buf[clr_cnt]  <= 16'sd0;
-    //         out_mem[clr_cnt] <= 10'sd0;
-    //         clr_cnt <= clr_cnt + 12'd1;
-    //         if (clr_cnt == 12'd4095)
-    //             clearing <= 1'b0;
-    //     end
-    // end
-
     // in_mem write port (no async reset for Block RAM inference)
-    // Write sources: S_LOAD (input data), S_LFNST (LFNST write-back)
+    // Write sources: S_CLEAR (zeroing), S_LOAD (input data), S_LFNST (LFNST write-back)
     // These are mutually exclusive states.
     always @(posedge clk) begin
-        if (state == S_LOAD && it_data_in_vld && it_data_in_req) begin
+        if (clearing) begin
+            in_mem[clr_cnt] <= 16'sd0;
+        end else if (state == S_LOAD && it_data_in_vld && it_data_in_req) begin
             in_mem[it_data_addr] <= it_data_in;
         end else if (lfnst_data_out_wr_en) begin
             in_mem[lfnst_wr_mem_addr] <= lfnst_data_out;
         end
     end
 
-    // Input write counter and timeout detection
+    // Input write counter
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             in_wr_cnt <= 12'd0;
-            idle_cnt  <= 4'd0;
         end else if (it_info_vld) begin
             in_wr_cnt <= 12'd0;
-            idle_cnt  <= 4'd0;
-        end else if (state == S_LOAD) begin
-            if (it_data_in_vld && it_data_in_req) begin
-                in_wr_cnt <= in_wr_cnt + 12'd1;
-                idle_cnt  <= 4'd0;
-            end else if (in_wr_cnt > 12'd0) begin
-                // No data received, increment timeout counter
-                idle_cnt <= idle_cnt + 4'd1;
-            end
-        end else begin
-            idle_cnt <= 4'd0;
+        end else if (state == S_LOAD && it_data_in_vld && it_data_in_req) begin
+            in_wr_cnt <= in_wr_cnt + 12'd1;
         end
     end
 
@@ -303,6 +285,30 @@ module its_top (
     end
 
     // ========================================
+    // Memory clear control
+    // Clears in_mem[0..total_points-1] at the start of each TU.
+    // Uses total_points (not 4096) to minimize clearing latency.
+    // For 64x64: total_points[11:0]-1 = 4095, clears all 4096 entries.
+    // For 4x4: total_points[11:0]-1 = 15, clears only 16 entries.
+    // ========================================
+    wire [11:0] clr_limit = total_points[11:0] - 12'd1;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            clearing <= 1'b0;
+            clr_cnt  <= 12'd0;
+        end else if (state == S_IDLE && it_info_vld) begin
+            clearing <= 1'b1;
+            clr_cnt  <= 12'd0;
+        end else if (clearing) begin
+            if (clr_cnt == clr_limit)
+                clearing <= 1'b0;
+            else
+                clr_cnt <= clr_cnt + 12'd1;
+        end
+    end
+
+    // ========================================
     // Main state machine
     // ========================================
     always @(posedge clk or negedge rst_n) begin
@@ -310,10 +316,13 @@ module its_top (
             state <= S_IDLE;
         else case (state)
             S_IDLE: begin
-                if (it_info_vld) state <= S_LOAD;
+                if (it_info_vld) state <= S_CLEAR;
+            end
+            S_CLEAR: begin
+                if (clr_cnt == clr_limit) state <= S_LOAD;
             end
             S_LOAD: begin
-                if (input_timeout && in_wr_cnt > 12'd0) begin
+                if (it_data_end) begin
                     if (lfnst_idx != 2'd0)
                         state <= S_LFNST;
                     else
@@ -346,9 +355,9 @@ module its_top (
                 end
             end
             S_OUT: begin
-                if (out_cnt >= total_points)
+                if (total_points == 0)
                     state <= S_DONE;
-                else if (total_points == 0)
+                else if (out_pipe_flush && it_data_out_req)
                     state <= S_DONE;
             end
             S_DONE: state <= S_IDLE;
@@ -366,7 +375,7 @@ module its_top (
         end else if (state == S_LFNST && lfnst_done) begin
             row_idx       <= 7'd0;
             row_base_addr <= 12'd0;
-        end else if (state == S_LOAD && input_timeout && in_wr_cnt > 12'd0 && lfnst_idx == 2'd0) begin
+        end else if (state == S_LOAD && it_data_end && lfnst_idx == 2'd0) begin
             row_idx       <= 7'd0;
             row_base_addr <= 12'd0;
         end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 < tu_height[6:0]) begin
@@ -401,7 +410,7 @@ module its_top (
         .clk        (clk),
         .rst_n      (rst_n),
         .start      (state == S_ROW_START),
-        .tr_type    (tr_type_hor),
+        .tr_type    (row_tr_type),
         .size       (tu_width[6:0]),
         .data_in    (in_mem[row_base_addr + row_eng_rd_addr]),
         .data_in_vld(state == S_ROW_RUN),
@@ -446,6 +455,9 @@ module its_top (
         if (!rst_n) begin
             tp_wr_cnt <= 12'd0;
             tp_col_cnt <= 6'd0;
+        end else if (it_info_vld) begin
+            tp_wr_cnt <= 12'd0;
+            tp_col_cnt <= 6'd0;
         end else if (state == S_ROW_START) begin
             tp_col_cnt <= 6'd0;
         end else if (state == S_ROW_RUN && row_out_vld) begin
@@ -463,7 +475,7 @@ module its_top (
         .clk        (clk),
         .rst_n      (rst_n),
         .start      (state == S_COL_START),
-        .tr_type    (tr_type_ver),
+        .tr_type    (col_tr_type),
         .size       (tu_height[6:0]),
         .data_in    (tp_buf[tp_rd_base + col_eng_rd_addr]),
         .data_in_vld(state == S_COL_RUN),
@@ -493,35 +505,76 @@ module its_top (
     end
 
     // ========================================
-    // Output Control
-    // out_mem is written sequentially by column engine (column-major):
-    //   col 0 at [0..H-1], col 1 at [H..2H-1], etc.
-    // Read sequentially: 4 values per cycle from consecutive addresses.
+    // Output Control (pipelined, synchronous read)
+    // out_mem written in row-major order by column engine.
+    // Read port: synchronous (posedge clk) for Block RAM inference.
+    // Single-stage pipeline: out_cnt -> out_mem sync read -> data_out_r (1 cycle)
+    // The synchronous read breaks the BRAM→OBUF critical path into two stages.
     // ========================================
 
+    // Read address generation (advance when not backpressured and more data to read)
     wire [11:0] out_rd0 = out_cnt;
     wire [11:0] out_rd1 = out_cnt + 12'd1;
     wire [11:0] out_rd2 = out_cnt + 12'd2;
     wire [11:0] out_rd3 = out_cnt + 12'd3;
 
-    assign it_data_out = {out_mem[out_rd3], out_mem[out_rd2], out_mem[out_rd1], out_mem[out_rd0]};
-    assign it_data_out_vld = out_vld_r;
-    assign it_done = (state == S_DONE);
-
-    // out_mem write (no async reset for Block RAM inference)
-    always @(posedge clk) begin
-        if (state == S_COL_RUN && col_out_vld)
-            out_mem[out_mem_wr_cnt] <= col_out_data[9:0];
-    end
-
-    // out_mem write pointer
+    // Pipeline flush flag: delays S_OUT→S_DONE by 1 cycle for synchronous read.
+    // When out_cnt reaches total_points, the last sync read has started.
+    // We need 1 more cycle for data_out_r to capture it before leaving S_OUT.
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
-            out_mem_wr_cnt <= 12'd0;
-        else if (it_info_vld)
-            out_mem_wr_cnt <= 12'd0;
+            out_pipe_flush <= 1'b0;
+        else if (state != S_OUT)
+            out_pipe_flush <= 1'b0;
+        else if (it_data_out_req && out_cnt >= total_points && total_points != 0)
+            out_pipe_flush <= 1'b1;
+    end
+
+    // Synchronous read port — single-stage pipeline for Block RAM inference.
+    // 1 cycle latency: address at cycle N, data_out_r valid at cycle N+1.
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            data_out_r <= 40'd0;
+        else if (state == S_OUT && it_data_out_req && out_cnt < total_points)
+            data_out_r <= {out_mem[out_rd3], out_mem[out_rd2], out_mem[out_rd1], out_mem[out_rd0]};
+    end
+
+    // Output valid — tracks state == S_OUT with same 1-cycle latency as data_out_r.
+    // Both data_out_valid and data_out_r are registered, so they're synchronized.
+    // When leaving S_OUT, holds 1 extra cycle so TB can capture the last batch.
+    reg data_out_valid;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            data_out_valid <= 1'b0;
+        else if (state == S_OUT)
+            data_out_valid <= 1'b1;
+        else if (state == S_DONE && data_out_valid)
+            data_out_valid <= 1'b1;  // hold 1 cycle for last batch
+        else
+            data_out_valid <= 1'b0;
+    end
+
+    // Registered output
+    assign it_data_out = data_out_r;
+    assign it_data_out_vld = data_out_valid && it_data_out_req;
+    assign it_done = (state == S_DONE);
+
+    // out_mem write port — separate always block for Block RAM inference.
+    // Write in row-major order: for column j, row i, addr = col_idx + row * tu_width.
+    reg [11:0] out_mem_wr_addr;
+    always @(posedge clk) begin
+        if (state == S_COL_RUN && col_out_vld)
+            out_mem[out_mem_wr_addr] <= col_out_data[9:0];
+    end
+
+    // out_mem write address (row-major: col_idx + row * tu_width)
+    always @(posedge clk) begin
+        if (!rst_n || it_info_vld)
+            out_mem_wr_addr <= 12'd0;
+        else if (state == S_COL_START)
+            out_mem_wr_addr <= {5'd0, col_idx[6:0]};  // start at column offset
         else if (state == S_COL_RUN && col_out_vld)
-            out_mem_wr_cnt <= out_mem_wr_cnt + 12'd1;
+            out_mem_wr_addr <= out_mem_wr_addr + {5'd0, tu_width[6:0]};  // stride = tu_width
     end
 
     // Raster scan address generation
@@ -529,7 +582,7 @@ module its_top (
         if (!rst_n) begin
             out_row_cnt <= 7'd0;
             out_col_cnt <= 7'd0;
-        end else if (state == S_OUT && out_vld_r && it_data_out_req) begin
+        end else if (state == S_OUT && data_out_valid && it_data_out_req) begin
             if (out_col_cnt + 7'd4 >= {1'b0, tu_width[6:0]}) begin
                 out_col_cnt <= 7'd0;
                 out_row_cnt <= out_row_cnt + 7'd1;
@@ -542,24 +595,13 @@ module its_top (
         end
     end
 
-    // Output valid (gated by it_data_out_req for backpressure)
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            out_vld_r <= 1'b0;
-        else if (state == S_OUT && out_cnt < total_points && it_data_out_req)
-            out_vld_r <= 1'b1;
-        else
-            out_vld_r <= 1'b0;
-    end
-
-    // Output counter
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
+    // Output counter (synchronous reset to avoid DRC with block RAM address)
+    // Increment when in S_OUT, req is high, and more data to output.
+    always @(posedge clk) begin
+        if (!rst_n || state != S_OUT)
             out_cnt <= 13'd0;
-        else if (state == S_OUT && out_vld_r && it_data_out_req)
+        else if (it_data_out_req && out_cnt < total_points)
             out_cnt <= out_cnt + 13'd4;
-        else if (state != S_OUT)
-            out_cnt <= 13'd0;
     end
 
 endmodule

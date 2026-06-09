@@ -1,25 +1,25 @@
-// VVC LFNST ROM coefficients (from competition attachment)
+// VVC LFNST ROM coefficients (from official document)
 // Total entries: 8192
-// nTrs=16: 4 setIdx x 2 lfnst_idx x 16x16 = 2048 entries [addr 0..2047]
-// nTrs=48: 4 setIdx x 2 lfnst_idx x 48x16 = 6144 entries [addr 2048..8191]
 
-// Address map:
-//   nTrs=16, set=0, idx=1: addr 0..255
-//   nTrs=16, set=0, idx=2: addr 256..511
-//   nTrs=16, set=1, idx=1: addr 512..767
-//   nTrs=16, set=1, idx=2: addr 768..1023
-//   nTrs=16, set=2, idx=1: addr 1024..1279
-//   nTrs=16, set=2, idx=2: addr 1280..1535
-//   nTrs=16, set=3, idx=1: addr 1536..1791
-//   nTrs=16, set=3, idx=2: addr 1792..2047
-//   nTrs=48, set=0, idx=1: addr 2048..2815
-//   nTrs=48, set=0, idx=2: addr 2816..3583
-//   nTrs=48, set=1, idx=1: addr 3584..4351
-//   nTrs=48, set=1, idx=2: addr 4352..5119
-//   nTrs=48, set=2, idx=1: addr 5120..5887
-//   nTrs=48, set=2, idx=2: addr 5888..6655
-//   nTrs=48, set=3, idx=1: addr 6656..7423
-//   nTrs=48, set=3, idx=2: addr 7424..8191
+// nTrs=16 region [0..2047] (8 scenarios x 256 entries):
+//   lfnstTrSetIdx=0, lfnst_idx=1: addr 0..255
+//   lfnstTrSetIdx=0, lfnst_idx=2: addr 256..511
+//   lfnstTrSetIdx=1, lfnst_idx=1: addr 512..767
+//   lfnstTrSetIdx=1, lfnst_idx=2: addr 768..1023
+//   lfnstTrSetIdx=2, lfnst_idx=1: addr 1024..1279
+//   lfnstTrSetIdx=2, lfnst_idx=2: addr 1280..1535
+//   lfnstTrSetIdx=3, lfnst_idx=1: addr 1536..1791
+//   lfnstTrSetIdx=3, lfnst_idx=2: addr 1792..2047
+
+// nTrs=48 region [2048..8191] (8 scenarios x 768 entries):
+//   lfnstTrSetIdx=0, lfnst_idx=1: addr 2048..2815
+//   lfnstTrSetIdx=0, lfnst_idx=2: addr 2816..3583
+//   lfnstTrSetIdx=1, lfnst_idx=1: addr 3584..4351
+//   lfnstTrSetIdx=1, lfnst_idx=2: addr 4352..5119
+//   lfnstTrSetIdx=2, lfnst_idx=1: addr 5120..5887
+//   lfnstTrSetIdx=2, lfnst_idx=2: addr 5888..6655
+//   lfnstTrSetIdx=3, lfnst_idx=1: addr 6656..7423
+//   lfnstTrSetIdx=3, lfnst_idx=2: addr 7424..8191
 
 006C
 FFD4

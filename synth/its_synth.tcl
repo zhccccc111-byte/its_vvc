@@ -1,20 +1,20 @@
 # ===================================================================
 # ITS VVC Inverse Transform - Vivado Synthesis Script
-# Target: Artix-7 xc7a200tfbg484-1 (WebPack license compatible)
+# Target: Artix-7 xc7a200tfbg484-2 (WebPack license compatible)
 # Clock: 500MHz (2ns period)
 # ===================================================================
 
 # Project settings
 set project_name "its_vvc_synth"
-set part "xc7a200tfbg484-1"
+set part "xc7a200tfbg484-2"
 set top_module "its_top"
 set rtl_dir "../rtl"
 set sim_dir "../sim"
 set constraint_dir "."
 
 # Copy hex files to project directory
-file copy -force "$sim_dir/rom_coeffs.hex" "./rom_coeffs.hex"
-file copy -force "$sim_dir/lfnst_coeffs.hex" "./lfnst_coeffs.hex"
+file copy -force "$rtl_dir/rom_coeffs.hex" "./rom_coeffs.hex"
+file copy -force "$rtl_dir/lfnst_coeffs.hex" "./lfnst_coeffs.hex"
 
 # Create project
 create_project $project_name ./$project_name -part $part -force
