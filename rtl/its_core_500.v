@@ -4,13 +4,13 @@
 //
 // FIFO Protocol:
 //   cmd_fifo:   FWFT (First Word Fall Through), 23-bit, depth 4
-//               [21:0]=it_info (no end_flag — last is in input_fifo)
-//               Core reads 1 entry per TU in S_IDLE.
+//               [22]=reserved(0), [21:0]=it_info
+//               Core reads 1 entry per TU in S_IDLE. No end marker.
 //
 //   input_fifo: FWFT, 29-bit, depth 16
 //               [28]=last, [27:16]=it_data_addr, [15:0]=it_data_in
 //               Data available when !empty. Core reads 1 entry/cycle.
-//               last=1 marks final entry of current TU (may carry data).
+//               last=1 marks final entry of current TU (pure control signal, no data).
 //
 //   output_fifo: Standard write (registered), 40-bit, depth 16
 //                [39:0]=4x10-bit output. wr_en pulses with valid data.
@@ -25,7 +25,7 @@ module its_core_500 (
     input  wire        rst_n,
 
     // Command FIFO interface — FWFT required
-    input  wire [22:0] cmd_fifo_rdata,      // [21:0]=it_info
+    input  wire [22:0] cmd_fifo_rdata,      // [21:0]=it_info, [22]=reserved(0)
     input  wire        cmd_fifo_empty,       // FWFT: data valid when !empty
     output wire        cmd_fifo_rd_en,       // pulse: consume 1 entry
 

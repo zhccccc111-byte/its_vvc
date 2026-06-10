@@ -1,11 +1,12 @@
 // ===================================================================
 // ITS Core 500MHz Testbench
 // Verifies its_core_500 FIFO interface output is bit-exact
-// with its_top golden vectors (108 test cases).
+// with its_top golden vectors (94 test cases: 89 + 5 backpressure).
 //
 // FIFO protocol:
-//   cmd_fifo:   FWFT, 23-bit. Push {1'b0, it_info} then {1'b1, 22'b0}
-//   input_fifo: FWFT, 28-bit. Push {addr[11:0], data[15:0]}
+//   cmd_fifo:   FWFT, 23-bit. Push {1'b0, it_info[21:0]}. 1 entry per TU.
+//   input_fifo: FWFT, 29-bit. Push {addr[11:0], data[15:0]} for each coeff,
+//               then push {last=1, 0} as pure end-of-TU marker (no data).
 //   output_fifo: Standard write, 40-bit. Read when !empty.
 // ===================================================================
 
