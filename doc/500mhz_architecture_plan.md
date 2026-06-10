@@ -101,7 +101,7 @@ S_IDLE → S_CLEAR → S_LOAD → [S_LFNST] → S_ROW_START → S_ROW_RUN
 | `its_top_500_wrapper` | 顶层 wrapper，实例化 FIFO + core | clk_if + clk_core |
 | `async_fifo` | 异步 FIFO (Gray code) | clk_if wr / clk_core rd |
 | `its_core_500` | 计算核心，替代原 its_top 的核心逻辑 | clk_core |
-| `cmd_fifo` | 传递 it_info + it_data_end + 参数 | clk_if → clk_core |
+| `cmd_fifo` | 仅传递 it_info，bit22 reserved(0) | clk_if → clk_core |
 | `input_fifo` | 传递稀疏输入数据 (addr + coeff) | clk_if → clk_core |
 | `output_fifo` | 传递 40-bit 输出结果 | clk_core → clk_if |
 
@@ -122,7 +122,7 @@ S_IDLE → S_CLEAR → S_LOAD → [S_LFNST] → S_ROW_START → S_ROW_RUN
 
 | 字段 | 位宽 | 说明 |
 |------|------|------|
-| `last` | 1 | TU 最后一条数据标志 |
+| `last` | 1 | TU 结束控制标志 |
 | `it_data_addr[11:0]` | 12 | 稀疏地址 |
 | `it_data_in[15:0]` | 16 | 系数值 |
 | **总计** | **29 bit** | |
