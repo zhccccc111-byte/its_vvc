@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-| Date         : Wed Jun 10 00:42:43 2026
+| Date         : Wed Jun 10 18:12:04 2026
 | Host         : lab running 64-bit major release  (build 9200)
 | Command      : report_timing_summary -file D:/WorkSpace/its_vvc/synth/core_500_timing_synth.rpt
 | Design       : its_core_500
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     -5.378   -58192.238                  26489                40082       -0.111       -2.514                     23                40082       -0.234     -222.473                    4420                  6834  
+     -5.378   -58158.770                  26429                40106       -0.111       -2.782                     26                40106       -0.234     -222.473                    4420                  6857  
 
 
 Timing constraints are not met.
@@ -161,7 +161,7 @@ clk_core  {0.000 1.000}        2.000           500.000
 
 Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
 -----             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-clk_core           -5.378   -58192.238                  26489                40082       -0.111       -2.514                     23                40082       -0.234     -222.473                    4420                  6834  
+clk_core           -5.378   -58158.770                  26429                40106       -0.111       -2.782                     26                40106       -0.234     -222.473                    4420                  6857  
 
 
 ------------------------------------------------------------------------------------------------
@@ -192,8 +192,8 @@ Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing 
 From Clock:  clk_core
   To Clock:  clk_core
 
-Setup :        26489  Failing Endpoints,  Worst Slack       -5.378ns,  Total Violation   -58192.240ns
-Hold  :           23  Failing Endpoints,  Worst Slack       -0.111ns,  Total Violation       -2.514ns
+Setup :        26429  Failing Endpoints,  Worst Slack       -5.378ns,  Total Violation   -58158.770ns
+Hold  :           26  Failing Endpoints,  Worst Slack       -0.111ns,  Total Violation       -2.782ns
 PW    :         4420  Failing Endpoints,  Worst Slack       -0.234ns,  Total Violation     -222.473ns
 ---------------------------------------------------------------------------------------------------
 
@@ -225,7 +225,7 @@ Slack (VIOLATED) :        -5.378ns  (required time - arrival time)
                          (clock clk_core rise edge)
                                                       0.000     0.000 r  
                                                       0.000     0.000 r  clk_core (IN)
-                         net (fo=6833, unset)         0.704     0.704    clk_core
+                         net (fo=6856, unset)         0.704     0.704    clk_core
                          FDCE                                         r  tu_width_reg[2]/C
   -------------------------------------------------------------------    -------------------
                          FDCE (Prop_fdce_C_Q)         0.341     1.045 r  tu_width_reg[2]/Q
@@ -248,7 +248,7 @@ Slack (VIOLATED) :        -5.378ns  (required time - arrival time)
                          (clock clk_core rise edge)
                                                       2.000     2.000 r  
                                                       0.000     2.000 r  clk_core (IN)
-                         net (fo=6833, unset)         0.669     2.669    u_row_engine/u_mac1/clk_core
+                         net (fo=6856, unset)         0.669     2.669    u_row_engine/u_mac1/clk_core
                          DSP48E1                                      r  u_row_engine/u_mac1/product0/CLK
                          clock pessimism              0.000     2.669    
                          clock uncertainty           -0.035     2.633    
@@ -267,9 +267,9 @@ Slack (VIOLATED) :        -5.378ns  (required time - arrival time)
 Min Delay Paths
 --------------------------------------------------------------------------------------
 Slack (VIOLATED) :        -0.111ns  (arrival time - required time)
-  Source:                 cmd_fifo_rdata[20]
+  Source:                 cmd_fifo_rdata[0]
                             (input port clocked by clk_core  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            lfnst_idx_reg[0]/D
+  Destination:            cmd_fifo_data_r_reg[0]/D
                             (rising edge-triggered cell FDCE clocked by clk_core  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk_core
   Path Type:              Hold (Min at Slow Process Corner)
@@ -292,19 +292,19 @@ Slack (VIOLATED) :        -0.111ns  (arrival time - required time)
                          (clock clk_core rise edge)
                                                       0.000     0.000 r  
                          input delay                  0.100     0.100    
-                                                      0.000     0.100 r  cmd_fifo_rdata[20] (IN)
-                         net (fo=0)                   0.669     0.769    cmd_fifo_rdata[20]
-                         FDCE                                         r  lfnst_idx_reg[0]/D
+                                                      0.000     0.100 r  cmd_fifo_rdata[0] (IN)
+                         net (fo=0)                   0.669     0.769    cmd_fifo_rdata[0]
+                         FDCE                                         r  cmd_fifo_data_r_reg[0]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_core rise edge)
                                                       0.000     0.000 r  
                                                       0.000     0.000 r  clk_core (IN)
-                         net (fo=6833, unset)         0.704     0.704    clk_core
-                         FDCE                                         r  lfnst_idx_reg[0]/C
+                         net (fo=6856, unset)         0.704     0.704    clk_core
+                         FDCE                                         r  cmd_fifo_data_r_reg[0]/C
                          clock pessimism              0.000     0.704    
                          clock uncertainty            0.035     0.739    
-                         FDCE (Hold_fdce_C_D)         0.140     0.879    lfnst_idx_reg[0]
+                         FDCE (Hold_fdce_C_D)         0.140     0.879    cmd_fifo_data_r_reg[0]
   -------------------------------------------------------------------
                          required time                         -0.879    
                          arrival time                           0.769    

@@ -61,7 +61,7 @@ S_IDLE → S_CLEAR → S_LOAD → [S_LFNST] → S_ROW_START → S_ROW_RUN
     │  it_data_in ──→ input_fifo ─────────┤   │
     │  it_data_addr                        │   │
     │  it_data_in_vld                      │   │
-    │  it_data_end ──→ cmd_fifo            │   │
+    │  it_data_end ──→ input_fifo (last)   │   │
     │                                      │   │
     │  it_data_in_req ←── input_fifo level │   │
     │                                      │   │
@@ -112,23 +112,27 @@ S_IDLE → S_CLEAR → S_LOAD → [S_LFNST] → S_ROW_START → S_ROW_RUN
 | 字段 | 位宽 | 说明 |
 |------|------|------|
 | `it_info[21:0]` | 22 | TU 参数 |
-| `it_data_end` | 1 | 输入结束标志 |
+| unused[22] | 1 | 保留 (写 0) |
 | **总计** | **23 bit** | |
 
-写入条件：`it_info_vld` 脉冲时写入 info；`it_data_end` 脉冲时写入 info + end 标志。
+写入条件：`it_info_vld` 脉冲时写入 `{1'b0, it_info}`。每 TU 仅 1 条。
 深度：4 条目（支持连续 TU 缓冲）。
 
 #### input_fifo (clk_if → clk_core)
 
 | 字段 | 位宽 | 说明 |
 |------|------|------|
+| `last` | 1 | TU 最后一条数据标志 |
 | `it_data_addr[11:0]` | 12 | 稀疏地址 |
 | `it_data_in[15:0]` | 16 | 系数值 |
-| **总计** | **28 bit** | |
+| **总计** | **29 bit** | |
 
-写入条件：`it_data_in_vld && it_data_in_req`。
+写入条件：`it_data_in_vld && it_data_in_req` 写入 `{0, addr, data}`；`it_data_end` 脉冲时写入 `{1, 0, 0}` 作为 last marker。
 深度：16 条目（典型 TU 非零点数 < 16）。
 反压：`it_data_in_req = (input_fifo_count < threshold)`。
+
+**协议要点：** last=1 的 entry 是纯控制信号，core 不将其数据写入 in_mem。
+cmd_fifo 只传 TU 参数，不携带 end 信号，彻底消除双 FIFO 保序问题。
 
 #### output_fifo (clk_core → clk_if)
 
@@ -303,10 +307,10 @@ its_top_500_wrapper
 ├── rst_sync_if    // rst_n 同步到 clk_if 域
 ├── rst_sync_core  // rst_n 同步到 clk_core 域
 ├── cmd_fifo       // async FIFO, 23-bit, depth=4
-│   ├── wr: clk_if (it_info + it_data_end)
+│   ├── wr: clk_if (it_info only, no end flag)
 │   └── rd: clk_core
-├── input_fifo     // async FIFO, 28-bit, depth=16
-│   ├── wr: clk_if (it_data_addr + it_data_in)
+├── input_fifo     // async FIFO, 29-bit, depth=16
+│   ├── wr: clk_if (last + it_data_addr + it_data_in)
 │   └── rd: clk_core
 ├── its_core_500   // 核心模块, clk_core 域
 │   ├── cmd_decode
@@ -329,7 +333,7 @@ its_top_500_wrapper
 |------|----|------|
 | `it_data_in_req` | clk_if | `input_fifo_count < 12` (FIFO 未满即可接收) |
 | `it_data_out_req` | clk_if | 直接控制 `output_fifo` 读使能 |
-| core 输出反压 | clk_core | core 检查 `output_fifo_almost_full`，暂停输出阶段 |
+| core 输出反压 | clk_core | core 检查 `output_fifo_full`，暂停输出阶段 |
 
 ---
 
@@ -508,6 +512,7 @@ report_power -file synth/core_500_power.rpt
 
 ---
 
-*文档版本：v1.0*
+*文档版本：v1.1*
 *创建时间：2026-06-10*
+*更新：input FIFO 改 29-bit last 协议，cmd FIFO 不再携带 end 标志*
 *基于 commit: d3e730b*
