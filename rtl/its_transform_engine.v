@@ -85,7 +85,7 @@ module its_transform_engine (
             size_shift <= 6'd0;
             size_m1    <= 7'd0;
         end else if (start) begin
-            size_m1 <= size_m1;
+            size_m1 <= size - 7'd1;
             case (size)
                 7'd4:    size_shift <= 6'd2;
                 7'd8:    size_shift <= 6'd3;
