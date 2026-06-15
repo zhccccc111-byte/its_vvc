@@ -49,6 +49,8 @@ route_design -directive Explore
 puts "Generating reports..."
 report_timing_summary -file [file join $xdc_dir core_500_timing_impl.rpt]
 report_timing -setup -nworst 20 -file [file join $xdc_dir core_500_timing_setup_paths.rpt]
+report_timing -setup -nworst 20 -unique_pins -file [file join $xdc_dir core_500_timing_unique_paths.rpt]
+write_checkpoint -force [file join $xdc_dir its_core_500_ooc.dcp]
 report_timing -hold -nworst 10 -file [file join $xdc_dir core_500_timing_hold_paths.rpt]
 report_utilization -file [file join $xdc_dir core_500_utilization_impl.rpt]
 report_power -file [file join $xdc_dir core_500_power_impl.rpt]

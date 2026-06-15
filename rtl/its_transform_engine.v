@@ -44,13 +44,14 @@ module its_transform_engine (
 
     reg [2:0] state;
 
-    // Line buffer (input data) - shared across all row groups
-    reg signed [15:0] line_buf [0:63];
+    // Line buffer (input data) - Block RAM with registered read
+    (* ram_style = "block" *) reg signed [15:0] line_buf [0:63];
+    reg signed [15:0] line_buf_dout_r;
     reg [5:0] load_cnt;
 
     // Coefficient buffer: 4 rows x N coeffs
-    // Re-populated for each row group
-    reg signed [15:0] coeff_buf [0:255];
+    // Re-populated for each row group (Block RAM)
+    (* ram_style = "block" *) reg signed [15:0] coeff_buf [0:255];
 
     // Pre-fetch counters
     reg [7:0] pf_cnt;
@@ -74,16 +75,26 @@ module its_transform_engine (
     // ============================================================
     // ROM address computation
     // ============================================================
+    // Registered size parameters: latched on start to break high-fanout
+    // combinational path (tu_width → size_shift → coeff_buf write addr)
     reg [5:0] size_shift;
-    always @(*) begin
-        case (size)
-            7'd4:    size_shift = 6'd2;
-            7'd8:    size_shift = 6'd3;
-            7'd16:   size_shift = 6'd4;
-            7'd32:   size_shift = 6'd5;
-            7'd64:   size_shift = 6'd6;
-            default: size_shift = 6'd0;
-        endcase
+    reg [6:0] size_m1;  // size - 1, for boundary conditions
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            size_shift <= 6'd0;
+            size_m1    <= 7'd0;
+        end else if (start) begin
+            size_m1 <= size_m1;
+            case (size)
+                7'd4:    size_shift <= 6'd2;
+                7'd8:    size_shift <= 6'd3;
+                7'd16:   size_shift <= 6'd4;
+                7'd32:   size_shift <= 6'd5;
+                7'd64:   size_shift <= 6'd6;
+                default: size_shift <= 6'd0;
+            endcase
+        end
     end
 
     reg [13:0] base_addr;
@@ -133,12 +144,24 @@ module its_transform_engine (
     // ============================================================
     // 4 MAC units
     // ============================================================
-    wire        mac_en = (state == S_COMPUTE);
+    wire        mac_en_raw = (state == S_COMPUTE);
+    // Delay mac_en by 2 cycles: BRAM registered read + P0 pipeline
+    reg         mac_en;
+    reg         mac_en_d;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            mac_en   <= 1'b0;
+            mac_en_d <= 1'b0;
+        end else begin
+            mac_en   <= mac_en_raw;
+            mac_en_d <= mac_en;
+        end
+    end
     // Clear MAC at start of loading AND at each row group transition
     // Transition condition uses CURRENT ROM position (not delayed)
     // because dly pipeline retains stale values from previous S_PREFETCH
     wire        pf_to_compute = (state == S_PREFETCH &&
-                                 pf_rom_row == 2'd3 && pf_rom_col >= size[5:0] - 6'd1);
+                                 pf_rom_row == 2'd3 && pf_rom_col >= size_m1[5:0]);
     wire        mac_clr = (state == S_LOAD && load_cnt == 6'd0 && data_in_vld) || pf_to_compute;
 
     // pf_to_compute_d: 1-cycle delayed pf_to_compute
@@ -150,35 +173,78 @@ module its_transform_engine (
         else
             pf_to_compute_d <= pf_to_compute;
     end
-    wire [15:0] mac_data = line_buf[comp_col];
-    wire [15:0] mac_coeff [0:3];
+    // line_buf BRAM registered read
+    always @(posedge clk)
+        line_buf_dout_r <= line_buf[comp_col];
 
-    // Coefficient addresses: row_i * N + col, using size_shift
-    // (coeff_buf is repopulated for each row group)
-    assign mac_coeff[0] = coeff_buf[{2'd0, comp_col}];
-    assign mac_coeff[1] = coeff_buf[(8'd1 << size_shift) + {2'd0, comp_col}];
-    assign mac_coeff[2] = coeff_buf[(8'd2 << size_shift) + {2'd0, comp_col}];
-    assign mac_coeff[3] = coeff_buf[(8'd3 << size_shift) + {2'd0, comp_col}];
+    // P0 pipeline: register coeff_buf outputs to align with BRAM read latency
+    // Both line_buf (BRAM) and coeff_buf (DistRAM+register) arrive at MAC in same cycle
+    wire [15:0] mac_coeff_raw [0:3];
+    assign mac_coeff_raw[0] = coeff_buf[{2'd0, comp_col}];
+    assign mac_coeff_raw[1] = coeff_buf[(8'd1 << size_shift) + {2'd0, comp_col}];
+    assign mac_coeff_raw[2] = coeff_buf[(8'd2 << size_shift) + {2'd0, comp_col}];
+    assign mac_coeff_raw[3] = coeff_buf[(8'd3 << size_shift) + {2'd0, comp_col}];
+
+    reg signed [15:0] mac_coeff_r [0:3];
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            mac_coeff_r[0] <= 16'sd0;
+            mac_coeff_r[1] <= 16'sd0;
+            mac_coeff_r[2] <= 16'sd0;
+            mac_coeff_r[3] <= 16'sd0;
+        end else begin
+            mac_coeff_r[0] <= mac_coeff_raw[0];
+            mac_coeff_r[1] <= mac_coeff_raw[1];
+            mac_coeff_r[2] <= mac_coeff_raw[2];
+            mac_coeff_r[3] <= mac_coeff_raw[3];
+        end
+    end
+
+    // P0 pipeline: register BRAM output and coeff before MAC
+    // DONT_TOUCH prevents Vivado from absorbing into DSP48E1
+    (* dont_touch = "yes" *) reg signed [15:0] mac_data_r;
+    (* dont_touch = "yes" *) reg signed [15:0] mac_coeff_p0 [0:3];
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            mac_data_r      <= 16'sd0;
+            mac_coeff_p0[0] <= 16'sd0;
+            mac_coeff_p0[1] <= 16'sd0;
+            mac_coeff_p0[2] <= 16'sd0;
+            mac_coeff_p0[3] <= 16'sd0;
+        end else begin
+            mac_data_r      <= line_buf_dout_r;
+            mac_coeff_p0[0] <= mac_coeff_r[0];
+            mac_coeff_p0[1] <= mac_coeff_r[1];
+            mac_coeff_p0[2] <= mac_coeff_r[2];
+            mac_coeff_p0[3] <= mac_coeff_r[3];
+        end
+    end
+
+    wire [15:0] mac_data = mac_data_r;
+    wire [15:0] mac_coeff [0:3];
+    assign mac_coeff[0] = mac_coeff_p0[0];
+    assign mac_coeff[1] = mac_coeff_p0[1];
+    assign mac_coeff[2] = mac_coeff_p0[2];
+    assign mac_coeff[3] = mac_coeff_p0[3];
 
     wire [39:0] mac_result [0:3];
     wire        mac_valid [0:3];
 
-    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
-    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
-    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
-    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
+    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
+    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
+    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
+    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
 
     // mac_final: 1-cycle delayed from last column
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             mac_final <= 1'b0;
         else
-            mac_final <= (state == S_COMPUTE && comp_col >= size - 7'd1);
+            mac_final <= (state == S_COMPUTE && comp_col >= size_m1);
     end
 
-    // mac_final_d: 2-cycle delayed - accounts for MAC pipeline latency
-    // MAC: cycle N-1 multiply, cycle N accumulate. Result fully ready at cycle N.
-    // mac_final_d fires at cycle N+1 when result has the complete sum.
+    // mac_final_d: multiply completes
     reg mac_final_d;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -187,9 +253,30 @@ module its_transform_engine (
             mac_final_d <= mac_final;
     end
 
-    // Coefficient buffer write address computation
+    // mac_final_e: accumulate completes, result ready
+    reg mac_final_e;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            mac_final_e <= 1'b0;
+        else
+            mac_final_e <= mac_final_d;
+    end
+
+    // Coefficient buffer write address computation (registered to break fanout path)
     wire [7:0] pf_dly_row_ext = {6'd0, pf_dly_row};
     wire [7:0] coeff_buf_wr_addr = (pf_dly_row_ext << size_shift) + {2'd0, pf_dly_col};
+
+    reg [7:0]  coeff_buf_wr_addr_r;
+    reg        pf_dly_valid_d;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            coeff_buf_wr_addr_r <= 8'd0;
+            pf_dly_valid_d      <= 1'b0;
+        end else begin
+            coeff_buf_wr_addr_r <= coeff_buf_wr_addr;
+            pf_dly_valid_d      <= pf_dly_valid;
+        end
+    end
 
     // ============================================================
     // State machine
@@ -201,15 +288,15 @@ module its_transform_engine (
         else if (state == S_IDLE) begin
             if (start) state <= S_LOAD;
         end else case (state)
-            S_LOAD:     if (load_cnt >= size - 7'd1 && data_in_vld) state <= S_PREFETCH;
+            S_LOAD:     if (load_cnt >= size_m1 && data_in_vld) state <= S_PREFETCH;
             S_PREFETCH: if (pf_to_compute_d) state <= S_COMPUTE;
-            S_COMPUTE:  if (mac_final_d && mac_valid[0]) begin
+            S_COMPUTE:  if (mac_final_e && mac_valid[0]) begin
                             if (comp_row_base >= size)
                                 state <= S_OUTPUT;
                             else
                                 state <= S_PREFETCH;  // More groups to process
                         end
-            S_OUTPUT:   if (out_cnt >= size - 7'd1 && data_out_req) state <= S_IDLE;
+            S_OUTPUT:   if (out_cnt >= size_m1 && data_out_req) state <= S_IDLE;
             default:    state <= S_IDLE;
         endcase
     end
@@ -241,9 +328,9 @@ module its_transform_engine (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             row_group <= 6'd0;
-        else if (state == S_LOAD && load_cnt >= size - 7'd1 && data_in_vld)
+        else if (state == S_LOAD && load_cnt >= size_m1 && data_in_vld)
             row_group <= 6'd0;
-        else if (state == S_COMPUTE && comp_col >= size - 7'd1)
+        else if (state == S_COMPUTE && comp_col >= size_m1)
             row_group <= row_group + 6'd1;
         else if (state != S_COMPUTE && state != S_PREFETCH)
             row_group <= 6'd0;
@@ -264,7 +351,7 @@ module its_transform_engine (
             pf_rom_col <= 6'd0;
             pf_cnt <= 8'd0;
             pf_row <= 2'd0;
-        end else if (state == S_LOAD && load_cnt >= size - 7'd1 && data_in_vld) begin
+        end else if (state == S_LOAD && load_cnt >= size_m1 && data_in_vld) begin
             // Initialize for first group
             pf_rom_row <= 2'd0;
             pf_rom_col <= 6'd0;
@@ -277,7 +364,7 @@ module its_transform_engine (
             pf_cnt <= 8'd0;
             pf_row <= 2'd0;
         end else if (state == S_PREFETCH) begin
-            if (pf_rom_col >= size - 7'd1) begin
+            if (pf_rom_col >= size_m1) begin
                 pf_rom_col <= 6'd0;
                 if (pf_rom_row < 2'd3)
                     pf_rom_row <= pf_rom_row + 2'd1;
@@ -317,15 +404,23 @@ module its_transform_engine (
     end
 
     // Store ROM output into coeff_buf (no async reset for Block RAM inference)
+    // Registered address used to break high-fanout write address path.
     // Two write paths:
-    // 1. entering_compute: writes last coefficient using saved pf_dly_row/col
-    // 2. Normal pipeline: writes during S_PREFETCH (but NOT on entering_compute
-    //    cycle to avoid overwriting the last coefficient with stale ROM data)
+    // 1. entering_compute_d: writes last coefficient (registered addr from pf_dly_row/col)
+    // 2. Normal pipeline: writes using registered address (1 cycle delayed)
+    reg entering_compute_d;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            entering_compute_d <= 1'b0;
+        else
+            entering_compute_d <= entering_compute;
+    end
+
     always @(posedge clk) begin
-        if (entering_compute) begin
-            coeff_buf[(pf_dly_row << size_shift) + {2'd0, pf_dly_col}] <= rom_coeff;
-        end else if (state == S_PREFETCH && pf_dly_valid) begin
-            coeff_buf[coeff_buf_wr_addr] <= rom_coeff;
+        if (entering_compute_d) begin
+            coeff_buf[coeff_buf_wr_addr_r] <= rom_coeff;
+        end else if (pf_dly_valid_d) begin
+            coeff_buf[coeff_buf_wr_addr_r] <= rom_coeff;
         end
     end
 
@@ -336,11 +431,11 @@ module its_transform_engine (
         if (!rst_n) begin
             comp_col <= 6'd0;
             comp_row_base <= 7'd0;
-        end else if (state == S_LOAD && load_cnt >= size - 7'd1 && data_in_vld) begin
+        end else if (state == S_LOAD && load_cnt >= size_m1 && data_in_vld) begin
             comp_col <= 6'd0;
             comp_row_base <= 7'd0;
         end else if (state == S_COMPUTE) begin
-            if (comp_col >= size - 7'd1) begin
+            if (comp_col >= size_m1) begin
                 comp_col <= 6'd0;
                 comp_row_base <= comp_row_base + 7'd4;
             end else begin
@@ -353,7 +448,7 @@ module its_transform_engine (
 
     // Capture MAC results into result_buf (no async reset for Block RAM inference)
     always @(posedge clk) begin
-        if (mac_final_d && mac_valid[0]) begin
+        if (mac_final_e && mac_valid[0]) begin
             result_buf[comp_row_base - 6'd4]         <= (mac_result[0] + 40'sd32) >>> 6;
             result_buf[comp_row_base - 6'd4 + 6'd1] <= (mac_result[1] + 40'sd32) >>> 6;
             result_buf[comp_row_base - 6'd4 + 6'd2] <= (mac_result[2] + 40'sd32) >>> 6;
@@ -375,7 +470,7 @@ module its_transform_engine (
             done_r <= 1'b0;
         else if (start)
             done_r <= 1'b0;
-        else if (state == S_OUTPUT && data_out_req && out_cnt >= size - 7'd1)
+        else if (state == S_OUTPUT && data_out_req && out_cnt >= size_m1)
             done_r <= 1'b1;
     end
 
