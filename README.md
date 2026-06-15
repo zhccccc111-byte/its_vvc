@@ -180,7 +180,7 @@ vsim -c -do "do run.do"
 
 预期输出: `ALL TESTS PASSED!`，95 个测试用例全部通过。
 
-### 5.2 测试用例覆盖 (共 95 个)
+### 5.2 测试用例覆盖 (共 94 个)
 
 | 类别 | 数量 | 覆盖范围 |
 |------|------|---------|
@@ -199,10 +199,31 @@ vsim -c -do "do run.do"
 
 ## 6. 综合与 PPA
 
-### 6.1 综合结果
+### 6.1 500MHz OOC 综合结果 (v3.2)
 
 **目标器件**: Artix-7 xc7a200tfbg484-3
-**时钟约束**: 100MHz (10ns)
+**时钟约束**: 500MHz (2ns)
+**综合方式**: Out-of-Context (OOC)，仅测内部时序，不含 I/O pad
+
+| 资源 | 使用 | 可用 | 利用率 |
+|------|------|------|--------|
+| LUT as Logic | ~3100 | 133,800 | ~2.3% |
+| LUT as Memory | 1,680 | 46,200 | 3.64% |
+| Block RAM Tile | 17 | 365 | 4.66% |
+| DSP48E1 | 9 | 740 | 1.22% |
+
+| 指标 | 值 |
+|------|-----|
+| WNS (Setup) | **-2.115 ns** |
+| TNS | -14,245 ns |
+| WHS (Hold) | -0.280 ns |
+| WPWS (Pulse Width) | -0.234 ns |
+
+**说明**: WNS = -2.115ns 表示内部关键路径延迟超出 2ns 约束约 2.1ns。worst path 为 ROM 地址计算路径 (`tu_height → base_addr + rom_row_idx << size_shift → RAMB36E1 address`)，6 级逻辑，3.475ns 数据延迟。后续优化方向为 ROM 地址管线化。
+
+### 6.2 100MHz 全芯片综合结果 (v1.0)
+
+**时钟约束**: 100MHz (10ns)，含 I/O pad
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
@@ -217,13 +238,12 @@ vsim -c -do "do run.do"
 | WNS (Setup) @ 100MHz | -0.421 ns |
 | 实际最高频率 | ~96 MHz |
 
-**说明**: 资源利用率低，设计轻量。500MHz (2ns) 在 Artix-7 上不可行（OBUF + BRAM 固定延迟 > 2ns）。详细分析见 doc/ppa_report.md。
-
-### 6.2 运行综合
+### 6.3 运行综合
 
 ```bash
+# 500MHz OOC 综合 (仅内部时序)
 cd synth
-vivado -mode batch -source its_synth.tcl
+vivado -mode batch -source its_core_500_ooc.tcl
 ```
 
 ---
@@ -250,7 +270,57 @@ vivado -mode batch -source its_synth.tcl
 
 ---
 
-## 8. 工具与环境
+## 8. 版本历史
+
+| 版本 | Tag | 关键改动 | WNS | 测试 |
+|------|-----|---------|-----|------|
+| **v3.2** | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | **-2.115ns** | 94/94 |
+| v3.1 | `v3.1-core-protocol-stable` | FIFO 接口协议稳定，29-bit last 标记，文档修正 | -5.213ns | 94/94 |
+| v3.0 | `v3.0-500mhz` | 引入 its_core_500 双时钟架构，OOC 综合脚本 | — | 94/94 |
+| v2.0 | `v2.0-deliverable` | 交付版：XDC 清理、PPA 对齐、波形 SVG | ~-0.4ns@100MHz | 95/95 |
+| v1.0 | `v1.0-baseline` | 初始基线：同步复位、DistRAM 推断 | ~-0.4ns@100MHz | 95/95 |
+
+### v3.2 详细改动
+
+**目标**: 从 v3.1 的 WNS -5.213ns 优化到 500MHz (2ns) 附近。
+
+**its_core_500.v**:
+- `in_mem` 从 DistRAM 改为 Block RAM (`(* ram_style = "block" *)`)，移除 clearing 写分支以启用 BRAM 推断
+- 新增 `lfnst_out_buf[0:47]` overlay buffer，LFNST 结果不再写回 in_mem，消除高扇出写路径
+- 行引擎改用绝对地址计数器 `row_in_mem_addr`（取代 `row_base_addr + row_eng_rd_addr`）
+- 新增 overlay 检测逻辑：`lfnst_active && row < 4/12 && col < 4` 时从 overlay buffer 读取
+- 注册 `in_mem_rd_addr` 断开 LFNST 地址计算关键路径
+- LFNST 读路径增加 2 拍延迟（地址寄存 + BRAM 读延迟）
+
+**its_transform_engine.v**:
+- `line_buf` 和 `coeff_buf` 改为 Block RAM
+- 新增 P0 管线寄存器 (`(* dont_touch = "yes" *)`)，对齐 BRAM 读延迟与 MAC 输入
+- `mac_en` 增加 2 拍延迟链 (`mac_en_raw → mac_en → mac_en_d`)
+- `size_shift` 和 `size_m1` 改为寄存器（`start` 时锁存）
+- `coeff_buf` 写地址注册，断开高扇出写路径 (fanout=528 → ~16)
+- `mac_final` 增加第 3 拍 `mac_final_e`，对齐 MAC 累加完成时序
+
+### v3.0 → v3.1 改动
+
+- 引入 `its_core_500.v`：独立于 `its_top.v` 的 500MHz 计算核
+- 接口改为 FIFO 协议 (cmd_fifo 23-bit, input_fifo 29-bit, output_fifo 40-bit)
+- 输出管线增加 ready/valid 握手，支持反压
+- OOC 综合脚本 `its_core_500_ooc.tcl`
+
+### v2.0 → v3.0 改动
+
+- 从单时钟架构 (`its_top`) 分离出双时钟架构 (`its_core_500`)
+- 添加 OOC 综合流程，独立评估内部时序
+
+### v1.0 → v2.0 改动
+
+- XDC 约束清理、PPA 报告对齐
+- 波形 SVG 文档、设计文档完善
+- 交付版打磨
+
+---
+
+## 9. 工具与环境
 
 | 工具 | 版本 | 用途 |
 |------|------|------|
