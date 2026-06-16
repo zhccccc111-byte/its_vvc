@@ -209,18 +209,18 @@ vsim -c -do "do run.do"
 |------|------|------|--------|
 | LUT as Logic | 2,450 | 133,800 | 1.83% |
 | LUT as Memory | 2,192 | 46,200 | 4.74% |
-| Slice Registers | 3,058 | 267,600 | 1.14% |
+| Slice Registers | 3,059 | 267,600 | 1.14% |
 | Block RAM Tile | 12 | 365 | 3.29% |
 | DSP48E1 | 9 | 740 | 1.22% |
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-2.108 ns** |
-| TNS | -15,345 ns |
+| WNS (Setup) | **-2.020 ns** |
+| TNS | -16,444 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
 
-**说明**: WNS = -2.108ns，worst path 为 ROM 地址路径 (`tu_width_reg → u_row_rom/coeff_reg_1/ADDRARDADDR`，5 级逻辑：3 LUT6 + 2 CARRY4，routing 占 67%)。LFNST 输出流水线拆分后，原 12 级 CARRY4 链不再是最差路径。
+**说明**: WNS = -2.020ns，worst path 为 row engine 内部路径 (`total_points_reg → state_reg/CE`，8 级逻辑：4 CARRY4 + 3 LUT6)。LFNST 流水线拆分 + base_addr 寄存化后，原 LFNST 12 级 CARRY4 链和 ROM 地址组合链均不再是 critical path。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合读 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用 P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异（2/108 PASS），这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
@@ -277,7 +277,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.4** | | LFNST 输出流水线拆分（S_OUTPUT → S_OUTPUT_CLIP 两级） | **-2.108ns** | 108/108 |
+| **v3.4** | | LFNST 输出流水线拆分 + base_addr 寄存化 | **-2.020ns** | 108/108 |
 | v3.3 | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | -2.289ns | 108/108 |
 | v3.2 | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | -2.115ns | 94/94 |
 | v3.1 | `v3.1-core-protocol-stable` | FIFO 接口协议稳定，29-bit last 标记，文档修正 | -5.213ns | 94/94 |
@@ -287,14 +287,19 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 ### v3.4 详细改动
 
-**目标**: 拆分 LFNST 输出流水线，打断 12 级 CARRY4 关键路径。
+**目标**: 打断 LFNST 12 级 CARRY4 关键路径 + ROM 地址组合链。
 
 **its_lfnst.v**:
 - 新增 `S_OUTPUT_CLIP` 状态，将原 S_OUTPUT 的 40-bit add + shift + clip 单周期组合逻辑拆为两级流水：
   - S_OUTPUT: `(captured_result + 64) >>> 7` → `shifted_r` 寄存器
   - S_OUTPUT_CLIP: clip `shifted_r` → `data_out`，输出有效
-- 原 12 级 CARRY4 链拆为 ~5 + ~2 级，WNS 从 -2.289ns 改善到 -2.108ns
-- worst path 转移到 ROM 地址路径 (`tu_width_reg → u_row_rom/ADDRARDADDR`)
+- 原 12 级 CARRY4 链拆为 ~5 + ~2 级
+
+**its_transform_engine.v**:
+- `base_addr` 从组合逻辑改为寄存器（`start` 时锁存），切断 `tu_width → base_addr case → ROM address` 组合链
+- ROM 地址路径从 5 级逻辑（3 LUT6 + 2 CARRY4）减为 3 级（纯加法）
+
+**综合结果**: WNS 从 -2.289ns → -2.108ns（LFNST 流水线）→ -2.020ns（base_addr 寄存化），worst path 转移到 row engine 内部 `total_points_reg → state_reg/CE`
 
 ### v3.3 详细改动
 

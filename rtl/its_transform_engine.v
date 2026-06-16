@@ -96,24 +96,29 @@ module its_transform_engine (
         end
     end
 
+    // base_addr: registered on start to break tu_width → ROM address combinational path
     reg [13:0] base_addr;
-    always @(*) begin
-        case ({tr_type, size})
-            {2'd0, 7'd4}:   base_addr = 14'd0;
-            {2'd0, 7'd8}:   base_addr = 14'd16;
-            {2'd0, 7'd16}:  base_addr = 14'd80;
-            {2'd0, 7'd32}:  base_addr = 14'd336;
-            {2'd0, 7'd64}:  base_addr = 14'd1360;
-            {2'd1, 7'd4}:   base_addr = 14'd5456;
-            {2'd1, 7'd8}:   base_addr = 14'd5472;
-            {2'd1, 7'd16}:  base_addr = 14'd5536;
-            {2'd1, 7'd32}:  base_addr = 14'd5792;
-            {2'd2, 7'd4}:   base_addr = 14'd6816;
-            {2'd2, 7'd8}:   base_addr = 14'd6832;
-            {2'd2, 7'd16}:  base_addr = 14'd6896;
-            {2'd2, 7'd32}:  base_addr = 14'd7152;
-            default:         base_addr = 14'd0;
-        endcase
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            base_addr <= 14'd0;
+        else if (start) begin
+            case ({tr_type, size})
+                {2'd0, 7'd4}:   base_addr <= 14'd0;
+                {2'd0, 7'd8}:   base_addr <= 14'd16;
+                {2'd0, 7'd16}:  base_addr <= 14'd80;
+                {2'd0, 7'd32}:  base_addr <= 14'd336;
+                {2'd0, 7'd64}:  base_addr <= 14'd1360;
+                {2'd1, 7'd4}:   base_addr <= 14'd5456;
+                {2'd1, 7'd8}:   base_addr <= 14'd5472;
+                {2'd1, 7'd16}:  base_addr <= 14'd5536;
+                {2'd1, 7'd32}:  base_addr <= 14'd5792;
+                {2'd2, 7'd4}:   base_addr <= 14'd6816;
+                {2'd2, 7'd8}:   base_addr <= 14'd6832;
+                {2'd2, 7'd16}:  base_addr <= 14'd6896;
+                {2'd2, 7'd32}:  base_addr <= 14'd7152;
+                default:         base_addr <= 14'd0;
+            endcase
+        end
     end
 
     // ROM address: base + (row_group*4 + pf_rom_row) * N + pf_rom_col
