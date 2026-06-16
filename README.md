@@ -207,20 +207,20 @@ vsim -c -do "do run.do"
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| LUT as Logic | 2,451 | 133,800 | 1.83% |
+| LUT as Logic | 2,450 | 133,800 | 1.83% |
 | LUT as Memory | 2,192 | 46,200 | 4.74% |
-| Slice Registers | 3,033 | 267,600 | 1.13% |
+| Slice Registers | 3,058 | 267,600 | 1.14% |
 | Block RAM Tile | 12 | 365 | 3.29% |
 | DSP48E1 | 9 | 740 | 1.22% |
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-2.289 ns** |
-| TNS | -15,506 ns |
+| WNS (Setup) | **-2.108 ns** |
+| TNS | -15,345 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
 
-**说明**: WNS = -2.289ns，worst path 为 LFNST 模块内部路径 (`u_lfnst/captured_result_reg → u_lfnst/data_out_reg`，12 级 CARRY4 逻辑)。transform engine 的 coeff_buf → MAC 路径已通过 P0 管线断开，不再是 critical path。
+**说明**: WNS = -2.108ns，worst path 为 ROM 地址路径 (`tu_width_reg → u_row_rom/coeff_reg_1/ADDRARDADDR`，5 级逻辑：3 LUT6 + 2 CARRY4，routing 占 67%)。LFNST 输出流水线拆分后，原 12 级 CARRY4 链不再是最差路径。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合读 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用 P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异（2/108 PASS），这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
@@ -277,12 +277,24 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.3** | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | **-2.289ns** | 108/108 |
+| **v3.4** | | LFNST 输出流水线拆分（S_OUTPUT → S_OUTPUT_CLIP 两级） | **-2.108ns** | 108/108 |
+| v3.3 | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | -2.289ns | 108/108 |
 | v3.2 | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | -2.115ns | 94/94 |
 | v3.1 | `v3.1-core-protocol-stable` | FIFO 接口协议稳定，29-bit last 标记，文档修正 | -5.213ns | 94/94 |
 | v3.0 | `v3.0-500mhz` | 引入 its_core_500 双时钟架构，OOC 综合脚本 | — | 94/94 |
 | v2.0 | `v2.0-deliverable` | 交付版：XDC 清理、PPA 对齐、波形 SVG | ~-0.4ns@100MHz | 95/95 |
 | v1.0 | `v1.0-baseline` | 初始基线：同步复位、DistRAM 推断 | ~-0.4ns@100MHz | 95/95 |
+
+### v3.4 详细改动
+
+**目标**: 拆分 LFNST 输出流水线，打断 12 级 CARRY4 关键路径。
+
+**its_lfnst.v**:
+- 新增 `S_OUTPUT_CLIP` 状态，将原 S_OUTPUT 的 40-bit add + shift + clip 单周期组合逻辑拆为两级流水：
+  - S_OUTPUT: `(captured_result + 64) >>> 7` → `shifted_r` 寄存器
+  - S_OUTPUT_CLIP: clip `shifted_r` → `data_out`，输出有效
+- 原 12 级 CARRY4 链拆为 ~5 + ~2 级，WNS 从 -2.289ns 改善到 -2.108ns
+- worst path 转移到 ROM 地址路径 (`tu_width_reg → u_row_rom/ADDRARDADDR`)
 
 ### v3.3 详细改动
 
@@ -293,7 +305,6 @@ vivado -mode batch -source its_core_500_ooc.tcl
   - 仿真路径（无 SYNTHESIS）：组合读 + mac_en 直连，保持 108/108 PASS
   - 综合路径（SYNTHESIS defined）：P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存
 - `size_m1` 和 `size_shift` 改为无条件寄存器（`start` 时锁存），减少组合逻辑深度
-- worst path 从 coeff_buf → MAC 路径移到 LFNST 模块内部
 
 **synth/its_core_500_ooc.tcl**:
 - 添加 `set_property verilog_define {SYNTHESIS} [current_fileset]`

@@ -53,6 +53,7 @@ module its_lfnst (
     localparam S_DRAIN    = 3'd4;
     localparam S_OUTPUT   = 3'd5;
     localparam S_DONE     = 3'd6;
+    localparam S_OUTPUT_CLIP = 3'd7;
 
     reg [2:0] state;
 
@@ -144,12 +145,13 @@ module its_lfnst (
                             state <= S_DRAIN;
             S_DRAIN:    if (drain_cnt == 2'd2)
                             state <= S_OUTPUT;
-            S_OUTPUT:   begin
-                            if (comp_cnt >= ntrs)
-                                state <= S_DONE;
-                            else
-                                state <= S_COMPUTE;
-                        end
+            S_OUTPUT:       state <= S_OUTPUT_CLIP;
+            S_OUTPUT_CLIP:  begin
+                                if (comp_cnt >= ntrs)
+                                    state <= S_DONE;
+                                else
+                                    state <= S_COMPUTE;
+                            end
             S_DONE:     state <= S_IDLE;
             default:    state <= S_IDLE;
         endcase
@@ -278,6 +280,9 @@ module its_lfnst (
             mac_en  <= 1'b0;
             mac_clr <= 1'b0;
         end else if (state == S_OUTPUT) begin
+            mac_en  <= 1'b0;
+            mac_clr <= 1'b0;
+        end else if (state == S_OUTPUT_CLIP) begin
             mac_clr <= 1'b1;
             mac_en  <= 1'b0;
             mac_cnt <= 4'd0;
@@ -303,7 +308,7 @@ module its_lfnst (
     // Output: capture result after drain, clip and write
     // ========================================
     reg signed [39:0] captured_result;
-    reg signed [39:0] shifted;
+    reg signed [39:0] shifted_r;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -312,8 +317,12 @@ module its_lfnst (
             captured_result <= mac_result;
     end
 
-    always @(*) begin
-        shifted = (captured_result + 40'sd64) >>> 7;
+    // Pipeline stage 1: register shift result (break 40-bit add + shift from clip)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            shifted_r <= 40'd0;
+        else if (state == S_OUTPUT)
+            shifted_r <= (captured_result + 40'sd64) >>> 7;
     end
 
     always @(posedge clk or negedge rst_n) begin
@@ -325,12 +334,18 @@ module its_lfnst (
         end else if (state == S_IDLE && start) begin
             done <= 1'b0;
         end else if (state == S_OUTPUT) begin
-            if ($signed(shifted) > 40'sd32767)
+            // Pipeline stage 1: shift happens in shifted_r register (above)
+            // No output this cycle
+            data_out_vld   <= 1'b0;
+            data_out_wr_en <= 1'b0;
+        end else if (state == S_OUTPUT_CLIP) begin
+            // Pipeline stage 2: clip from registered shifted_r
+            if ($signed(shifted_r) > 40'sd32767)
                 data_out <= 16'h7FFF;
-            else if ($signed(shifted) < -40'sd32768)
+            else if ($signed(shifted_r) < -40'sd32768)
                 data_out <= 16'h8000;
             else
-                data_out <= shifted[15:0];
+                data_out <= shifted_r[15:0];
             data_out_vld   <= 1'b1;
             data_out_wr_en <= 1'b1;
             if (comp_cnt >= ntrs)
