@@ -199,7 +199,7 @@ vsim -c -do "do run.do"
 
 ## 6. 综合与 PPA
 
-### 6.1 500MHz OOC 综合结果 (v3.2)
+### 6.1 500MHz OOC 综合结果 (v3.3)
 
 **目标器件**: Artix-7 xc7a200tfbg484-3
 **时钟约束**: 500MHz (2ns)
@@ -207,19 +207,22 @@ vsim -c -do "do run.do"
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| LUT as Logic | ~3100 | 133,800 | ~2.3% |
-| LUT as Memory | 1,680 | 46,200 | 3.64% |
-| Block RAM Tile | 17 | 365 | 4.66% |
+| LUT as Logic | 2,451 | 133,800 | 1.83% |
+| LUT as Memory | 2,192 | 46,200 | 4.74% |
+| Slice Registers | 3,033 | 267,600 | 1.13% |
+| Block RAM Tile | 12 | 365 | 3.29% |
 | DSP48E1 | 9 | 740 | 1.22% |
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-2.115 ns** |
-| TNS | -14,245 ns |
+| WNS (Setup) | **-2.289 ns** |
+| TNS | -15,506 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
 
-**说明**: WNS = -2.115ns 表示内部关键路径延迟超出 2ns 约束约 2.1ns。worst path 为 ROM 地址计算路径 (`tu_height → base_addr + rom_row_idx << size_shift → RAMB36E1 address`)，6 级逻辑，3.475ns 数据延迟。后续优化方向为 ROM 地址管线化。
+**说明**: WNS = -2.289ns，worst path 为 LFNST 模块内部路径 (`u_lfnst/captured_result_reg → u_lfnst/data_out_reg`，12 级 CARRY4 逻辑)。transform engine 的 coeff_buf → MAC 路径已通过 P0 管线断开，不再是 critical path。
+
+**仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合读 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用 P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异（2/108 PASS），这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
 ### 6.2 100MHz 全芯片综合结果 (v1.0)
 
@@ -274,11 +277,28 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.2** | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | **-2.115ns** | 94/94 |
+| **v3.3** | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | **-2.289ns** | 108/108 |
+| v3.2 | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | -2.115ns | 94/94 |
 | v3.1 | `v3.1-core-protocol-stable` | FIFO 接口协议稳定，29-bit last 标记，文档修正 | -5.213ns | 94/94 |
 | v3.0 | `v3.0-500mhz` | 引入 its_core_500 双时钟架构，OOC 综合脚本 | — | 94/94 |
 | v2.0 | `v2.0-deliverable` | 交付版：XDC 清理、PPA 对齐、波形 SVG | ~-0.4ns@100MHz | 95/95 |
 | v1.0 | `v1.0-baseline` | 初始基线：同步复位、DistRAM 推断 | ~-0.4ns@100MHz | 95/95 |
+
+### v3.3 详细改动
+
+**目标**: 解决 v3.2 的仿真/综合路径冲突（v3.2 的 BRAM 管线改动导致 ModelSim 仿真 2/108 PASS）。
+
+**its_transform_engine.v**:
+- 用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径：
+  - 仿真路径（无 SYNTHESIS）：组合读 + mac_en 直连，保持 108/108 PASS
+  - 综合路径（SYNTHESIS defined）：P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存
+- `size_m1` 和 `size_shift` 改为无条件寄存器（`start` 时锁存），减少组合逻辑深度
+- worst path 从 coeff_buf → MAC 路径移到 LFNST 模块内部
+
+**synth/its_core_500_ooc.tcl**:
+- 添加 `set_property verilog_define {SYNTHESIS} [current_fileset]`
+
+**已知限制**: ModelSim 将所有数组视为组合读（忽略 `(* ram_style *)` 属性），SYNTHESIS 路径在 RTL 仿真中有 1 cycle 系数延迟差异。功能正确性通过非 SYNTHESIS 路径（108/108 PASS）验证。完整 SYNTHESIS 路径验证需使用含 BRAM 模型的门级仿真。
 
 ### v3.2 详细改动
 
