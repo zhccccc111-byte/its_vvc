@@ -44,14 +44,13 @@ module its_transform_engine (
 
     reg [2:0] state;
 
-    // Line buffer (input data) - Block RAM with registered read
-    (* ram_style = "block" *) reg signed [15:0] line_buf [0:63];
-    reg signed [15:0] line_buf_dout_r;
+    // Line buffer (input data) - shared across all row groups
+    reg signed [15:0] line_buf [0:63];
     reg [5:0] load_cnt;
 
     // Coefficient buffer: 4 rows x N coeffs
-    // Re-populated for each row group (Block RAM)
-    (* ram_style = "block" *) reg signed [15:0] coeff_buf [0:255];
+    // Re-populated for each row group
+    reg signed [15:0] coeff_buf [0:255];
 
     // Pre-fetch counters
     reg [7:0] pf_cnt;
@@ -144,8 +143,11 @@ module its_transform_engine (
     // ============================================================
     // 4 MAC units
     // ============================================================
+    // mac_en: gates MAC multiply stage
+    // Simulation: direct (0-cycle read latency)
+    // Synthesis:  2-cycle delay (BRAM read + P0 pipeline = 2 cycles)
+`ifdef SYNTHESIS
     wire        mac_en_raw = (state == S_COMPUTE);
-    // Delay mac_en by 2 cycles: BRAM registered read + P0 pipeline
     reg         mac_en;
     reg         mac_en_d;
     always @(posedge clk or negedge rst_n) begin
@@ -157,6 +159,9 @@ module its_transform_engine (
             mac_en_d <= mac_en;
         end
     end
+`else
+    wire        mac_en = (state == S_COMPUTE);
+`endif
     // Clear MAC at start of loading AND at each row group transition
     // Transition condition uses CURRENT ROM position (not delayed)
     // because dly pipeline retains stale values from previous S_PREFETCH
@@ -173,37 +178,20 @@ module its_transform_engine (
         else
             pf_to_compute_d <= pf_to_compute;
     end
-    // line_buf BRAM registered read
-    always @(posedge clk)
-        line_buf_dout_r <= line_buf[comp_col];
 
-    // P0 pipeline: register coeff_buf outputs to align with BRAM read latency
-    // Both line_buf (BRAM) and coeff_buf (DistRAM+register) arrive at MAC in same cycle
+    // P0 pipeline: registers between memory outputs and MAC inputs
+    // Simulation: not needed (0-cycle read latency)
+    // Synthesis:  breaks long combinational paths for timing
+    //             line_buf + coeff_buf both through P0, mac_en_d (2 cycles)
+`ifdef SYNTHESIS
+    (* dont_touch = "yes" *) reg signed [15:0] mac_data_r;
+    (* dont_touch = "yes" *) reg signed [15:0] mac_coeff_p0 [0:3];
+
     wire [15:0] mac_coeff_raw [0:3];
     assign mac_coeff_raw[0] = coeff_buf[{2'd0, comp_col}];
     assign mac_coeff_raw[1] = coeff_buf[(8'd1 << size_shift) + {2'd0, comp_col}];
     assign mac_coeff_raw[2] = coeff_buf[(8'd2 << size_shift) + {2'd0, comp_col}];
     assign mac_coeff_raw[3] = coeff_buf[(8'd3 << size_shift) + {2'd0, comp_col}];
-
-    reg signed [15:0] mac_coeff_r [0:3];
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            mac_coeff_r[0] <= 16'sd0;
-            mac_coeff_r[1] <= 16'sd0;
-            mac_coeff_r[2] <= 16'sd0;
-            mac_coeff_r[3] <= 16'sd0;
-        end else begin
-            mac_coeff_r[0] <= mac_coeff_raw[0];
-            mac_coeff_r[1] <= mac_coeff_raw[1];
-            mac_coeff_r[2] <= mac_coeff_raw[2];
-            mac_coeff_r[3] <= mac_coeff_raw[3];
-        end
-    end
-
-    // P0 pipeline: register BRAM output and coeff before MAC
-    // DONT_TOUCH prevents Vivado from absorbing into DSP48E1
-    (* dont_touch = "yes" *) reg signed [15:0] mac_data_r;
-    (* dont_touch = "yes" *) reg signed [15:0] mac_coeff_p0 [0:3];
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -213,11 +201,11 @@ module its_transform_engine (
             mac_coeff_p0[2] <= 16'sd0;
             mac_coeff_p0[3] <= 16'sd0;
         end else begin
-            mac_data_r      <= line_buf_dout_r;
-            mac_coeff_p0[0] <= mac_coeff_r[0];
-            mac_coeff_p0[1] <= mac_coeff_r[1];
-            mac_coeff_p0[2] <= mac_coeff_r[2];
-            mac_coeff_p0[3] <= mac_coeff_r[3];
+            mac_data_r      <= line_buf[comp_col];
+            mac_coeff_p0[0] <= mac_coeff_raw[0];
+            mac_coeff_p0[1] <= mac_coeff_raw[1];
+            mac_coeff_p0[2] <= mac_coeff_raw[2];
+            mac_coeff_p0[3] <= mac_coeff_raw[3];
         end
     end
 
@@ -227,14 +215,29 @@ module its_transform_engine (
     assign mac_coeff[1] = mac_coeff_p0[1];
     assign mac_coeff[2] = mac_coeff_p0[2];
     assign mac_coeff[3] = mac_coeff_p0[3];
+`else
+    wire [15:0] mac_data = line_buf[comp_col];
+    wire [15:0] mac_coeff [0:3];
+    assign mac_coeff[0] = coeff_buf[{2'd0, comp_col}];
+    assign mac_coeff[1] = coeff_buf[(8'd1 << size_shift) + {2'd0, comp_col}];
+    assign mac_coeff[2] = coeff_buf[(8'd2 << size_shift) + {2'd0, comp_col}];
+    assign mac_coeff[3] = coeff_buf[(8'd3 << size_shift) + {2'd0, comp_col}];
+`endif
 
     wire [39:0] mac_result [0:3];
     wire        mac_valid [0:3];
 
+`ifdef SYNTHESIS
     its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
     its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
     its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
     its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
+`else
+    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
+    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
+    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
+    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
+`endif
 
     // mac_final: 1-cycle delayed from last column
     always @(posedge clk or negedge rst_n) begin
@@ -244,7 +247,9 @@ module its_transform_engine (
             mac_final <= (state == S_COMPUTE && comp_col >= size_m1);
     end
 
-    // mac_final_d: multiply completes
+    // mac_final_d: 2-cycle delayed - accounts for MAC pipeline latency
+    // MAC: cycle N-1 multiply, cycle N accumulate. Result fully ready at cycle N.
+    // mac_final_d fires at cycle N+1 when result has the complete sum.
     reg mac_final_d;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -253,7 +258,10 @@ module its_transform_engine (
             mac_final_d <= mac_final;
     end
 
-    // mac_final_e: accumulate completes, result ready
+    // mac_final_e: 3-cycle delayed (synthesis only, for P0 pipeline)
+    // Simulation: mac_final_d (2 cycles) — no P0, result ready at mac_final_d
+    // Synthesis:  mac_final_e (3 cycles) — P0 adds 1 cycle to coeff path
+`ifdef SYNTHESIS
     reg mac_final_e;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -261,11 +269,27 @@ module its_transform_engine (
         else
             mac_final_e <= mac_final_d;
     end
+    wire mac_final_ok = mac_final_e;
+`else
+    wire mac_final_ok = mac_final_d;
+`endif
 
-    // Coefficient buffer write address computation (registered to break fanout path)
+    // entering_compute: 1-cycle pulse on S_PREFETCH→S_COMPUTE transition
+    // Used to write the last coefficient from ROM pipeline to coeff_buf
+    reg entering_compute;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            entering_compute <= 1'b0;
+        else
+            entering_compute <= (state == S_PREFETCH && pf_to_compute_d);
+    end
+
+    // Coefficient buffer write address computation
     wire [7:0] pf_dly_row_ext = {6'd0, pf_dly_row};
     wire [7:0] coeff_buf_wr_addr = (pf_dly_row_ext << size_shift) + {2'd0, pf_dly_col};
 
+    // Register coeff_buf write address (synthesis only, to break fanout path)
+`ifdef SYNTHESIS
     reg [7:0]  coeff_buf_wr_addr_r;
     reg        pf_dly_valid_d;
     always @(posedge clk or negedge rst_n) begin
@@ -277,6 +301,14 @@ module its_transform_engine (
             pf_dly_valid_d      <= pf_dly_valid;
         end
     end
+    reg entering_compute_d;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            entering_compute_d <= 1'b0;
+        else
+            entering_compute_d <= entering_compute;
+    end
+`endif
 
     // ============================================================
     // State machine
@@ -290,7 +322,7 @@ module its_transform_engine (
         end else case (state)
             S_LOAD:     if (load_cnt >= size_m1 && data_in_vld) state <= S_PREFETCH;
             S_PREFETCH: if (pf_to_compute_d) state <= S_COMPUTE;
-            S_COMPUTE:  if (mac_final_e && mac_valid[0]) begin
+            S_COMPUTE:  if (mac_final_ok && mac_valid[0]) begin
                             if (comp_row_base >= size)
                                 state <= S_OUTPUT;
                             else
@@ -393,29 +425,9 @@ module its_transform_engine (
         end
     end
 
-    // entering_compute: 1-cycle pulse on S_PREFETCH→S_COMPUTE transition
-    // Used to write the last coefficient from ROM pipeline to coeff_buf
-    reg entering_compute;
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            entering_compute <= 1'b0;
-        else
-            entering_compute <= (state == S_PREFETCH && pf_to_compute_d);
-    end
-
     // Store ROM output into coeff_buf (no async reset for Block RAM inference)
-    // Registered address used to break high-fanout write address path.
-    // Two write paths:
-    // 1. entering_compute_d: writes last coefficient (registered addr from pf_dly_row/col)
-    // 2. Normal pipeline: writes using registered address (1 cycle delayed)
-    reg entering_compute_d;
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            entering_compute_d <= 1'b0;
-        else
-            entering_compute_d <= entering_compute;
-    end
-
+`ifdef SYNTHESIS
+    // Registered write address breaks high-fanout path
     always @(posedge clk) begin
         if (entering_compute_d) begin
             coeff_buf[coeff_buf_wr_addr_r] <= rom_coeff;
@@ -423,6 +435,16 @@ module its_transform_engine (
             coeff_buf[coeff_buf_wr_addr_r] <= rom_coeff;
         end
     end
+`else
+    // Simulation: combinational write address
+    always @(posedge clk) begin
+        if (entering_compute) begin
+            coeff_buf[(pf_dly_row << size_shift) + {2'd0, pf_dly_col}] <= rom_coeff;
+        end else if (state == S_PREFETCH && pf_dly_valid) begin
+            coeff_buf[coeff_buf_wr_addr] <= rom_coeff;
+        end
+    end
+`endif
 
     // ============================================================
     // Compute phase
@@ -448,7 +470,7 @@ module its_transform_engine (
 
     // Capture MAC results into result_buf (no async reset for Block RAM inference)
     always @(posedge clk) begin
-        if (mac_final_e && mac_valid[0]) begin
+        if (mac_final_ok && mac_valid[0]) begin
             result_buf[comp_row_base - 6'd4]         <= (mac_result[0] + 40'sd32) >>> 6;
             result_buf[comp_row_base - 6'd4 + 6'd1] <= (mac_result[1] + 40'sd32) >>> 6;
             result_buf[comp_row_base - 6'd4 + 6'd2] <= (mac_result[2] + 40'sd32) >>> 6;

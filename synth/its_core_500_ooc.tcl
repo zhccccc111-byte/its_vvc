@@ -16,6 +16,9 @@ read_verilog [file join $rtl_dir its_rom.v]
 read_verilog [file join $rtl_dir its_lfnst.v]
 read_verilog [file join $rtl_dir its_lfnst_rom.v]
 
+# Enable SYNTHESIS define for conditional compilation
+set_property verilog_define {SYNTHESIS} [current_fileset]
+
 # Read constraints
 set xdc_dir [file dirname [file normalize [info script]]]
 read_xdc [file join $xdc_dir timing_core_500.xdc]
