@@ -4,14 +4,14 @@
 
 | 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
 |------|---------|-----|------------|------|
-| **Kintex UltraScale+ xcku5p** | -2 | **+0.030 ns** | **MET** | 零改动 RTL (v3.9)，DSP48E2 消除瓶颈 |
+| **Kintex UltraScale+ xcku5p** | -2 | **+0.024 ns** | **MET** | v4.2 面积优化后，DSP48E2 消除瓶颈 |
 | Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
 
 **最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上已达标，相同 RTL 零改动。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ---
 
-## 2. UltraScale+ 时序结果 (v4.0)
+## 2. UltraScale+ 时序结果 (v4.2 面积优化后)
 
 ### 2.1 综合配置
 
@@ -30,7 +30,7 @@
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | **+0.030 ns** | **MET** |
+| WNS (Setup) | **+0.024 ns** | **MET** |
 | TNS | 0.000 ns | — |
 | WHS (Hold) | +0.020 ns | MET |
 | WPWS (Pulse Width) | +0.431 ns | MET |
@@ -48,7 +48,7 @@ Dest:    u_lfnst/coeff_buf_reg_192_255_7_13 (RAMD64E)
   Logic levels:          0
   Clock skew:            -0.033 ns
   Clock uncertainty:     0.035 ns
-  Slack:                 +0.030 ns
+  Slack:                 +0.024 ns
 ```
 
 **关键观察**:
@@ -60,9 +60,9 @@ Dest:    u_lfnst/coeff_buf_reg_192_255_7_13 (RAMD64E)
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| CLB LUTs (Logic) | 1,993 | 216,960 | 0.92% |
-| CLB LUTs (Memory) | 850 | 99,840 | 0.85% |
-| CLB Registers | 2,882 | 433,920 | 0.66% |
+| CLB LUTs (Logic) | 1,929 | 216,960 | 0.89% |
+| CLB LUTs (Memory) | 610 | 99,840 | 0.61% |
+| CLB Registers | 2,899 | 433,920 | 0.67% |
 | CARRY8 | 92 | 27,120 | 0.34% |
 | DSP48E2 | 9 | — | ✅ |
 | RAMB36E2 | 12 | — | ✅ |
@@ -178,7 +178,7 @@ Artix-7 的 RAMB36E1 最小周期 2.234ns（-3 速度等级），对应最高频
 
 | 指标 | Artix-7 (xc7a200t-3) | UltraScale+ (xcku5p-2) | 改善 |
 |------|----------------------|------------------------|------|
-| WNS | -1.733 ns | **+0.030 ns** | **+1.763 ns** |
+| WNS | -1.733 ns | **+0.024 ns** | **+1.757 ns** |
 | Worst path | DSP48E1 FF→A | BRAM→DistRAM | DSP 瓶颈消除 |
 | DSP | DSP48E1 (9) | DSP48E2 (9) | 更快的 FF/setup |
 | BRAM | RAMB36E1 (14) | RAMB36E2 (12) | min period 2.23→~1.8ns |

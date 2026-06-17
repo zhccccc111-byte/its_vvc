@@ -443,16 +443,18 @@ _req       └──────────────────────
 
 赛题要求目标时钟频率 500MHz（2ns 周期）。
 
-### 8.2 UltraScale+ 实现结果 (v4.0)
+### 8.2 UltraScale+ 实现结果 (v4.2 面积优化后)
 
-v3.9 的 RTL 在 Kintex UltraScale+ xcku5p-ffvb676-2-e 上零改动即满足 500MHz：
+v3.9 的 RTL 在 Kintex UltraScale+ xcku5p-ffvb676-2-e 上零改动即满足 500MHz，v4.2 面积优化后进一步改善：
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | **+0.030 ns** | **MET** |
+| WNS (Setup) | **+0.024 ns** | **MET** |
 | TNS | 0.000 ns | — |
 | WHS (Hold) | +0.020 ns | MET |
 | Failing Endpoints | **0** | — |
+| CLB LUTs | 2,539 (1.17%) | — |
+| CLB Registers | 2,899 (0.67%) | — |
 
 **Worst Path**: LFNST ROM→DistRAM（0 级逻辑，1.846ns），不再是 DSP 路径。
 
@@ -487,6 +489,6 @@ v3.3→v3.9 的 RTL 优化（+0.556ns）消除了全部逻辑瓶颈，剩余 gap
 
 ### 8.5 结论
 
-- **UltraScale+**: 500MHz **已达标**（WNS +0.030ns），相同 RTL 零改动
+- **UltraScale+**: 500MHz **已达标**（WNS +0.024ns），相同 RTL 零改动
 - **Artix-7**: 500MHz 不可达（WNS -1.733ns），受限于 DSP48E1 固有物理特性
 - **ASIC**: 500MHz 可行，设计架构已针对高频优化（4 MAC 并行、流水线、寄存器输出）

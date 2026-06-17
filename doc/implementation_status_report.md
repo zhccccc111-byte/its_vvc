@@ -6,7 +6,7 @@
 
 **基线版本：2026-06-17**
 **仿真结果：1444 passed, 0 failed, 0 protocol violations (1377 regression + 37 backpressure + 30 protocol)**
-**500MHz 状态：UltraScale+ (xcku5p-2) WNS +0.030ns 达标**
+**500MHz 状态：UltraScale+ (xcku5p-2) WNS +0.024ns 达标**
 
 ---
 
@@ -65,13 +65,13 @@
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| 工作主频 500MHz | **已满足** | UltraScale+ (xcku5p-2) WNS +0.030ns |
+| 工作主频 500MHz | **已满足** | UltraScale+ (xcku5p-2) WNS +0.024ns |
 
 **UltraScale+ 实测数据 (Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | +0.030 ns | **MET** |
+| WNS (Setup) | +0.024 ns | **MET** |
 | TNS | 0.000 ns | — |
 | WHS (Hold) | +0.020 ns | MET |
 | Failing Endpoints | 0 | — |
@@ -95,12 +95,12 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 ### 4.3 资源利用
 
-**UltraScale+ (xcku5p-2, OOC)：**
+**UltraScale+ (xcku5p-2, OOC, v4.2 面积优化后)：**
 
 | 资源 | 使用量 | 可用量 | 利用率 |
 |------|--------|--------|--------|
-| CLB LUTs | 2,843 | 216,960 | 1.31% |
-| CLB Registers | 2,882 | 433,920 | 0.66% |
+| CLB LUTs | 2,539 | 216,960 | 1.17% |
+| CLB Registers | 2,899 | 433,920 | 0.67% |
 | DSP48E2 | 9 | — | ✅ |
 | RAMB36E2 | 12 | — | ✅ |
 
@@ -168,8 +168,8 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，1444 测试 0 失败 |
 | 验证 | **完成** | 1444 测试用例 (穷举 1377 组合) + 协议 monitor + 参考模型 bit-exact |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
-| PPA | **完成** | UltraScale+: LUT 2843 (1.31%), BRAM 12, DSP 9 |
-| 时序 | **完成** | UltraScale+ OOC WNS = +0.030ns，500MHz **达标** |
+| PPA | **完成** | UltraScale+: LUT 2539 (1.17%), BRAM 12, DSP 9 |
+| 时序 | **完成** | UltraScale+ OOC WNS = +0.024ns，500MHz **达标** |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
 
 **全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现，相同 RTL 零改动。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。

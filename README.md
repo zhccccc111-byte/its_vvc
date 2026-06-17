@@ -302,7 +302,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ✅ | UltraScale+ (xcku5p-2) WNS=+0.030ns 达标；Artix-7 WNS=-1.733ns 不可达，详见 6.1/6.2 节 |
+| 500MHz 主频 | ✅ | UltraScale+ (xcku5p-2) WNS=+0.024ns 达标；Artix-7 WNS=-1.733ns 不可达，详见 6.1/6.2 节 |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
