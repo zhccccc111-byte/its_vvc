@@ -165,8 +165,7 @@ module its_core_500 (
 
     // Output reorder buffer
     reg signed [9:0] out_mem [0:4095];
-    reg [6:0]  out_row_cnt;
-    reg [6:0]  out_col_cnt;
+    // out_row_cnt / out_col_cnt removed — debug-only, unused by logic
 
     // Output control
     reg [12:0] out_cnt;
@@ -189,8 +188,25 @@ module its_core_500 (
 
     wire [1:0]  lfnst_rd_row = lfnst_rd_addr[3:2];
     wire [1:0]  lfnst_rd_col = lfnst_rd_addr[1:0];
+
+    // row * tu_width via case-shift (replaces 12-bit multiplier)
+    function [11:0] row_times_width;
+        input [1:0] row;
+        input [6:0] tw;
+        begin
+            case (tw)
+                7'd4:    row_times_width = {8'd0, row, 2'd0};
+                7'd8:    row_times_width = {7'd0, row, 3'd0};
+                7'd16:   row_times_width = {6'd0, row, 4'd0};
+                7'd32:   row_times_width = {5'd0, row, 5'd0};
+                7'd64:   row_times_width = {4'd0, row, 6'd0};
+                default: row_times_width = {8'd0, row, 2'd0};
+            endcase
+        end
+    endfunction
+
     wire [11:0] lfnst_rd_mem_addr = lfnst_ntrs_is_48 ?
-                    ({6'd0, lfnst_rd_row} * {5'd0, tu_width} + {10'd0, lfnst_rd_col}) :
+                    (row_times_width(lfnst_rd_row, tu_width) + {10'd0, lfnst_rd_col}) :
                     {6'd0, lfnst_rd_addr[3:0]};
 
     wire [1:0]  lfnst_blk = lfnst_wr_addr[5:4];
@@ -198,8 +214,24 @@ module its_core_500 (
     wire [1:0]  lfnst_col_in_blk = lfnst_wr_addr[1:0];
     wire [2:0]  lfnst_row48 = {1'b0, lfnst_row_in_blk} + (lfnst_blk == 2'd2 ? 3'd4 : 3'd0);
     wire [2:0]  lfnst_col48 = {1'b0, lfnst_col_in_blk} + (lfnst_blk == 2'd1 ? 3'd4 : 3'd0);
+
+    function [11:0] row48_times_width;
+        input [2:0] row;
+        input [6:0] tw;
+        begin
+            case (tw)
+                7'd4:    row48_times_width = {7'd0, row, 2'd0};
+                7'd8:    row48_times_width = {6'd0, row, 3'd0};
+                7'd16:   row48_times_width = {5'd0, row, 4'd0};
+                7'd32:   row48_times_width = {4'd0, row, 5'd0};
+                7'd64:   row48_times_width = {3'd0, row, 6'd0};
+                default: row48_times_width = {7'd0, row, 2'd0};
+            endcase
+        end
+    endfunction
+
     wire [11:0] lfnst_wr_mem_addr = lfnst_ntrs_is_48 ?
-                    ({6'd0, lfnst_row48} * {5'd0, tu_width} + {9'd0, lfnst_col48}) :
+                    (row48_times_width(lfnst_row48, tu_width) + {9'd0, lfnst_col48}) :
                     {6'd0, lfnst_wr_addr};
 
     // LFNST BRAM read pipeline: delay data_in_vld by 2 cycles to match
@@ -351,19 +383,20 @@ module its_core_500 (
     end
 
     // ========================================
-    // ROM Instantiation
+    // ROM Instantiation (shared: row/col engines are strictly sequential)
     // ========================================
-    its_rom u_row_rom (
+    wire        is_col_phase = (state == S_COL_START || state == S_COL_RUN);
+    wire [13:0] shared_rom_addr = is_col_phase ? col_rom_addr : row_rom_addr;
+    wire [15:0] shared_rom_coeff;
+
+    its_rom u_shared_rom (
         .clk   (clk_core),
-        .addr  (row_rom_addr),
-        .coeff (row_rom_coeff)
+        .addr  (shared_rom_addr),
+        .coeff (shared_rom_coeff)
     );
 
-    its_rom u_col_rom (
-        .clk   (clk_core),
-        .addr  (col_rom_addr),
-        .coeff (col_rom_coeff)
-    );
+    assign row_rom_coeff = shared_rom_coeff;
+    assign col_rom_coeff = shared_rom_coeff;
 
     its_lfnst_rom u_lfnst_rom (
         .clk   (clk_core),
@@ -583,7 +616,7 @@ module its_core_500 (
     // ========================================
     // Transpose Buffer Write
     // ========================================
-    reg [5:0] tp_col_cnt;
+    // tp_col_cnt removed — debug-only, unused by logic
 
     always @(posedge clk_core) begin
         if (state == S_ROW_RUN && row_out_vld)
@@ -593,17 +626,10 @@ module its_core_500 (
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n) begin
             tp_wr_cnt <= 12'd0;
-            tp_col_cnt <= 6'd0;
         end else if (cmd_fifo_rd_en_r) begin
             tp_wr_cnt <= 12'd0;
-            tp_col_cnt <= 6'd0;
-        end else if (state == S_ROW_START) begin
-            tp_col_cnt <= 6'd0;
         end else if (state == S_ROW_RUN && row_out_vld) begin
-            tp_col_cnt <= tp_col_cnt + 6'd1;
             tp_wr_cnt <= tp_wr_cnt + 12'd1;
-        end else if (state != S_ROW_START && state != S_ROW_RUN) begin
-            tp_col_cnt <= 6'd0;
         end
     end
 
@@ -760,23 +786,7 @@ module its_core_500 (
             out_mem_wr_addr <= out_mem_wr_addr + {5'd0, tu_width[6:0]};
     end
 
-    // Raster scan address generation
-    always @(posedge clk_core or negedge rst_n) begin
-        if (!rst_n) begin
-            out_row_cnt <= 7'd0;
-            out_col_cnt <= 7'd0;
-        end else if (write_fire) begin
-            if (out_col_cnt + 7'd4 >= {1'b0, tu_width[6:0]}) begin
-                out_col_cnt <= 7'd0;
-                out_row_cnt <= out_row_cnt + 7'd1;
-            end else begin
-                out_col_cnt <= out_col_cnt + 7'd4;
-            end
-        end else if (state != S_OUT) begin
-            out_row_cnt <= 7'd0;
-            out_col_cnt <= 7'd0;
-        end
-    end
+    // out_row_cnt / out_col_cnt always block removed — debug-only
 
     // Done pulse
     always @(posedge clk_core or negedge rst_n) begin
