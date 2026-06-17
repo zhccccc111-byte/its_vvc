@@ -249,22 +249,21 @@ module its_top (
     end
 
     // ========================================
-    // ROM Instantiation
+    // ROM Instantiation (shared: row/col engines are strictly sequential)
     // ========================================
+    wire        is_col_phase = (state == S_COL_START || state == S_COL_RUN);
+    wire [13:0] shared_rom_addr = is_col_phase ? col_rom_addr : row_rom_addr;
+    wire [15:0] shared_rom_coeff;
 
-    // Row engine ROM
-    its_rom u_row_rom (
+    its_rom u_shared_rom (
         .clk   (clk),
-        .addr  (row_rom_addr),
-        .coeff (row_rom_coeff)
+        .addr  (shared_rom_addr),
+        .coeff (shared_rom_coeff)
     );
 
-    // Column engine ROM
-    its_rom u_col_rom (
-        .clk   (clk),
-        .addr  (col_rom_addr),
-        .coeff (col_rom_coeff)
-    );
+    // Route shared ROM output to both engines
+    assign row_rom_coeff = shared_rom_coeff;
+    assign col_rom_coeff = shared_rom_coeff;
 
     // LFNST ROM
     its_lfnst_rom u_lfnst_rom (
