@@ -195,6 +195,19 @@ module its_transform_engine (
                                  pf_rom_row == 2'd3 && pf_rom_col >= size_m1[5:0]);
     wire        mac_clr = (state == S_LOAD && load_cnt == 6'd0 && data_in_vld) || pf_to_compute;
 
+    // Register mac_clr to break pf_to_compute → mac_clr → result_reg combinational path
+    // (10 logic levels → 4 + 6). Timing safe: MAC pipeline has 2-cycle en delay,
+    // so 1-cycle clr delay clears before first accumulate.
+`ifdef SYNTHESIS
+    (* max_fanout = 16 *) reg mac_clr_r;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            mac_clr_r <= 1'b0;
+        else
+            mac_clr_r <= mac_clr;
+    end
+`endif
+
     // pf_to_compute_d: 1-cycle delayed pf_to_compute
     // Used to write the last coefficient from ROM pipeline to coeff_buf
     reg        pf_to_compute_d;
@@ -267,10 +280,10 @@ module its_transform_engine (
     wire        mac_valid [0:3];
 
 `ifdef SYNTHESIS
-    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r0), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
-    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r1), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
-    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r2), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
-    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r3), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
+    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr_r), .a(mac_data_r0), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
+    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr_r), .a(mac_data_r1), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
+    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr_r), .a(mac_data_r2), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
+    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr_r), .a(mac_data_r3), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
 `else
     its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
     its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
