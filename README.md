@@ -46,7 +46,7 @@ its_vvc/
 │   ├── ppa_report.md               # PPA 报告
 │   └── fix_log.md                  # 修复记录
 ├── tb/
-│   ├── its_tb.v                    # 测试平台 (95 个测试用例)
+│   ├── its_tb.v                    # 测试平台 (1444 个测试用例)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
 │   ├── run.do                      # ModelSim 仿真脚本
@@ -178,20 +178,23 @@ cd sim
 vsim -c -do "do run.do"
 ```
 
-预期输出: `ALL TESTS PASSED!`，95 个测试用例全部通过。
+预期输出: `ALL TESTS PASSED!`，1444 个测试用例全部通过。
 
-### 5.2 测试用例覆盖 (共 94 个)
+### 5.2 测试用例覆盖 (共 1444 个)
+
+穷举覆盖 VVC 赛题要求的所有 (尺寸×变换×LFNST) 组合：
 
 | 类别 | 数量 | 覆盖范围 |
 |------|------|---------|
-| DCT2 | 25 | 4x4 ~ 64x64 全部 25 种块大小 |
-| DCT8 | 16 | 4x4 ~ 32x32 全部 16 种块大小 |
-| DST7 | 16 | 4x4 ~ 32x32 全部 16 种块大小 |
-| LFNST (nTrs=16) | 8 | 4 setIdx x 2 idx |
-| LFNST (nTrs=48) | 8 | 4 setIdx x 2 idx |
-| LFNST+DCT2 | 6 | 8x16, 16x8, 16x16, 16x32, 32x16, 32x32 |
-| 连续 TU | 8 | 无复位连续处理，覆盖 DCT2/DCT8/DST7/LFNST |
-| 反压 | 8 | 输出反压 (3高/2低)，覆盖 DCT2/DCT8/DST7/LFNST |
+| DCT2 回归 | 225 | 25 尺寸 × 9 LFNST 配置 |
+| MTS 回归 | 1152 | 16 尺寸 × 8 变换对 × 9 LFNST 配置 |
+| 反压 | 37 | 从 1377 中采样，3on/2off 模式 |
+| 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
+| 协议 (continuous) | 20 | 无复位连续 TU 处理 |
+
+**LFNST 配置** (每种尺寸×变换组合 9 个): lfnst_idx=0 random_sparse (1) + lfnst_idx=1 set0~3 low_freq (4) + lfnst_idx=2 set0~3 extreme_low_freq (4)
+
+**MTS 变换对** (8 种): DCT8×DST7, DST7×DCT8, DST7×DST7, DCT8×DCT8, DCT2×DST7, DST7×DCT2, DCT2×DCT8, DCT8×DCT2
 
 每个测试用例与 Python 参考模型 (ref_model.py) 逐点比对输出值。
 
@@ -310,6 +313,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v4.1** | | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |
 | **v4.0** | `v4.0-ultrascale-plus-500mhz` | 零改动 RTL 移植 UltraScale+ (xcku5p-2)，500MHz 达标 | **+0.030ns** | 108/108 |
 | v3.9 | | mac_clr 注册（10 级控制链拆为 4+6），Top-20 全为 FF→DSP 物理路径 | -1.733ns (A7) | 108/108 |
 | v3.8 | `v3.8-mac-data-replicate` | mac_data_r 复制为 4 份（fanout 60→15），消除所有 RTL 逻辑瓶颈 | -1.736ns | 108/108 |
