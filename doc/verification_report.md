@@ -187,35 +187,37 @@
 ### 3.2 测试结果
 
 ```
-=== dct2_4x4 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
+=== [REGRESSION] 0000:4x4_DCT2xDCT2_lfnst0_s0 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
   PASS (16 outputs)
 
-=== dct2_4x8 (w=4 h=8 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
-  PASS (32 outputs)
+=== [REGRESSION] 0001:4x4_DCT2xDCT2_lfnst1_s0 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=1) ===
+  PASS (16 outputs)
 
-... (中间 73 个常规测试省略) ...
+... (中间 1375 个回归测试省略) ...
 
-=== dct2_32x32_lfnst1 (w=32 h=32 tr_h=0 tr_v=0 sidx=0 lfnst=1) ===
+=== [REGRESSION] 1376:32x32_DCT8xDCT2_lfnst2_s3 (w=32 h=32 tr_h=1 tr_v=0 sidx=3 lfnst=2) ===
   PASS (1024 outputs)
 
-=== [CONTINUOUS] cont_dct2_4x4 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
+=== [END_SAME_CYCLE] 0000:4x4_DCT2xDCT2_lfnst0_s0 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
   PASS (16 outputs)
 
-... (中间 6 个连续 TU 测试省略) ...
+... (中间 8 个 end_same_cycle 测试省略) ...
 
-=== [CONTINUOUS] cont_lfnst16_s1_i2 (w=4 h=4 tr_h=0 tr_v=0 sidx=1 lfnst=2) ===
+=== [CONTINUOUS] 0000:4x4_DCT2xDCT2_lfnst0_s0 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
   PASS (16 outputs)
 
-=== [BACKPRESSURE] bp_dct2_4x4 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
+... (中间 18 个连续 TU 测试省略) ...
+
+=== [BACKPRESSURE] 0000:4x4_DCT2xDCT2_lfnst0_s0 (w=4 h=4 tr_h=0 tr_v=0 sidx=0 lfnst=0) ===
   PASS (16 outputs)
 
-... (中间 6 个反压测试省略) ...
+... (中间 35 个反压测试省略) ...
 
-=== [BACKPRESSURE] bp_lfnst48_s0_i1 (w=8 h=8 tr_h=0 tr_v=0 sidx=0 lfnst=1) ===
-  PASS (64 outputs)
+=== [BACKPRESSURE] 1376:32x32_DCT8xDCT2_lfnst2_s3 (w=32 h=32 tr_h=1 tr_v=0 sidx=3 lfnst=2) ===
+  PASS (1024 outputs)
 
 ========================================
-Test Summary: 95 passed, 0 failed (total 95)
+Test Summary: 1444 passed, 0 failed (total 1444)
 ========================================
 ALL TESTS PASSED!
 ```
@@ -224,17 +226,16 @@ ALL TESTS PASSED!
 
 | 指标 | 值 |
 |------|-----|
-| 常规测试用例 | 83 |
-| 连续 TU 测试 | 8 |
-| 反压测试 | 8 |
-| it_data_end 同拍测试 | 3 |
-| 边界输入测试 | 5 |
-| 非方阵 LFNST 测试 | 4 (含在常规中) |
-| 测试用例总数 | 108 |
-| 通过 | 108 |
+| DCT2 回归测试 | 225 (25 尺寸 × 9 LFNST) |
+| MTS 回归测试 | 1152 (16 尺寸 × 8 变换对 × 9 LFNST) |
+| 反压测试 | 37 |
+| 协议测试 (end_same_cycle) | 10 |
+| 协议测试 (continuous) | 20 |
+| 测试用例总数 | 1444 |
+| 通过 | 1444 |
 | 失败 | 0 |
 | 协议违规 | 0 |
-| 仿真耗时 | ~3 秒 |
+| 仿真耗时 | ~17 秒 |
 
 ---
 
@@ -265,16 +266,16 @@ ALL TESTS PASSED!
 
 ## 5. 验证结论
 
-1. **功能正确性**：全部 108 个测试用例通过，RTL 输出与 Python 参考模型 bit-exact 匹配
-2. **变换覆盖**：DCT2 (25 种) + DCT8 (16 种) + DST7 (16 种) = 57 种变换组合全覆盖
-3. **LFNST 覆盖**：16 个场景 (4 setIdx x 2 idx x 2 nTrs) + 4 个非方阵组合全部正确
-4. **LFNST+DCT2 强制**：LFNST 激活时主变换强制 DCT2，1 个验证用例通过
+1. **功能正确性**：全部 1444 个测试用例通过，RTL 输出与 Python 参考模型 bit-exact 匹配
+2. **穷举回归**：1377 个 (尺寸×变换×LFNST) 组合全覆盖，与 VVC 赛题对标
+3. **变换覆盖**：DCT2 (25 种) + DCT8/DST7 (16 尺寸 × 8 MTS 组合) 全覆盖
+4. **LFNST 覆盖**：9 LFNST 配置 (lfnst0/1/2 × 4 setIdx) × 全部尺寸组合
 5. **光栅扫描输出**：out_mem 按 row-major 写入，golden 按 flatten_raster() 生成
-6. **反压协议**：8 个反压测试通过，全局 monitor 检测 `req=0 → vld=0`，0 违规
+6. **反压协议**：37 个反压测试通过，3on/2off 模式，全局 monitor 检测 `req=0 → vld=0`，0 违规
 7. **尾拍保护**：反压测试后验证无重复 vld 脉冲
-8. **it_data_end 时序**：3 个同拍测试通过，支持 end 与最后一个输入同拍
-9. **边界输入**：全零、单 DC、最大/最小值、稀疏随机全部通过
-10. **连续 TU 处理**：8 个无复位连续 TU 测试通过，in_mem 清零正确
+8. **it_data_end 时序**：10 个 end_same_cycle 测试通过，支持 end 与最后一个输入同拍
+9. **边界输入**：random_sparse / low_freq / extreme_low_freq 三种模式全覆盖
+10. **连续 TU 处理**：20 个无复位连续 TU 测试通过，in_mem 清零正确
 11. **接口合规性**：22-bit it_info 接口、it_data_end 信号符合赛题规范
 
 **验证状态：PASS**
