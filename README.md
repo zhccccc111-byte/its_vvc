@@ -215,13 +215,13 @@ vsim -c -do "do run.do"
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-2.081 ns** |
-| TNS | -14,540 ns |
+| WNS (Setup) | **-1.859 ns** |
+| TNS | -7,936 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
-| Failing Endpoints | 17,234 |
+| Failing Endpoints | 9,830 |
 
-**说明**: WNS = -2.081ns，worst path 为列引擎 DistRAM 路径 (`col_eng_rd_addr_reg → u_col_engine/line_buf_reg`，routing 占 73%)。输出控制链优化（clr_limit 寄存化 + last_out_cnt 预锁存 + out_done 寄存退出条件 + 清除延迟启动一拍）消除了原 `total_points → state CE` 的 8 级逻辑路径，failing endpoints 从 18,377 降至 17,234。
+**说明**: WNS = -1.859ns，worst path 为行引擎 ROM 地址路径 (`u_row_engine/size_shift_reg → u_row_rom/coeff_reg_1/ADDRARDADDR`，5 级逻辑：2 CARRY4 + 3 LUT6，routing 占 63%)。列引擎输入 DistRAM 路径已通过 tp_buf 读数据流水线化消除，failing endpoints 从 17,234 降至 9,830。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合读 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用 P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异（2/108 PASS），这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
@@ -278,7 +278,8 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.5** | | 输出控制链优化（clr_limit 寄存化 + out_done 退出条件 + 清除延迟启动） | **-2.081ns** | 108/108 |
+| **v3.6** | | 列引擎输入 tp_buf 流水线化（切断 DistRAM→line_buf 组合链） | **-1.859ns** | 108/108 |
+| v3.5 | | 输出控制链优化（clr_limit 寄存化 + out_done 退出条件 + 清除延迟启动） | -2.081ns | 108/108 |
 | v3.4 | | LFNST 输出流水线拆分 + base_addr 寄存化 | -2.020ns | 108/108 |
 | v3.3 | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | -2.289ns | 108/108 |
 | v3.2 | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | -2.115ns | 94/94 |
@@ -300,7 +301,18 @@ vivado -mode batch -source its_core_500_ooc.tcl
 - 状态机 S_OUT 退出改用 `out_done`
 - 清除启动延迟一拍（`clearing_start` 脉冲），确保 `clr_limit_r` 从已注册的 `total_points` 锁存，避免乘法器暴露在关键路径
 
-**综合结果**: WNS = -2.081ns（默认 OOC），failing endpoints 从 18,377 降至 17,234。原 worst path 已从 top-20 消除，新 worst path 为列引擎 DistRAM routing 路径（73% route）。
+**综合结果**: WNS = -2.081ns（默认 OOC），failing endpoints 从 18,377 降至 17,234。
+
+### v3.6 详细改动
+
+**目标**: 切断列引擎输入 `tp_buf DistRAM → line_buf` 的组合链。
+
+**its_core_500.v**:
+- 新增 `tp_buf_rd_data` 流水寄存器，在 tp_buf DistRAM 读和 col_engine `data_in` 之间插入一级流水
+- 新增 `col_data_in_vld_d` 延迟有效信号（1 拍），与 `tp_buf_rd_data` 对齐
+- col_engine `data_in` 改接 `tp_buf_rd_data`，`data_in_vld` 改接 `col_data_in_vld_d`
+
+**综合结果**: WNS = -1.859ns（默认 OOC），failing endpoints 从 17,234 降至 9,830。worst path 转移到行引擎 ROM 地址路径（`size_shift_reg → coeff_reg_1/ADDRARDADDR`，5 级逻辑，route 63%）。
 
 ### v3.4 详细改动
 

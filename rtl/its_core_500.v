@@ -610,14 +610,29 @@ module its_core_500 (
     // ========================================
     // Column Transform Engine
     // ========================================
+    // Pipeline register: break tp_buf DistRAM → col_engine line_buf path
+    reg signed [15:0] tp_buf_rd_data;
+    always @(posedge clk_core) begin
+        tp_buf_rd_data <= tp_buf[tp_rd_base + col_eng_rd_addr];
+    end
+
+    // Delay data_in_vld to align with pipelined tp_buf_rd_data
+    reg col_data_in_vld_d;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            col_data_in_vld_d <= 1'b0;
+        else
+            col_data_in_vld_d <= (state == S_COL_RUN);
+    end
+
     its_transform_engine u_col_engine (
         .clk        (clk_core),
         .rst_n      (rst_n),
         .start      (state == S_COL_START),
         .tr_type    (col_tr_type),
         .size       (tu_height[6:0]),
-        .data_in    (tp_buf[tp_rd_base + col_eng_rd_addr]),
-        .data_in_vld(state == S_COL_RUN),
+        .data_in    (tp_buf_rd_data),
+        .data_in_vld(col_data_in_vld_d),
         .data_in_req(col_data_in_req),
         .rom_addr   (col_rom_addr),
         .rom_coeff  (col_rom_coeff),
