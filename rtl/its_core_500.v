@@ -414,7 +414,14 @@ module its_core_500 (
     // ========================================
     // Memory clear control
     // ========================================
-    wire [11:0] clr_limit = total_points[11:0] - 12'd1;
+    // clr_limit: registered to break total_points subtraction from critical path
+    reg [11:0] clr_limit_r;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            clr_limit_r <= 12'd0;
+        else if (cmd_fifo_rd_en_r && state == S_IDLE)
+            clr_limit_r <= total_points[11:0] - 12'd1;
+    end
 
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n) begin
@@ -424,7 +431,7 @@ module its_core_500 (
             clearing <= 1'b1;
             clr_cnt  <= 12'd0;
         end else if (clearing) begin
-            if (clr_cnt == clr_limit)
+            if (clr_cnt == clr_limit_r)
                 clearing <= 1'b0;
             else
                 clr_cnt <= clr_cnt + 12'd1;
@@ -442,7 +449,7 @@ module its_core_500 (
                 if (cmd_fifo_rd_en_r) state <= S_CLEAR;
             end
             S_CLEAR: begin
-                if (clr_cnt == clr_limit) state <= S_LOAD;
+                if (clr_cnt == clr_limit_r) state <= S_LOAD;
             end
             S_LOAD: begin
                 if (input_last_detected) begin
@@ -480,7 +487,7 @@ module its_core_500 (
             S_OUT: begin
                 if (total_points == 0)
                     state <= S_DONE;
-                else if (out_pipe_flush && !out_valid_pipe)
+                else if (out_done)
                     state <= S_DONE;
             end
             S_DONE: state <= S_IDLE;
@@ -630,7 +637,7 @@ module its_core_500 (
 
     // Can accept new read only when pipeline is empty (no pending write)
     wire out_pipe_ready = !out_valid_pipe;
-    wire out_read_en = (state == S_OUT && out_pipe_ready && out_cnt < total_points);
+    wire out_read_en = (state == S_OUT && out_pipe_ready && !out_pipe_flush);
     wire write_fire  = out_valid_pipe && !output_fifo_full;
 
     // Stage 1: capture out_mem read result (only when no pending write)
@@ -673,15 +680,37 @@ module its_core_500 (
             out_cnt <= out_cnt + 12'd4;
     end
 
+    // last_out_cnt: pre-computed out_cnt value for the last output beat
+    // Avoids wide out_cnt >= total_points comparison on critical path
+    reg [11:0] last_out_cnt;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            last_out_cnt <= 12'd0;
+        else if (cmd_fifo_rd_en_r && state == S_IDLE)
+            last_out_cnt <= total_points[11:0] - 12'd4;
+    end
+
     // out_pipe_flush: all data has been READ from out_mem into pipeline
-    // State machine waits for pipeline drain (write_fire for last beat) before S_DONE
+    // Fires when the last beat is actually written to FIFO (write_fire)
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             out_pipe_flush <= 1'b0;
         else if (state != S_OUT)
             out_pipe_flush <= 1'b0;
-        else if (out_cnt >= total_points && total_points != 0)
+        else if (write_fire && out_cnt == last_out_cnt)
             out_pipe_flush <= 1'b1;
+    end
+
+    // out_done: registered exit condition for state machine
+    // Breaks out_pipe_flush → state_reg/CE combinational path
+    reg out_done;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            out_done <= 1'b0;
+        else if (state != S_OUT)
+            out_done <= 1'b0;
+        else if (out_pipe_flush && !out_valid_pipe && !write_fire)
+            out_done <= 1'b1;
     end
 
     // out_mem write port
