@@ -713,386 +713,26 @@ module its_tb;
         repeat(5) @(posedge clk);
 
         // ============================
-        // DCT2 (25 block sizes)
+        // Exhaustive regression: 1377 test cases
+        // (DCT2 25×9 + MTS 16×8×9 = 225 + 1152)
         // ============================
-        run_test("dct2_4x4",    7'd4,  7'd4,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
-        run_test("dct2_4x8",    7'd4,  7'd8,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x8_golden.hex");
-        run_test("dct2_4x16",   7'd4,  7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x16_golden.hex");
-        run_test("dct2_4x32",   7'd4,  7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x32_golden.hex");
-        run_test("dct2_4x64",   7'd4,  7'd64, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x64_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x64_golden.hex");
-        run_test("dct2_8x4",    7'd8,  7'd4,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x4_golden.hex");
-        run_test("dct2_16x4",   7'd16, 7'd4,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x4_golden.hex");
-        run_test("dct2_32x4",   7'd32, 7'd4,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x4_golden.hex");
-        run_test("dct2_64x4",   7'd64, 7'd4,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x4_golden.hex");
-        run_test("dct2_8x8",    7'd8,  7'd8,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_golden.hex");
-        run_test("dct2_8x16",   7'd8,  7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x16_golden.hex");
-        run_test("dct2_8x32",   7'd8,  7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x32_golden.hex");
-        run_test("dct2_8x64",   7'd8,  7'd64, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x64_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x64_golden.hex");
-        run_test("dct2_16x8",   7'd16, 7'd8,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x8_golden.hex");
-        run_test("dct2_32x8",   7'd32, 7'd8,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x8_golden.hex");
-        run_test("dct2_64x8",   7'd64, 7'd8,  2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x8_golden.hex");
-        run_test("dct2_16x16",  7'd16, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_golden.hex");
-        run_test("dct2_16x32",  7'd16, 7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x32_golden.hex");
-        run_test("dct2_16x64",  7'd16, 7'd64, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x64_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x64_golden.hex");
-        run_test("dct2_32x16",  7'd32, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x16_golden.hex");
-        run_test("dct2_32x32",  7'd32, 7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_golden.hex");
-        run_test("dct2_32x64",  7'd32, 7'd64, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x64_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x64_golden.hex");
-        run_test("dct2_64x16",  7'd64, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x16_golden.hex");
-        run_test("dct2_64x32",  7'd64, 7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x32_golden.hex");
-        run_test("dct2_64x64",  7'd64, 7'd64, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x64_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x64_golden.hex");
+        `include "D:/Workspace/its_vvc/tb/test_vectors/regression_tests.vh"
 
         // ============================
-        // DCT8 (16 block sizes)
+        // it_data_end same-cycle protocol tests
         // ============================
-        run_test("dct8_4x4",    7'd4,  7'd4,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x4_golden.hex");
-        run_test("dct8_4x8",    7'd4,  7'd8,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x8_golden.hex");
-        run_test("dct8_4x16",   7'd4,  7'd16, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x16_golden.hex");
-        run_test("dct8_4x32",   7'd4,  7'd32, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_4x32_golden.hex");
-        run_test("dct8_8x4",    7'd8,  7'd4,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x4_golden.hex");
-        run_test("dct8_16x4",   7'd16, 7'd4,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x4_golden.hex");
-        run_test("dct8_32x4",   7'd32, 7'd4,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x4_golden.hex");
-        run_test("dct8_8x8",    7'd8,  7'd8,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_golden.hex");
-        run_test("dct8_8x16",   7'd8,  7'd16, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x16_golden.hex");
-        run_test("dct8_8x32",   7'd8,  7'd32, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x32_golden.hex");
-        run_test("dct8_16x8",   7'd16, 7'd8,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x8_golden.hex");
-        run_test("dct8_32x8",   7'd32, 7'd8,  2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x8_golden.hex");
-        run_test("dct8_16x16",  7'd16, 7'd16, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x16_golden.hex");
-        run_test("dct8_16x32",  7'd16, 7'd32, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_16x32_golden.hex");
-        run_test("dct8_32x16",  7'd32, 7'd16, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x16_golden.hex");
-        run_test("dct8_32x32",  7'd32, 7'd32, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_32x32_golden.hex");
+        `include "D:/Workspace/its_vvc/tb/test_vectors/end_same_cycle_tests.vh"
 
         // ============================
-        // DST7 (16 block sizes)
-        // ============================
-        run_test("dst7_4x4",    7'd4,  7'd4,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x4_golden.hex");
-        run_test("dst7_4x8",    7'd4,  7'd8,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x8_golden.hex");
-        run_test("dst7_4x16",   7'd4,  7'd16, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x16_golden.hex");
-        run_test("dst7_4x32",   7'd4,  7'd32, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_4x32_golden.hex");
-        run_test("dst7_8x4",    7'd8,  7'd4,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x4_golden.hex");
-        run_test("dst7_16x4",   7'd16, 7'd4,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x4_golden.hex");
-        run_test("dst7_32x4",   7'd32, 7'd4,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x4_golden.hex");
-        run_test("dst7_8x8",    7'd8,  7'd8,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_golden.hex");
-        run_test("dst7_8x16",   7'd8,  7'd16, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x16_golden.hex");
-        run_test("dst7_8x32",   7'd8,  7'd32, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x32_golden.hex");
-        run_test("dst7_16x8",   7'd16, 7'd8,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x8_golden.hex");
-        run_test("dst7_32x8",   7'd32, 7'd8,  2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x8_golden.hex");
-        run_test("dst7_16x16",  7'd16, 7'd16, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x16_golden.hex");
-        run_test("dst7_16x32",  7'd16, 7'd32, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_16x32_golden.hex");
-        run_test("dst7_32x16",  7'd32, 7'd16, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x16_golden.hex");
-        run_test("dst7_32x32",  7'd32, 7'd32, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_32x32_golden.hex");
-
-        // ============================
-        // LFNST nTrs=16 (4 setIdx x 2 idx, using 4x4)
-        // ============================
-        run_test("lfnst16_s0_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
-        run_test("lfnst16_s0_i2", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i2_golden.hex");
-        run_test("lfnst16_s1_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd1, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i1_golden.hex");
-        run_test("lfnst16_s1_i2", 7'd4, 7'd4, 2'd0, 2'd0, 2'd1, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i2_golden.hex");
-        run_test("lfnst16_s2_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd2, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s2_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s2_i1_golden.hex");
-        run_test("lfnst16_s2_i2", 7'd4, 7'd4, 2'd0, 2'd0, 2'd2, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s2_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s2_i2_golden.hex");
-        run_test("lfnst16_s3_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd3, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s3_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s3_i1_golden.hex");
-        run_test("lfnst16_s3_i2", 7'd4, 7'd4, 2'd0, 2'd0, 2'd3, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s3_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s3_i2_golden.hex");
-
-        // ============================
-        // LFNST nTrs=48 (4 setIdx x 2 idx, using 8x8)
-        // ============================
-        run_test("lfnst48_s0_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_golden.hex");
-        run_test("lfnst48_s0_i2", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i2_golden.hex");
-        run_test("lfnst48_s1_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd1, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s1_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s1_i1_golden.hex");
-        run_test("lfnst48_s1_i2", 7'd8, 7'd8, 2'd0, 2'd0, 2'd1, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s1_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s1_i2_golden.hex");
-        run_test("lfnst48_s2_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd2, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s2_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s2_i1_golden.hex");
-        run_test("lfnst48_s2_i2", 7'd8, 7'd8, 2'd0, 2'd0, 2'd2, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s2_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s2_i2_golden.hex");
-        run_test("lfnst48_s3_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd3, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s3_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s3_i1_golden.hex");
-        run_test("lfnst48_s3_i2", 7'd8, 7'd8, 2'd0, 2'd0, 2'd3, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s3_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s3_i2_golden.hex");
-
-        // ============================
-        // LFNST + non-DCT2 (verify RTL forces DCT2 when lfnst active)
-        // tr_type=1 (DCT8) but lfnst_idx=1 → should use DCT2
-        // ============================
-        run_test("lfnst16_dct8_force", 7'd4, 7'd4, 2'd1, 2'd1, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
-
-        // ============================
-        // LFNST nTrs=48 with different block sizes
-        // ============================
-        run_test("dct2_8x16_lfnst1",  7'd8,  7'd16, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x16_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x16_lfnst1_golden.hex");
-        run_test("dct2_16x8_lfnst1",  7'd16, 7'd8,  2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x8_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x8_lfnst1_golden.hex");
-        run_test("dct2_16x16_lfnst1", 7'd16, 7'd16, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_lfnst1_golden.hex");
-        run_test("dct2_16x32_lfnst1", 7'd16, 7'd32, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x32_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x32_lfnst1_golden.hex");
-        run_test("dct2_32x16_lfnst1", 7'd32, 7'd16, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x16_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x16_lfnst1_golden.hex");
-        run_test("dct2_32x32_lfnst1", 7'd32, 7'd32, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_lfnst1_golden.hex");
-
-        // ============================
-        // Non-square LFNST combinations
-        // ============================
-        run_test("dct2_4x64_lfnst1", 7'd4, 7'd64, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x64_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x64_lfnst1_golden.hex");
-        run_test("dct2_64x4_lfnst1", 7'd64, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x4_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x4_lfnst1_golden.hex");
-        run_test("dct2_8x64_lfnst1", 7'd8, 7'd64, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x64_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x64_lfnst1_golden.hex");
-        run_test("dct2_64x8_lfnst1", 7'd64, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x8_lfnst1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_64x8_lfnst1_golden.hex");
-
-        // ============================
-        // Boundary input tests
-        // ============================
-        run_test("boundary_zero_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_zero_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_zero_4x4_golden.hex");
-        run_test("boundary_dc_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_dc_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_dc_4x4_golden.hex");
-        run_test("boundary_maxval_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_maxval_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_maxval_4x4_golden.hex");
-        run_test("boundary_minval_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_minval_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_minval_4x4_golden.hex");
-        run_test("boundary_sparse_8x8", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_sparse_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/boundary_sparse_8x8_golden.hex");
-
-        // ============================
-        // it_data_end same-cycle tests (end asserted on same cycle as last input)
-        // ============================
-        run_test_end_same_cycle("end_same_dct2_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
-        run_test_end_same_cycle("end_same_dct2_8x8", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_golden.hex");
-        run_test_end_same_cycle("end_same_lfnst16", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
-
-        // ============================
-        // Continuous TU test (no reset between TUs)
+        // Continuous TU tests (no reset between TUs)
         // ============================
         $display("\n--- Continuous TU Tests (no reset) ---");
-
-        // TU 1: small DCT2 → TU 2: large DCT2 (tests memory clearing)
-        run_test_continuous("cont_dct2_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
-        run_test_continuous("cont_dct2_16x16", 7'd16, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_golden.hex");
-
-        // TU 3: DCT8 → TU 4: DST7 (tests different transform types back to back)
-        run_test_continuous("cont_dct8_8x8", 7'd8, 7'd8, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_golden.hex");
-        run_test_continuous("cont_dst7_8x8", 7'd8, 7'd8, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_golden.hex");
-
-        // TU 5: LFNST → TU 6: non-LFNST (tests LFNST state transition)
-        run_test_continuous("cont_lfnst16_s0_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
-        run_test_continuous("cont_dct2_4x4_b", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
-
-        // TU 7: LFNST nTrs=48 → TU 8: LFNST nTrs=16 (tests nTrs transition)
-        run_test_continuous("cont_lfnst48_s0_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_golden.hex");
-        run_test_continuous("cont_lfnst16_s1_i2", 7'd4, 7'd4, 2'd0, 2'd0, 2'd1, 2'd2,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i2_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s1_i2_golden.hex");
+        `include "D:/Workspace/its_vvc/tb/test_vectors/continuous_tests.vh"
 
         // ============================
-        // Backpressure tests (random output backpressure)
+        // Backpressure tests (3on/2off toggle)
         // ============================
-        run_test_backpressure("bp_dct2_4x4", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
-        run_test_backpressure("bp_dct2_8x8", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_8x8_golden.hex");
-        run_test_backpressure("bp_dct2_16x16", 7'd16, 7'd16, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_16x16_golden.hex");
-        run_test_backpressure("bp_dct2_32x32", 7'd32, 7'd32, 2'd0, 2'd0, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct2_32x32_golden.hex");
-        run_test_backpressure("bp_dct8_8x8", 7'd8, 7'd8, 2'd1, 2'd1, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dct8_8x8_golden.hex");
-        run_test_backpressure("bp_dst7_8x8", 7'd8, 7'd8, 2'd2, 2'd2, 2'd0, 2'd0,
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/dst7_8x8_golden.hex");
-        run_test_backpressure("bp_lfnst16_s0_i1", 7'd4, 7'd4, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst16_s0_i1_golden.hex");
-        run_test_backpressure("bp_lfnst48_s0_i1", 7'd8, 7'd8, 2'd0, 2'd0, 2'd0, 2'd1,
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_input.hex",
-                 "D:/Workspace/its_vvc/tb/test_vectors/lfnst48_s0_i1_golden.hex");
+        `include "D:/Workspace/its_vvc/tb/test_vectors/backpressure_tests.vh"
 
         // ============================
         // Summary
@@ -1109,8 +749,53 @@ module its_tb;
         $finish;
     end
 
-    // Global timeout watchdog
+    // Global timeout watchdog (~1000s for 1444 regression tests)
     initial begin
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
+        #2000000000;
         #2000000000;
         #2000000000;
         #2000000000;
