@@ -68,13 +68,17 @@ module its_lfnst (
     // ========================================
     reg [12:0] rom_base;
     wire [1:0] lfnst_idx_m1 = lfnst_idx - 2'd1;
+    // set_idx*512 = {set_idx, 9'b0}, idx_m1*256 = {idx_m1, 8'b0}
+    // For nTrs=48: x*768 = x*512 + x*256 = {x,9'b0} + {x,8'b0}
     always @(*) begin
         if (!ntrs_is_48)
-            rom_base = {11'd0, lfnst_tr_set_idx} * 13'd512
-                     + {12'd0, lfnst_idx_m1[0]} * 13'd256;
-        else
+            rom_base = {lfnst_tr_set_idx, 9'd0} + {lfnst_idx_m1[0], 8'd0};
+        else begin
+            // x = {set_idx, idx_m1[0]}, 2-bit value
             rom_base = 13'd2048
-                     + ({11'd0, lfnst_tr_set_idx} * 13'd2 + {12'd0, lfnst_idx_m1[0]}) * 13'd768;
+                     + {lfnst_tr_set_idx, lfnst_idx_m1[0], 9'd0}
+                     + {1'b0, lfnst_tr_set_idx, lfnst_idx_m1[0], 8'd0};
+        end
     end
 
     // ========================================

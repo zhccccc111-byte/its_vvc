@@ -93,8 +93,7 @@ module its_top (
 
     // Output reorder buffer
     reg signed [9:0] out_mem [0:4095];
-    reg [6:0]  out_row_cnt;
-    reg [6:0]  out_col_cnt;
+    // out_row_cnt / out_col_cnt removed — debug-only, unused by logic
 
     // Output control
     reg [12:0] out_cnt;
@@ -124,10 +123,28 @@ module its_top (
     // For nTrs=16: tu_width=4, sequential read = rd_addr[3:0]
     // For nTrs=48: tu_width>=8, read 16 elements row-major from top-left 4x4
     //   row = rd_addr[3:2], col = rd_addr[1:0], addr = row * tu_width + col
+    //   row * tu_width replaced with shift (tu_width is always power of 2)
     wire [1:0]  lfnst_rd_row = lfnst_rd_addr[3:2];
     wire [1:0]  lfnst_rd_col = lfnst_rd_addr[1:0];
+
+    // row * tu_width via case-shift (replaces 12-bit multiplier)
+    function [11:0] row_times_width;
+        input [1:0] row;
+        input [6:0] tw;
+        begin
+            case (tw)
+                7'd4:    row_times_width = {8'd0, row, 2'd0};       // row << 2
+                7'd8:    row_times_width = {7'd0, row, 3'd0};       // row << 3
+                7'd16:   row_times_width = {6'd0, row, 4'd0};       // row << 4
+                7'd32:   row_times_width = {5'd0, row, 5'd0};       // row << 5
+                7'd64:   row_times_width = {4'd0, row, 6'd0};       // row << 6
+                default: row_times_width = {8'd0, row, 2'd0};
+            endcase
+        end
+    endfunction
+
     wire [11:0] lfnst_rd_mem_addr = lfnst_ntrs_is_48 ?
-                    ({6'd0, lfnst_rd_row} * {5'd0, tu_width} + {10'd0, lfnst_rd_col}) :
+                    (row_times_width(lfnst_rd_row, tu_width) + {10'd0, lfnst_rd_col}) :
                     {6'd0, lfnst_rd_addr[3:0]};
 
     // LFNST write-back address computation for nTrs=48
@@ -137,8 +154,25 @@ module its_top (
     wire [1:0]  lfnst_col_in_blk = lfnst_wr_addr[1:0];
     wire [2:0]  lfnst_row48 = {1'b0, lfnst_row_in_blk} + (lfnst_blk == 2'd2 ? 3'd4 : 3'd0);
     wire [2:0]  lfnst_col48 = {1'b0, lfnst_col_in_blk} + (lfnst_blk == 2'd1 ? 3'd4 : 3'd0);
+
+    // row48 * tu_width via case-shift (replaces 12-bit multiplier)
+    function [11:0] row48_times_width;
+        input [2:0] row;
+        input [6:0] tw;
+        begin
+            case (tw)
+                7'd4:    row48_times_width = {7'd0, row, 2'd0};     // row << 2
+                7'd8:    row48_times_width = {6'd0, row, 3'd0};     // row << 3
+                7'd16:   row48_times_width = {5'd0, row, 4'd0};     // row << 4
+                7'd32:   row48_times_width = {4'd0, row, 5'd0};     // row << 5
+                7'd64:   row48_times_width = {3'd0, row, 6'd0};     // row << 6
+                default: row48_times_width = {7'd0, row, 2'd0};
+            endcase
+        end
+    endfunction
+
     wire [11:0] lfnst_wr_mem_addr = lfnst_ntrs_is_48 ?
-                    ({6'd0, lfnst_row48} * {5'd0, tu_width} + {9'd0, lfnst_col48}) :
+                    (row48_times_width(lfnst_row48, tu_width) + {9'd0, lfnst_col48}) :
                     {6'd0, lfnst_wr_addr};
 
     // LFNST ROM signals (13-bit for 8192 entries)
@@ -442,7 +476,7 @@ module its_top (
     //   Row 0 at [0..W-1], Row 1 at [W..2W-1], etc.
     // Column engine reads with stride W to get column data.
     // ========================================
-    reg [5:0] tp_col_cnt;  // for debug display only
+    // tp_col_cnt removed — debug-only, unused by logic
 
     // tp_buf write (no async reset for Block RAM inference)
     always @(posedge clk) begin
@@ -454,17 +488,10 @@ module its_top (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             tp_wr_cnt <= 12'd0;
-            tp_col_cnt <= 6'd0;
         end else if (it_info_vld) begin
             tp_wr_cnt <= 12'd0;
-            tp_col_cnt <= 6'd0;
-        end else if (state == S_ROW_START) begin
-            tp_col_cnt <= 6'd0;
         end else if (state == S_ROW_RUN && row_out_vld) begin
-            tp_col_cnt <= tp_col_cnt + 6'd1;
             tp_wr_cnt <= tp_wr_cnt + 12'd1;
-        end else if (state != S_ROW_START && state != S_ROW_RUN) begin
-            tp_col_cnt <= 6'd0;
         end
     end
 
@@ -577,23 +604,7 @@ module its_top (
             out_mem_wr_addr <= out_mem_wr_addr + {5'd0, tu_width[6:0]};  // stride = tu_width
     end
 
-    // Raster scan address generation
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            out_row_cnt <= 7'd0;
-            out_col_cnt <= 7'd0;
-        end else if (state == S_OUT && data_out_valid && it_data_out_req) begin
-            if (out_col_cnt + 7'd4 >= {1'b0, tu_width[6:0]}) begin
-                out_col_cnt <= 7'd0;
-                out_row_cnt <= out_row_cnt + 7'd1;
-            end else begin
-                out_col_cnt <= out_col_cnt + 7'd4;
-            end
-        end else if (state != S_OUT) begin
-            out_row_cnt <= 7'd0;
-            out_col_cnt <= 7'd0;
-        end
-    end
+    // out_row_cnt / out_col_cnt always block removed — debug-only
 
     // Output counter (synchronous reset to avoid DRC with block RAM address)
     // Increment when in S_OUT, req is high, and more data to output.
