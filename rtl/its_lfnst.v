@@ -243,10 +243,32 @@ module its_lfnst (
 
     // ========================================
     // MAC compute: y[n] = sum_j(T[n][j] * x[j])
+    // coeff_buf is BRAM (1-cycle read latency): address pre-computed 1 cycle ahead
     // coeff_buf address = comp_cnt * 16 + mac_cnt = T[comp_cnt][mac_cnt]
     // For nTrs=48, comp_cnt can be 0..47, need 6-bit row index
     // ========================================
-    wire [9:0] coeff_buf_rd_addr = {comp_cnt[5:0], 4'd0} + {4'd0, mac_cnt[3:0]};
+    // Pre-compute BRAM read address 1 cycle ahead
+    // Also register in_buf read to match BRAM 1-cycle latency
+    reg [9:0] coeff_buf_rd_addr;
+    reg signed [15:0] in_buf_rd_data;
+    always @(posedge clk) begin
+        if (state == S_LOAD && load_done) begin
+            coeff_buf_rd_addr <= 10'd0;
+            in_buf_rd_data    <= 16'd0;
+        end else if (state == S_COMPUTE) begin
+            in_buf_rd_data <= in_buf[mac_cnt];  // DistRAM combinational read, registered here
+            if (mac_cnt >= 4'd15)
+                coeff_buf_rd_addr <= {comp_cnt[5:0] + 6'd1, 4'd0};
+            else
+                coeff_buf_rd_addr <= {comp_cnt[5:0], 4'd0} + {4'd0, mac_cnt[3:0]} + 10'd1;
+        end
+    end
+
+    // BRAM read output register (coeff_buf already declared with ram_style="block")
+    reg signed [15:0] coeff_buf_rd_data;
+    always @(posedge clk) begin
+        coeff_buf_rd_data <= coeff_buf[coeff_buf_rd_addr];
+    end
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -263,9 +285,9 @@ module its_lfnst (
             mac_clr  <= 1'b1;
             first_compute <= 1'b1;
         end else if (state == S_COMPUTE) begin
-            // Keep clr for 1 cycle to flush pipeline (load_done added extra cycle)
-            mac_a   <= in_buf[mac_cnt];
-            mac_b   <= coeff_buf[coeff_buf_rd_addr];
+            // Both mac_a and mac_b use registered values (1-cycle delay from address/data)
+            mac_a   <= in_buf_rd_data;
+            mac_b   <= coeff_buf_rd_data;
             mac_en  <= 1'b1;
             if (first_compute) begin
                 mac_clr      <= 1'b1;
