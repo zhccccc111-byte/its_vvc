@@ -52,7 +52,23 @@
 
 ## 2. 测试用例
 
-### 2.1 测试矩阵 (共 95 个)
+### 2.1 测试矩阵 (共 1444 个)
+
+穷举覆盖 VVC 赛题要求的所有 (尺寸×变换×LFNST) 组合：
+
+| 类别 | 数量 | 说明 |
+|------|------|------|
+| DCT2 回归 | 225 | 25 尺寸 × 9 LFNST 配置 |
+| MTS 回归 | 1152 | 16 尺寸 × 8 变换对 × 9 LFNST 配置 |
+| 反压 | 37 | 从 1377 中采样，3on/2off 模式 |
+| 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
+| 协议 (continuous) | 20 | 无复位连续 TU 处理 |
+
+**LFNST 配置** (每种尺寸×变换组合 9 个): lfnst_idx=0 random_sparse (1) + lfnst_idx=1 set0~3 low_freq (4) + lfnst_idx=2 set0~3 extreme_low_freq (4)
+
+**MTS 变换对** (8 种): DCT8×DST7, DST7×DCT8, DST7×DST7, DCT8×DCT8, DCT2×DST7, DST7×DCT2, DCT2×DCT8, DCT8×DCT2
+
+#### 原始测试矩阵 (共 95 个，已整合到 1377 回归中)
 
 #### DCT2 (25 个块大小)
 

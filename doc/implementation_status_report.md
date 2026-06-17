@@ -5,7 +5,7 @@
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
 **基线版本：2026-06-17**
-**仿真结果：108 passed, 0 failed, 0 protocol violations**
+**仿真结果：1444 passed, 0 failed, 0 protocol violations (1377 regression + 37 backpressure + 30 protocol)**
 **500MHz 状态：UltraScale+ (xcku5p-2) WNS +0.030ns 达标**
 
 ---
@@ -120,15 +120,15 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
 | 验证环境 | **已满足** | ModelSim SE-64 10.6e testbench |
-| DCT2 全尺寸覆盖 | **已满足** | 25 个 dct2 测试 (4×4 ~ 64×64) PASS |
-| DCT8 全尺寸覆盖 | **已满足** | 16 个 dct8 测试 PASS |
-| DST7 全尺寸覆盖 | **已满足** | 16 个 dst7 测试 PASS |
-| LFNST 全场景覆盖 | **已满足** | 16 个 lfnst + 6 个 lfnst+dct2 + 4 个非方阵 PASS |
-| 输出反压测试 | **已满足** | 8 个 backpressure 测试 PASS，3拍高/2拍低模式 |
-| 连续 TU 测试 | **已满足** | 8 个 continuous 测试 PASS，无复位 |
-| 边界输入测试 | **已满足** | 5 个 boundary 测试 PASS (全零/DC/max/min/sparse) |
+| DCT2 全尺寸覆盖 | **已满足** | 25 尺寸 × 9 LFNST = 225 回归测试 PASS |
+| DCT8 全尺寸覆盖 | **已满足** | 16 尺寸 × 8 MTS 组合 × 9 LFNST = 1152 回归测试 PASS |
+| DST7 全尺寸覆盖 | **已满足** | 同上，DST7 组合已包含在 MTS 1152 中 |
+| LFNST 全场景覆盖 | **已满足** | 9 LFNST 配置 (lfnst0/1/2 × 4 setIdx) × 全部尺寸组合 PASS |
+| 输出反压测试 | **已满足** | 37 个 backpressure 测试 PASS，3拍高/2拍低模式 |
+| 连续 TU 测试 | **已满足** | 20 个 continuous 测试 PASS，无复位 |
+| 边界输入测试 | **已满足** | random_sparse/low_freq/extreme_low_freq 三种模式覆盖 |
 | 协议合规检查 | **已满足** | 全局 monitor 检查 req=0 → vld=0，0 违规 |
-| 参考模型比对 | **已满足** | Python ref_model.py bit-exact 匹配 |
+| 参考模型比对 | **已满足** | Python ref_model.py bit-exact 匹配 (1377 组合) |
 | 波形截图 | **已满足** | 6 个关键场景 SVG，见 `doc/waveforms/` |
 
 ---
@@ -141,7 +141,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 设计文档 | **已满足** | `doc/design_doc.md` |
 | 验证报告 | **已满足** | `doc/verification_report.md` |
 | PPA 报告 | **已满足** | `doc/ppa_report.md` |
-| 测试用例 | **已满足** | 108 个测试全部通过 |
+| 测试用例 | **已满足** | 1444 个测试全部通过 (1377 回归 + 37 反压 + 30 协议) |
 | 波形截图 | **已满足** | 6 个关键场景 SVG 波形，见 `doc/waveforms/` |
 
 ---
@@ -165,8 +165,8 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 | 维度 | 状态 | 说明 |
 |------|------|------|
-| 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，108 测试 0 失败 |
-| 验证 | **完成** | 108 测试用例 + 协议 monitor + 参考模型 bit-exact |
+| 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，1444 测试 0 失败 |
+| 验证 | **完成** | 1444 测试用例 (穷举 1377 组合) + 协议 monitor + 参考模型 bit-exact |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
 | PPA | **完成** | UltraScale+: LUT 2843 (1.31%), BRAM 12, DSP 9 |
 | 时序 | **完成** | UltraScale+ OOC WNS = +0.030ns，500MHz **达标** |
@@ -177,7 +177,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 ---
 
 *报告生成时间：2026-06-17*
-*基线：108 passed, 0 failed, 0 protocol violations*
+*基线：1444 passed, 0 failed, 0 protocol violations (1377 regression + 37 backpressure + 30 protocol)*
 *综合工具：Vivado 2024.1*
 *目标器件：Kintex UltraScale+ xcku5p-ffvb676-2-e / Artix-7 xc7a200tfbg484-3*
 *仿真工具：ModelSim SE-64 10.6e*
