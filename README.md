@@ -211,16 +211,16 @@ vsim -c -do "do run.do"
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| LUT as Logic | 1,993 | 216,960 | 0.92% |
-| LUT as Memory | 850 | 99,840 | 0.85% |
-| CLB Registers | 2,882 | 433,920 | 0.66% |
+| LUT as Logic | 1,929 | 216,960 | 0.89% |
+| LUT as Memory | 610 | 99,840 | 0.61% |
+| CLB Registers | 2,899 | 433,920 | 0.67% |
 | CARRY8 | 92 | 27,120 | 0.34% |
 | DSP48E2 | 9 | — | ✅ 推断正确 |
 | RAMB36E2 | 12 | — | ✅ 推断正确 |
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | **+0.030 ns** | **MET** |
+| WNS (Setup) | **+0.024 ns** | **MET** |
 | TNS | 0.000 ns | — |
 | WHS (Hold) | +0.020 ns | MET |
 | WPWS (Pulse Width) | +0.431 ns | MET |
@@ -313,6 +313,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v4.2** | `v4.2-area-optimization` | 面积优化：LUT -10.7%, DistRAM -28.2%, 控制集 -32.4% | +0.024ns | 1444/1444 |
 | **v4.1** | `v4.1-exhaustive-regression-1444` | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |
 | **v4.0** | `v4.0-ultrascale-plus-500mhz` | 零改动 RTL 移植 UltraScale+ (xcku5p-2)，500MHz 达标 | **+0.030ns** | 108/108 |
 | v3.9 | | mac_clr 注册（10 级控制链拆为 4+6），Top-20 全为 FF→DSP 物理路径 | -1.733ns (A7) | 108/108 |
