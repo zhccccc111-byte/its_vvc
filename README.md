@@ -199,7 +199,7 @@ vsim -c -do "do run.do"
 
 ## 6. 综合与 PPA
 
-### 6.1 500MHz OOC 综合结果 (v3.7)
+### 6.1 500MHz OOC 综合结果 (v3.8)
 
 **目标器件**: Artix-7 xc7a200tfbg484-3
 **时钟约束**: 500MHz (2ns)
@@ -207,21 +207,21 @@ vsim -c -do "do run.do"
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| LUT as Logic | 2,114 | 133,800 | 1.58% |
+| LUT as Logic | 2,125 | 133,800 | 1.59% |
 | LUT as Memory | 784 | 46,200 | 1.70% |
-| Slice Registers | 2,879 | 267,600 | 1.08% |
-| Block RAM Tile | 12 | 365 | 3.29% |
+| Slice Registers | 3,060 | 267,600 | 1.14% |
+| Block RAM Tile | 14 | 365 | 3.84% |
 | DSP48E1 | 9 | 740 | 1.22% |
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-1.881 ns** |
-| TNS | -8,655 ns |
+| WNS (Setup) | **-1.736 ns** |
+| TNS | -8,613 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
-| Failing Endpoints | 10,137 |
+| Failing Endpoints | 10,443 |
 
-**说明**: WNS = -1.881ns，worst path 为 DSP48E1 路径 (`mac_data_r_reg → u_mac0/product0/A[16]`，0 级逻辑，routing 占 63%，DSP 固有 setup 0.106ns)。旧 ROM 地址路径 (`size_shift_reg → u_row_rom/ADDRARDADDR`) 已通过 ROM 地址累加器完全消除（从 top-20 中消失）。第二 path 为 MAC 累加链 (`size_shift_reg → mac_coeff_p0_reg`，4 级逻辑，-1.838ns)。
+**说明**: WNS = -1.736ns，worst path 为 DSP48E1 路径 (`mac_data_r0_reg → u_mac0/product0/A[23]`，0 级逻辑，routing 占 58%，DSP 固有 setup 0.106ns)。Top-20 全部为 FF→DSP 物理路径，所有 RTL 逻辑瓶颈已消除。mac_data_r 从单寄存器(fanout=60)复制为 4 份(fanout=15)，路由延迟从 0.679ns 降至 0.534ns。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合 ROM 地址 + pf_dly 一级流水 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用注册 ROM 地址（累加器模式）+ pf_ddly 二级流水 + P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异，这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
@@ -278,7 +278,8 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.7** | | ROM 地址累加器（消除 barrel shifter 关键路径）+ pf_ddly 二级流水 | **-1.881ns** | 108/108 |
+| **v3.8** | | mac_data_r 复制为 4 份（fanout 60→15），消除所有 RTL 逻辑瓶颈 | **-1.736ns** | 108/108 |
+| v3.7 | `v3.7-rom-accumulator` | ROM 地址累加器（消除 barrel shifter 关键路径）+ pf_ddly 二级流水 | -1.881ns | 108/108 |
 | v3.6 | | 列引擎输入 tp_buf 流水线化（切断 DistRAM→line_buf 组合链） | -1.859ns | 108/108 |
 | v3.5 | | 输出控制链优化（clr_limit 寄存化 + out_done 退出条件 + 清除延迟启动） | -2.081ns | 108/108 |
 | v3.4 | | LFNST 输出流水线拆分 + base_addr 寄存化 | -2.020ns | 108/108 |
@@ -288,6 +289,18 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | v3.0 | `v3.0-500mhz` | 引入 its_core_500 双时钟架构，OOC 综合脚本 | — | 94/94 |
 | v2.0 | `v2.0-deliverable` | 交付版：XDC 清理、PPA 对齐、波形 SVG | ~-0.4ns@100MHz | 95/95 |
 | v1.0 | `v1.0-baseline` | 初始基线：同步复位、DistRAM 推断 | ~-0.4ns@100MHz | 95/95 |
+
+### v3.8 详细改动
+
+**目标**: 消除 `mac_data_r_reg → DSP48E1` 路由瓶颈（fanout=60，routing 63%）。
+
+**its_transform_engine.v**:
+- `mac_data_r` 从单寄存器复制为 4 份（`mac_data_r0`~`mac_data_r3`），每份驱动 1 个 MAC
+- 使用 `(* max_fanout = 16 *)` 属性引导 Vivado 保留独立副本（fanout 60→15）
+- `mac_coeff` 声明提到 `ifdef` 外部，确保 SYNTHESIS/SIM 路径共享
+- 同步应用到行引擎和列引擎
+
+**综合结果**: WNS = -1.736ns（+0.145ns）。路由延迟从 0.679ns 降至 0.534ns。Top-20 全部为 FF→DSP 物理路径（0 级逻辑），所有 RTL 逻辑瓶颈已消除。`size_shift_reg → mac_coeff_p0_reg` 路径跌出 top-20。
 
 ### v3.7 详细改动
 

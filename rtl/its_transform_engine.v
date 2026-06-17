@@ -210,7 +210,12 @@ module its_transform_engine (
     // Synthesis:  breaks long combinational paths for timing
     //             line_buf + coeff_buf both through P0, mac_en_d (2 cycles)
 `ifdef SYNTHESIS
-    (* dont_touch = "yes" *) reg signed [15:0] mac_data_r;
+    // Replicate mac_data_r per MAC to reduce fanout (60 → 15) and
+    // allow Vivado to place each copy near its DSP48E1.
+    (* max_fanout = 16 *) reg signed [15:0] mac_data_r0;
+    (* max_fanout = 16 *) reg signed [15:0] mac_data_r1;
+    (* max_fanout = 16 *) reg signed [15:0] mac_data_r2;
+    (* max_fanout = 16 *) reg signed [15:0] mac_data_r3;
     (* dont_touch = "yes" *) reg signed [15:0] mac_coeff_p0 [0:3];
 
     wire [15:0] mac_coeff_raw [0:3];
@@ -221,29 +226,37 @@ module its_transform_engine (
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            mac_data_r      <= 16'sd0;
+            mac_data_r0     <= 16'sd0;
+            mac_data_r1     <= 16'sd0;
+            mac_data_r2     <= 16'sd0;
+            mac_data_r3     <= 16'sd0;
             mac_coeff_p0[0] <= 16'sd0;
             mac_coeff_p0[1] <= 16'sd0;
             mac_coeff_p0[2] <= 16'sd0;
             mac_coeff_p0[3] <= 16'sd0;
         end else begin
-            mac_data_r      <= line_buf[comp_col];
+            mac_data_r0     <= line_buf[comp_col];
+            mac_data_r1     <= line_buf[comp_col];
+            mac_data_r2     <= line_buf[comp_col];
+            mac_data_r3     <= line_buf[comp_col];
             mac_coeff_p0[0] <= mac_coeff_raw[0];
             mac_coeff_p0[1] <= mac_coeff_raw[1];
             mac_coeff_p0[2] <= mac_coeff_raw[2];
             mac_coeff_p0[3] <= mac_coeff_raw[3];
         end
     end
+`else
+    wire [15:0] mac_data = line_buf[comp_col];
+`endif
 
-    wire [15:0] mac_data = mac_data_r;
+    // mac_coeff: shared across SYNTHESIS and simulation paths
     wire [15:0] mac_coeff [0:3];
+`ifdef SYNTHESIS
     assign mac_coeff[0] = mac_coeff_p0[0];
     assign mac_coeff[1] = mac_coeff_p0[1];
     assign mac_coeff[2] = mac_coeff_p0[2];
     assign mac_coeff[3] = mac_coeff_p0[3];
 `else
-    wire [15:0] mac_data = line_buf[comp_col];
-    wire [15:0] mac_coeff [0:3];
     assign mac_coeff[0] = coeff_buf[{2'd0, comp_col}];
     assign mac_coeff[1] = coeff_buf[(8'd1 << size_shift) + {2'd0, comp_col}];
     assign mac_coeff[2] = coeff_buf[(8'd2 << size_shift) + {2'd0, comp_col}];
@@ -254,10 +267,10 @@ module its_transform_engine (
     wire        mac_valid [0:3];
 
 `ifdef SYNTHESIS
-    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
-    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
-    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
-    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
+    its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r0), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
+    its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r1), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
+    its_mac u_mac2 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r2), .b(mac_coeff[2]), .result(mac_result[2]), .valid(mac_valid[2]));
+    its_mac u_mac3 (.clk(clk), .rst_n(rst_n), .en(mac_en_d), .clr(mac_clr), .a(mac_data_r3), .b(mac_coeff[3]), .result(mac_result[3]), .valid(mac_valid[3]));
 `else
     its_mac u_mac0 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[0]), .result(mac_result[0]), .valid(mac_valid[0]));
     its_mac u_mac1 (.clk(clk), .rst_n(rst_n), .en(mac_en), .clr(mac_clr), .a(mac_data), .b(mac_coeff[1]), .result(mac_result[1]), .valid(mac_valid[1]));
