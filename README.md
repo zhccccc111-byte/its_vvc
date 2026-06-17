@@ -313,7 +313,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v4.1** | | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |
+| **v4.1** | `v4.1-exhaustive-regression-1444` | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |
 | **v4.0** | `v4.0-ultrascale-plus-500mhz` | 零改动 RTL 移植 UltraScale+ (xcku5p-2)，500MHz 达标 | **+0.030ns** | 108/108 |
 | v3.9 | | mac_clr 注册（10 级控制链拆为 4+6），Top-20 全为 FF→DSP 物理路径 | -1.733ns (A7) | 108/108 |
 | v3.8 | `v3.8-mac-data-replicate` | mac_data_r 复制为 4 份（fanout 60→15），消除所有 RTL 逻辑瓶颈 | -1.736ns | 108/108 |
