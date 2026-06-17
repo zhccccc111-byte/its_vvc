@@ -267,7 +267,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ⚠️ | Artix-7 物理限制，实际 ~96MHz；500MHz 为 ASIC 目标，详见 doc/design_doc.md 第 8 节 |
+| 500MHz 主频 | ⚠️ | Artix-7 物理极限 WNS=-1.733ns（DSP48E1 FF→A 路由 + setup），详见下方实验结论 |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -301,6 +301,21 @@ vivado -mode batch -source its_core_500_ooc.tcl
 - 时序安全：MAC 管线 `en` 信号已有 2 拍延迟，`clr` 延迟 1 拍不影响功能
 
 **综合结果**: WNS = -1.733ns（+0.003ns）。控制链路径从 top-20 消除，全部为 FF→DSP 物理路径。LUT 减少 121（组合逻辑被寄存器吸收）。
+
+### v4.0 物理优化实验（分支 `v4.0-dsp-input-pipeline`，未合入 master）
+
+**目标**: 尝试进一步改善 WNS，突破 DSP48E1 物理限制。
+
+**实验 1 — pblock 约束 col_engine**: 将 `mac_data_r0~3` 寄存器约束到 DSP 附近（SLICE_X0Y20:X44Y35）。
+- 结果: WNS 恶化到 -1.746ns（row_engine 被挤到更差位置）。**回退。**
+
+**实验 2 — phys_opt_design 多策略叠加**: AggressiveExplore + AlternateFlowWithRetiming + AggressiveFanoutOpt。
+- 结果: WNS 不变 -1.733ns。**无改善。**
+
+**实验 3 — DSP 输入流水线**: `its_mac.v` 加 `a_r/b_r` 输入寄存器，尝试让 Vivado 吸收进 DSP48E1 AREG/BREG。
+- 结果: WNS = -1.728ns（仅 +0.005ns），`a_r_reg` 未被 DSP 吸收（外部 FF，路由 0.577ns）。未达 >0.3ns 收益门槛。**停止。**
+
+**结论**: v3.9 的 WNS -1.733ns 已是 Artix-7 xc7a200tfbg484-3 上该架构的物理极限。剩余 gap 全部来自 DSP48E1 固有特性（FF propagation 0.341ns + 路由 ~0.58ns + DSP setup 0.106ns + 时钟偏移/不确定性 0.07ns）。500MHz 目标在 Artix-7 上无法通过 RTL 或物理优化达成，需 ASIC 工艺或更高速度等级 FPGA。
 
 ### v3.8 详细改动
 
