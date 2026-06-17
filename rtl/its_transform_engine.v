@@ -121,18 +121,31 @@ module its_transform_engine (
         end
     end
 
-    // ROM address: base + (row_group*4 + pf_rom_row) * N + pf_rom_col
-    // = base + ((row_group << 2) + pf_rom_row) << size_shift + pf_rom_col
-    reg [13:0] rom_addr_r;
+    // ============================================================
+    // ROM address computation helpers (declared early)
+    // ============================================================
     wire [7:0] rom_row_idx = {row_group[5:0], 2'b00} + {6'd0, pf_rom_row};
 
-    // ROM address: continuously computed from pf_rom_row/col
-    // Don't zero outside S_PREFETCH to avoid 1-cycle address offset
-    always @(*) begin
-        rom_addr_r = base_addr + ({6'd0, rom_row_idx} << size_shift) + {8'd0, pf_rom_col};
+`ifdef SYNTHESIS
+    // Pre-computed next row base: base_addr + ((rom_row_idx+1) << size_shift)
+    // Barrel shifter is in this path, NOT in ROM address critical path.
+    reg [13:0] next_row_base;
+    wire [7:0] next_rom_row_idx = rom_row_idx + 8'd1;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            next_row_base <= 14'd0;
+        else if (start)
+            next_row_base <= base_addr;
+        else if (state == S_PREFETCH)
+            next_row_base <= base_addr + ({6'd0, next_rom_row_idx} << size_shift);
     end
 
-    assign rom_addr = rom_addr_r;
+    wire       is_last_col = (pf_rom_col == size_m1[5:0]);
+`else
+    // Simulation: combinational ROM address (no barrel shifter optimization needed)
+    wire [13:0] rom_addr_r = base_addr + ({6'd0, rom_row_idx} << size_shift) + {8'd0, pf_rom_col};
+`endif
 
     // ============================================================
     // Pipeline registers (declared before MAC to avoid forward refs)
@@ -141,6 +154,13 @@ module its_transform_engine (
     reg [1:0]  pf_dly_row;
     reg [5:0]  pf_dly_col;
     reg        pf_dly_valid;
+
+    // Second pipeline stage (synthesis only): compensates for registered ROM address
+`ifdef SYNTHESIS
+    reg [1:0]  pf_ddly_row;
+    reg [5:0]  pf_ddly_col;
+    reg        pf_ddly_valid;
+`endif
 
     // mac_final: 1-cycle delayed signal indicating all MAC inputs for a group are done
     reg        mac_final;
@@ -168,8 +188,9 @@ module its_transform_engine (
     wire        mac_en = (state == S_COMPUTE);
 `endif
     // Clear MAC at start of loading AND at each row group transition
-    // Transition condition uses CURRENT ROM position (not delayed)
-    // because dly pipeline retains stale values from previous S_PREFETCH
+    // pf_to_compute fires when ROM reads the last coefficient (pf_rom_col == N-1).
+    // With registered ROM address, the accumulator pre-computes the address,
+    // but pf_to_compute timing stays the same: it marks the end of prefetch.
     wire        pf_to_compute = (state == S_PREFETCH &&
                                  pf_rom_row == 2'd3 && pf_rom_col >= size_m1[5:0]);
     wire        mac_clr = (state == S_LOAD && load_cnt == 6'd0 && data_in_vld) || pf_to_compute;
@@ -279,6 +300,45 @@ module its_transform_engine (
     wire mac_final_ok = mac_final_d;
 `endif
 
+    // ============================================================
+    // Registered ROM address (accumulator pattern) — SYNTHESIS ONLY
+    // ============================================================
+    // Eliminates barrel shifter from critical path by pre-computing
+    // row base address and using incremental update.
+    // ROM has 1-cycle read latency; registered addr adds 1 more cycle.
+    // Total 2-cycle latency compensated by pf_ddly pipeline.
+    //
+    // Simulation: uses combinational ROM address (rom_addr_r) + pf_dly (1 stage)
+    // Synthesis:  uses registered ROM address (rom_addr_reg) + pf_ddly (2 stages)
+`ifdef SYNTHESIS
+    // ROM address accumulator: registered, updated each cycle
+    // Common case: acc + 1 (simple increment, no barrel shifter)
+    // Row transition: next_row_base + 0 (pre-computed, no barrel shifter)
+    // Group transition: stable sources (base_addr or next_row_base) — avoids NBA stale-read
+    reg [13:0] rom_addr_reg;
+
+    wire entering_prefetch = (state == S_LOAD && load_cnt >= size_m1 && data_in_vld) ||
+                             (state == S_COMPUTE && mac_final_ok && mac_valid[0] && comp_row_base < size);
+
+    // Use stable registered sources directly — no intermediate register needed
+    wire [13:0] prefetch_start_addr = (state == S_LOAD) ? base_addr : next_row_base;
+    wire [13:0] acc_next = entering_prefetch ? prefetch_start_addr :
+                           is_last_col      ? next_row_base :
+                                              (rom_addr_reg + 14'd1);
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            rom_addr_reg <= 14'd0;
+        else if (state == S_PREFETCH || entering_prefetch)
+            rom_addr_reg <= acc_next;
+    end
+
+    assign rom_addr = rom_addr_reg;
+`else
+    // Simulation: combinational ROM address
+    assign rom_addr = rom_addr_r;
+`endif
+
     // entering_compute: 1-cycle pulse on S_PREFETCH→S_COMPUTE transition
     // Used to write the last coefficient from ROM pipeline to coeff_buf
     reg entering_compute;
@@ -290,20 +350,20 @@ module its_transform_engine (
     end
 
     // Coefficient buffer write address computation
-    wire [7:0] pf_dly_row_ext = {6'd0, pf_dly_row};
-    wire [7:0] coeff_buf_wr_addr = (pf_dly_row_ext << size_shift) + {2'd0, pf_dly_col};
-
-    // Register coeff_buf write address (synthesis only, to break fanout path)
 `ifdef SYNTHESIS
+    // Synthesis: uses pf_ddly (2-stage pipeline for registered ROM address)
+    wire [7:0] pf_ddly_row_ext = {6'd0, pf_ddly_row};
+    wire [7:0] coeff_buf_wr_addr = (pf_ddly_row_ext << size_shift) + {2'd0, pf_ddly_col};
+
     reg [7:0]  coeff_buf_wr_addr_r;
-    reg        pf_dly_valid_d;
+    reg        pf_ddly_valid_d;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             coeff_buf_wr_addr_r <= 8'd0;
-            pf_dly_valid_d      <= 1'b0;
+            pf_ddly_valid_d     <= 1'b0;
         end else begin
             coeff_buf_wr_addr_r <= coeff_buf_wr_addr;
-            pf_dly_valid_d      <= pf_dly_valid;
+            pf_ddly_valid_d     <= pf_ddly_valid;
         end
     end
     reg entering_compute_d;
@@ -313,6 +373,10 @@ module its_transform_engine (
         else
             entering_compute_d <= entering_compute;
     end
+`else
+    // Simulation: uses pf_dly (1-stage pipeline with combinational ROM address)
+    wire [7:0] pf_dly_row_ext = {6'd0, pf_dly_row};
+    wire [7:0] coeff_buf_wr_addr = (pf_dly_row_ext << size_shift) + {2'd0, pf_dly_col};
 `endif
 
     // ============================================================
@@ -413,7 +477,7 @@ module its_transform_engine (
         end
     end
 
-    // Pipeline register for ROM latency
+    // Pipeline register for ROM latency (stage 1)
     // Hold pf_dly_row/col at last prefetch values when entering S_COMPUTE
     // so the last coefficient can be captured from ROM pipeline
     always @(posedge clk or negedge rst_n) begin
@@ -430,18 +494,36 @@ module its_transform_engine (
         end
     end
 
+`ifdef SYNTHESIS
+    // Pipeline register for ROM latency (stage 2 - compensates registered ROM address)
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            pf_ddly_row   <= 2'd0;
+            pf_ddly_col   <= 6'd0;
+            pf_ddly_valid <= 1'b0;
+        end else if (state == S_PREFETCH) begin
+            pf_ddly_row   <= pf_dly_row;
+            pf_ddly_col   <= pf_dly_col;
+            pf_ddly_valid <= pf_dly_valid;
+        end else if (state == S_COMPUTE && pf_ddly_valid) begin
+            pf_ddly_valid <= 1'b0;
+        end
+    end
+`endif
+
     // Store ROM output into coeff_buf (no async reset for Block RAM inference)
 `ifdef SYNTHESIS
+    // Synthesis: uses pf_ddly (2-stage) to compensate for registered ROM address
     // Registered write address breaks high-fanout path
     always @(posedge clk) begin
         if (entering_compute_d) begin
             coeff_buf[coeff_buf_wr_addr_r] <= rom_coeff;
-        end else if (pf_dly_valid_d) begin
+        end else if (pf_ddly_valid_d) begin
             coeff_buf[coeff_buf_wr_addr_r] <= rom_coeff;
         end
     end
 `else
-    // Simulation: combinational write address
+    // Simulation: uses pf_dly (1-stage) with combinational ROM address
     always @(posedge clk) begin
         if (entering_compute) begin
             coeff_buf[(pf_dly_row << size_shift) + {2'd0, pf_dly_col}] <= rom_coeff;

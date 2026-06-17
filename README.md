@@ -199,7 +199,7 @@ vsim -c -do "do run.do"
 
 ## 6. 综合与 PPA
 
-### 6.1 500MHz OOC 综合结果 (v3.3)
+### 6.1 500MHz OOC 综合结果 (v3.7)
 
 **目标器件**: Artix-7 xc7a200tfbg484-3
 **时钟约束**: 500MHz (2ns)
@@ -207,23 +207,23 @@ vsim -c -do "do run.do"
 
 | 资源 | 使用 | 可用 | 利用率 |
 |------|------|------|--------|
-| LUT as Logic | 2,450 | 133,800 | 1.83% |
-| LUT as Memory | 2,192 | 46,200 | 4.74% |
-| Slice Registers | 3,059 | 267,600 | 1.14% |
+| LUT as Logic | 2,114 | 133,800 | 1.58% |
+| LUT as Memory | 784 | 46,200 | 1.70% |
+| Slice Registers | 2,879 | 267,600 | 1.08% |
 | Block RAM Tile | 12 | 365 | 3.29% |
 | DSP48E1 | 9 | 740 | 1.22% |
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-1.859 ns** |
-| TNS | -7,936 ns |
+| WNS (Setup) | **-1.881 ns** |
+| TNS | -8,655 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
-| Failing Endpoints | 9,830 |
+| Failing Endpoints | 10,137 |
 
-**说明**: WNS = -1.859ns，worst path 为行引擎 ROM 地址路径 (`u_row_engine/size_shift_reg → u_row_rom/coeff_reg_1/ADDRARDADDR`，5 级逻辑：2 CARRY4 + 3 LUT6，routing 占 63%)。列引擎输入 DistRAM 路径已通过 tp_buf 读数据流水线化消除，failing endpoints 从 17,234 降至 9,830。
+**说明**: WNS = -1.881ns，worst path 为 DSP48E1 路径 (`mac_data_r_reg → u_mac0/product0/A[16]`，0 级逻辑，routing 占 63%，DSP 固有 setup 0.106ns)。旧 ROM 地址路径 (`size_shift_reg → u_row_rom/ADDRARDADDR`) 已通过 ROM 地址累加器完全消除（从 top-20 中消失）。第二 path 为 MAC 累加链 (`size_shift_reg → mac_coeff_p0_reg`，4 级逻辑，-1.838ns)。
 
-**仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合读 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用 P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异（2/108 PASS），这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
+**仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合 ROM 地址 + pf_dly 一级流水 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用注册 ROM 地址（累加器模式）+ pf_ddly 二级流水 + P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异，这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
 ### 6.2 100MHz 全芯片综合结果 (v1.0)
 
@@ -278,7 +278,8 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.6** | | 列引擎输入 tp_buf 流水线化（切断 DistRAM→line_buf 组合链） | **-1.859ns** | 108/108 |
+| **v3.7** | | ROM 地址累加器（消除 barrel shifter 关键路径）+ pf_ddly 二级流水 | **-1.881ns** | 108/108 |
+| v3.6 | | 列引擎输入 tp_buf 流水线化（切断 DistRAM→line_buf 组合链） | -1.859ns | 108/108 |
 | v3.5 | | 输出控制链优化（clr_limit 寄存化 + out_done 退出条件 + 清除延迟启动） | -2.081ns | 108/108 |
 | v3.4 | | LFNST 输出流水线拆分 + base_addr 寄存化 | -2.020ns | 108/108 |
 | v3.3 | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | -2.289ns | 108/108 |
@@ -287,6 +288,22 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | v3.0 | `v3.0-500mhz` | 引入 its_core_500 双时钟架构，OOC 综合脚本 | — | 94/94 |
 | v2.0 | `v2.0-deliverable` | 交付版：XDC 清理、PPA 对齐、波形 SVG | ~-0.4ns@100MHz | 95/95 |
 | v1.0 | `v1.0-baseline` | 初始基线：同步复位、DistRAM 推断 | ~-0.4ns@100MHz | 95/95 |
+
+### v3.7 详细改动
+
+**目标**: 消除行引擎 ROM 地址路径（`size_shift_reg → barrel shift + add → ROM ADDRARDADDR`，5 级逻辑 + 63% 路由）。
+
+**its_transform_engine.v**:
+- ROM 地址从组合逻辑改为寄存器（累加器模式），用 `ifdef SYNTHESIS` 条件编译分离：
+  - 仿真路径：组合 ROM 地址 + pf_dly 一级流水（保持 108/108 PASS）
+  - 综合路径：注册 ROM 地址 + pf_ddly 二级流水（补偿 2 拍总延迟）
+- 新增 `next_row_base` 寄存器：提前 1 周期预计算下一行基地址（含 barrel shifter，不在公共关键路径）
+- `prefetch_start_addr` 直接从已注册的 `base_addr`/`next_row_base` 选择，无需中间寄存器（消除 P0 NBA stale-read 风险）
+- `acc_next` 选择逻辑：`entering_prefetch` 用 `prefetch_start_addr`，`is_last_col` 用 `next_row_base`，公共路径用 `acc+1`
+- `pf_ddly` 二级流水：补偿注册 ROM 地址 + BRAM 读的 2 拍总延迟
+- `pf_to_compute` 保持不变（pf_rom_col == N-1 触发）
+
+**综合结果**: WNS = -1.881ns（默认 OOC）。旧 ROM 地址路径完全消除（从 top-20 中消失）。新 worst path 为 DSP48E1 路径（mac_data_r_reg → DSP48E1，0 级逻辑，routing 63%，DSP 固有 setup 0.106ns）。第二 path 为系数选择路径（size_shift_reg → mac_coeff_p0_reg，4 级逻辑，-1.838ns）。
 
 ### v3.5 详细改动
 
