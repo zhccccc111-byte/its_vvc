@@ -221,7 +221,7 @@ vsim -c -do "do run.do"
 | WPWS (Pulse Width) | -0.234 ns |
 | Failing Endpoints | 10,443 |
 
-**说明**: WNS = -1.736ns，worst path 为 DSP48E1 路径 (`mac_data_r0_reg → u_mac0/product0/A[23]`，0 级逻辑，routing 占 58%，DSP 固有 setup 0.106ns)。Top-20 全部为 FF→DSP 物理路径，所有 RTL 逻辑瓶颈已消除。mac_data_r 从单寄存器(fanout=60)复制为 4 份(fanout=15)，路由延迟从 0.679ns 降至 0.534ns。
+**说明**: WNS = -1.736ns，worst path 为 DSP48E1 路径 (`mac_data_r0_reg → u_mac0/product0/A[23]`，0 级逻辑，routing 占 58%，DSP 固有 setup 0.106ns)。Top-20 以 FF→DSP 物理路径为主，但仍残留控制链路径（`pf_rom_col_reg → pf_to_compute → mac_clr → result_reg`，10 级逻辑，-1.714ns）。mac_data_r 从单寄存器(fanout=60)复制为 4 份(fanout=15)，路由延迟从 0.679ns 降至 0.534ns。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合 ROM 地址 + pf_dly 一级流水 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用注册 ROM 地址（累加器模式）+ pf_ddly 二级流水 + P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异，这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
@@ -300,7 +300,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 - `mac_coeff` 声明提到 `ifdef` 外部，确保 SYNTHESIS/SIM 路径共享
 - 同步应用到行引擎和列引擎
 
-**综合结果**: WNS = -1.736ns（+0.145ns）。路由延迟从 0.679ns 降至 0.534ns。Top-20 全部为 FF→DSP 物理路径（0 级逻辑），所有 RTL 逻辑瓶颈已消除。`size_shift_reg → mac_coeff_p0_reg` 路径跌出 top-20。
+**综合结果**: WNS = -1.736ns（+0.145ns）。路由延迟从 0.679ns 降至 0.534ns。Top-20 以 FF→DSP 物理路径为主，但残留控制链路径（`pf_rom_col_reg → mac_clr → result_reg`，10 级逻辑，-1.714ns）。`size_shift_reg → mac_coeff_p0_reg` 路径跌出 top-20。
 
 ### v3.7 详细改动
 
