@@ -19,6 +19,7 @@ vsim.wlf
 synth/its_vvc_synth/
 synth/*.jou
 synth/*.log
+synth/*.dcp
 synth/vivado_*.backup.*
 
 # Python

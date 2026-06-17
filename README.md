@@ -199,7 +199,35 @@ vsim -c -do "do run.do"
 
 ## 6. 综合与 PPA
 
-### 6.1 500MHz OOC 综合结果 (v3.9)
+### 6.1 500MHz OOC 综合结果 — UltraScale+ (v4.0)
+
+**目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
+**时钟约束**: 500MHz (2ns)
+**综合方式**: Out-of-Context (OOC)，仅测内部时序，不含 I/O pad
+**RTL**: 与 v3.9 完全相同（零改动），仅更换目标器件
+
+| 资源 | 使用 | 可用 | 利用率 |
+|------|------|------|--------|
+| LUT as Logic | 1,993 | 216,960 | 0.92% |
+| LUT as Memory | 850 | 99,840 | 0.85% |
+| CLB Registers | 2,882 | 433,920 | 0.66% |
+| CARRY8 | 92 | 27,120 | 0.34% |
+| DSP48E2 | 9 | — | ✅ 推断正确 |
+| RAMB36E2 | 12 | — | ✅ 推断正确 |
+
+| 指标 | 值 | 状态 |
+|------|-----|------|
+| WNS (Setup) | **+0.030 ns** | **MET** |
+| TNS | 0.000 ns | — |
+| WHS (Hold) | +0.020 ns | MET |
+| WPWS (Pulse Width) | +0.431 ns | MET |
+| Failing Endpoints | **0** | — |
+
+**Worst Path**: `u_lfnst_rom/coeff_reg_1 (RAMB36E2) → u_lfnst/coeff_buf (DistRAM)`，BRAM→DistRAM 路径，0 级逻辑，data path 1.846ns (logic 52% + route 48%)。Artix-7 上的 DSP48E1 FF→A 瓶颈（WNS -1.733ns）在 UltraScale+ 上完全消失。
+
+**结论**: v3.9 的 RTL 在 UltraScale+ 上零改动即满足 500MHz。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有特性（FF propagation + 路由 + setup time），DSP48E2 大幅改善了这些参数。
+
+### 6.2 500MHz OOC 综合结果 — Artix-7 (v3.9)
 
 **目标器件**: Artix-7 xc7a200tfbg484-3
 **时钟约束**: 500MHz (2ns)
@@ -221,11 +249,11 @@ vsim -c -do "do run.do"
 | WPWS (Pulse Width) | -0.234 ns |
 | Failing Endpoints | 9,915 |
 
-**说明**: WNS = -1.733ns，worst path 为 DSP48E1 路径 (`mac_data_r2_reg → u_mac2/product0/A[23]`，0 级逻辑，routing 占 63%，DSP 固有 setup 0.106ns)。Top-20 全部为 FF→DSP 物理路径（0 级逻辑），RTL 控制链路径已消除（`mac_clr` 注册为 `mac_clr_r`，10 级组合链拆为 4+6）。
+**说明**: WNS = -1.733ns，worst path 为 DSP48E1 路径 (`mac_data_r2_reg → u_mac2/product0/A[23]`，0 级逻辑，routing 占 63%，DSP 固有 setup 0.106ns)。Top-20 以 FF→DSP 物理路径为主，RTL 控制链路径已消除（`mac_clr` 注册为 `mac_clr_r`，10 级组合链拆为 4+6）。500MHz 在 Artix-7 上不可达，需 UltraScale+ 或 ASIC。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合 ROM 地址 + pf_dly 一级流水 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用注册 ROM 地址（累加器模式）+ pf_ddly 二级流水 + P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异，这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
-### 6.2 100MHz 全芯片综合结果 (v1.0)
+### 6.3 100MHz 全芯片综合结果 (v1.0)
 
 **时钟约束**: 100MHz (10ns)，含 I/O pad
 
@@ -242,10 +270,14 @@ vsim -c -do "do run.do"
 | WNS (Setup) @ 100MHz | -0.421 ns |
 | 实际最高频率 | ~96 MHz |
 
-### 6.3 运行综合
+### 6.4 运行综合
 
 ```bash
-# 500MHz OOC 综合 (仅内部时序)
+# 500MHz OOC 综合 — UltraScale+ (推荐，500MHz 达标)
+cd synth
+vivado -mode batch -source its_core_500_ooc_usp.tcl
+
+# 500MHz OOC 综合 — Artix-7 (基线，WNS -1.733ns)
 cd synth
 vivado -mode batch -source its_core_500_ooc.tcl
 ```
@@ -267,7 +299,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ⚠️ | Artix-7 物理极限 WNS=-1.733ns（DSP48E1 FF→A 路由 + setup），详见下方实验结论 |
+| 500MHz 主频 | ✅ | UltraScale+ (xcku5p-2) WNS=+0.030ns 达标；Artix-7 WNS=-1.733ns 不可达，详见 6.1/6.2 节 |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -278,7 +310,8 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.9** | | mac_clr 注册（10 级控制链拆为 4+6），Top-20 全为 FF→DSP 物理路径 | **-1.733ns** | 108/108 |
+| **v4.0** | `v4.0-ultrascale-plus-500mhz` | 零改动 RTL 移植 UltraScale+ (xcku5p-2)，500MHz 达标 | **+0.030ns** | 108/108 |
+| v3.9 | | mac_clr 注册（10 级控制链拆为 4+6），Top-20 全为 FF→DSP 物理路径 | -1.733ns (A7) | 108/108 |
 | v3.8 | `v3.8-mac-data-replicate` | mac_data_r 复制为 4 份（fanout 60→15），消除所有 RTL 逻辑瓶颈 | -1.736ns | 108/108 |
 | v3.7 | `v3.7-rom-accumulator` | ROM 地址累加器（消除 barrel shifter 关键路径）+ pf_ddly 二级流水 | -1.881ns | 108/108 |
 | v3.6 | | 列引擎输入 tp_buf 流水线化（切断 DistRAM→line_buf 组合链） | -1.859ns | 108/108 |
@@ -315,7 +348,20 @@ vivado -mode batch -source its_core_500_ooc.tcl
 **实验 3 — DSP 输入流水线**: `its_mac.v` 加 `a_r/b_r` 输入寄存器，尝试让 Vivado 吸收进 DSP48E1 AREG/BREG。
 - 结果: WNS = -1.728ns（仅 +0.005ns），`a_r_reg` 未被 DSP 吸收（外部 FF，路由 0.577ns）。未达 >0.3ns 收益门槛。**停止。**
 
-**结论**: v3.9 的 WNS -1.733ns 已是 Artix-7 xc7a200tfbg484-3 上该架构的物理极限。剩余 gap 全部来自 DSP48E1 固有特性（FF propagation 0.341ns + 路由 ~0.58ns + DSP setup 0.106ns + 时钟偏移/不确定性 0.07ns）。500MHz 目标在 Artix-7 上无法通过 RTL 或物理优化达成，需 ASIC 工艺或更高速度等级 FPGA。
+**结论**: v3.9 的 WNS -1.733ns 已是 Artix-7 xc7a200tfbg484-3 上该架构的物理极限。剩余 gap 全部来自 DSP48E1 固有特性（FF propagation 0.341ns + 路由 ~0.58ns + DSP setup 0.106ns + 时钟偏移/不确定性 0.07ns）。500MHz 目标在 Artix-7 上无法通过 RTL 或物理优化达成。
+
+### v4.0 UltraScale+ 移植（分支 `v4.0-ultrascale-plus`，已合入 master）
+
+**目标**: 验证相同 RTL 在 UltraScale+ 上能否满足 500MHz。
+
+**方法**: 零改动 RTL，仅更换目标器件为 Kintex UltraScale+ xcku5p-ffvb676-2-e，新建 `synth/its_core_500_ooc_usp.tcl`。
+
+**结果**:
+- WNS = **+0.030ns**（500MHz **达标**）
+- DSP48E2: 9, RAMB36E2: 12, URAM289: 0（推断正确）
+- Worst path: LFNST ROM→DistRAM（0 级逻辑，1.846ns），不再是 DSP 路径
+- Artix-7 上的 DSP48E1 FF→A 瓶颈在 UltraScale+ 上完全消失（DSP48E2 改善了 FF propagation + setup time）
+- 功能回归 108/108 PASS（RTL 未修改，仿真结果不变）
 
 ### v3.8 详细改动
 
