@@ -263,6 +263,9 @@ module its_core_500 (
     // ========================================
     // Command FIFO decode (from registered pipeline)
     // ========================================
+    // total_points_next: combinational, used to avoid NBA stale-read bug
+    // when latching clr_limit_r / last_out_cnt in the same cycle as total_points
+    wire [12:0] total_points_next = cmd_fifo_data_r[6:0] * cmd_fifo_data_r[13:7];
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n) begin
             tu_width         <= 7'd0;
@@ -279,7 +282,7 @@ module its_core_500 (
             tr_type_ver      <= cmd_fifo_data_r[17:16];
             lfnst_tr_set_idx <= cmd_fifo_data_r[19:18];
             lfnst_idx        <= cmd_fifo_data_r[21:20];
-            total_points     <= cmd_fifo_data_r[6:0] * cmd_fifo_data_r[13:7];
+            total_points     <= total_points_next;
         end
     end
 
@@ -414,12 +417,24 @@ module its_core_500 (
     // ========================================
     // Memory clear control
     // ========================================
-    // clr_limit: registered to break total_points subtraction from critical path
+    // Delay clearing start by 1 cycle so clr_limit_r latches from registered
+    // total_points (not combinational total_points_next), avoiding multiplier
+    // on critical path. total_points is stable 1 cycle after cmd_fifo_rd_en_r.
+    reg clearing_start;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            clearing_start <= 1'b0;
+        else if (cmd_fifo_rd_en_r && state == S_IDLE)
+            clearing_start <= 1'b1;
+        else
+            clearing_start <= 1'b0;
+    end
+
     reg [11:0] clr_limit_r;
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             clr_limit_r <= 12'd0;
-        else if (cmd_fifo_rd_en_r && state == S_IDLE)
+        else if (clearing_start)
             clr_limit_r <= total_points[11:0] - 12'd1;
     end
 
@@ -427,7 +442,7 @@ module its_core_500 (
         if (!rst_n) begin
             clearing <= 1'b0;
             clr_cnt  <= 12'd0;
-        end else if (state == S_IDLE && cmd_fifo_rd_en_r) begin
+        end else if (clearing_start) begin
             clearing <= 1'b1;
             clr_cnt  <= 12'd0;
         end else if (clearing) begin
@@ -681,12 +696,13 @@ module its_core_500 (
     end
 
     // last_out_cnt: pre-computed out_cnt value for the last output beat
-    // Avoids wide out_cnt >= total_points comparison on critical path
+    // Latched from registered total_points (1 cycle after cmd) — safe because
+    // S_OUT starts long after clearing completes, so total_points is stable.
     reg [11:0] last_out_cnt;
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             last_out_cnt <= 12'd0;
-        else if (cmd_fifo_rd_en_r && state == S_IDLE)
+        else if (state == S_COL_RUN && col_done && col_idx + 7'd1 >= tu_width[6:0])
             last_out_cnt <= total_points[11:0] - 12'd4;
     end
 

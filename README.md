@@ -215,13 +215,13 @@ vsim -c -do "do run.do"
 
 | 指标 | 值 |
 |------|-----|
-| WNS (Setup) | **-2.093 ns** (double phys_opt) |
-| TNS | -15,899 ns |
+| WNS (Setup) | **-2.081 ns** |
+| TNS | -14,540 ns |
 | WHS (Hold) | -0.280 ns |
 | WPWS (Pulse Width) | -0.234 ns |
-| Failing Endpoints | 17,700 (down from 18,377) |
+| Failing Endpoints | 17,234 |
 
-**说明**: WNS = -2.093ns（Strategy E: double AggressiveExplore），worst path 为列引擎 DistRAM 路径 (`col_eng_rd_addr_reg → u_col_engine/line_buf_reg`，routing 占 72%)。输出控制链优化（clr_limit 寄存化 + last_out_cnt 预锁存 + out_done 寄存退出条件）消除了原 `total_points → state CE` 的 8 级逻辑路径，failing endpoints 从 18,377 降至 17,700。
+**说明**: WNS = -2.081ns，worst path 为列引擎 DistRAM 路径 (`col_eng_rd_addr_reg → u_col_engine/line_buf_reg`，routing 占 73%)。输出控制链优化（clr_limit 寄存化 + last_out_cnt 预锁存 + out_done 寄存退出条件 + 清除延迟启动一拍）消除了原 `total_points → state CE` 的 8 级逻辑路径，failing endpoints 从 18,377 降至 17,234。
 
 **仿真/综合路径说明**: 使用 `ifdef SYNTHESIS` 条件编译分离仿真和综合路径。仿真路径（无 SYNTHESIS）使用组合读 + mac_en 直连，108/108 PASS。综合路径（SYNTHESIS defined）使用 P0 管线 + mac_en_d（2 cycle delay）+ coeff_buf 写地址寄存，改善时序。由于 ModelSim 将所有数组视为组合读（忽略 ram_style 属性），SYNTHESIS 路径在 RTL 仿真中会有 1 cycle 的系数延迟差异（2/108 PASS），这是已知的 ModelSim 限制。功能正确性通过非 SYNTHESIS 路径验证。
 
@@ -278,7 +278,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v3.5** | | 输出控制链优化（clr_limit 寄存化 + out_done 退出条件） | **-2.093ns** | 108/108 |
+| **v3.5** | | 输出控制链优化（clr_limit 寄存化 + out_done 退出条件 + 清除延迟启动） | **-2.081ns** | 108/108 |
 | v3.4 | | LFNST 输出流水线拆分 + base_addr 寄存化 | -2.020ns | 108/108 |
 | v3.3 | | `ifdef SYNTHESIS` 条件编译分离仿真/综合路径 + size_m1/size_shift 寄存化 | -2.289ns | 108/108 |
 | v3.2 | `v3.2-500mhz-timing-baseline` | BRAM in_mem + LFNST overlay buffer + P0 pipeline + size_shift 寄存 + coeff_buf 写地址寄存 | -2.115ns | 94/94 |
@@ -292,14 +292,15 @@ vivado -mode batch -source its_core_500_ooc.tcl
 **目标**: 消除 `total_points → state CE` 的 8 级逻辑关键路径。
 
 **its_core_500.v**:
-- `clr_limit` 从组合 wire 改为寄存器 `clr_limit_r`（`cmd_fifo_rd_en_r` 时锁存），移除 3 CARRY4 减法器
-- 新增 `last_out_cnt = total_points - 4` 寄存器，替换 `out_cnt >= total_points` 的宽位比较
+- `clr_limit` 从组合 wire 改为寄存器 `clr_limit_r`（清除启动时从 `total_points` 锁存），移除 3 CARRY4 减法器
+- 新增 `last_out_cnt = total_points - 4` 寄存器（S_COL_RUN→S_OUT 转换时锁存），替换 `out_cnt >= total_points` 的宽位比较
 - `out_pipe_flush` 改用 `write_fire && out_cnt == last_out_cnt` 触发
 - `out_read_en` 改用 `!out_pipe_flush` 替代 `out_cnt < total_points` 比较
 - 新增 `out_done` 寄存器，将 `out_pipe_flush && !out_valid_pipe` 打一拍，切断到 state CE 的组合路径
 - 状态机 S_OUT 退出改用 `out_done`
+- 清除启动延迟一拍（`clearing_start` 脉冲），确保 `clr_limit_r` 从已注册的 `total_points` 锁存，避免乘法器暴露在关键路径
 
-**综合结果**: WNS = -2.093ns（double phys_opt），failing endpoints 从 18,377 降至 17,700。原 worst path 已从 top-20 消除，新 worst path 为列引擎 DistRAM routing 路径（72% route）。
+**综合结果**: WNS = -2.081ns（默认 OOC），failing endpoints 从 18,377 降至 17,234。原 worst path 已从 top-20 消除，新 worst path 为列引擎 DistRAM routing 路径（73% route）。
 
 ### v3.4 详细改动
 
