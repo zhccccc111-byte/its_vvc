@@ -228,12 +228,14 @@ vsim -c work.its_core_500_tb -do "run -all"
 | 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
 | 协议 (continuous) | 20 | 无复位连续 TU 处理 |
 
-**500MHz wrapper 回归 (93 个)** — CDC 功能 + 接口协议验证：
+**500MHz wrapper 回归 (1537 个)** — 穷举覆盖 + CDC 协议验证：
 
 | 类别 | 数量 | 测试项 |
 |------|------|--------|
-| 核心功能 | 89 | 与 core_500 相同测试向量 (DCT2/DCT8/DST7/LFNST 全尺寸) |
-| 反压 | 3 | bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48 (1:4 duty cycle) |
+| DCT2/MTS 穷举回归 | 1377 | 与 its_top 相同测试向量，wrapper CDC 路径 |
+| 反压 | 40 | 37 个 3on/2off 采样 + 3 个手写 (bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48) |
+| 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
+| 协议 (continuous) | 20 | 无复位连续 TU 处理 |
 | 两 TU 无复位 | 1 | 连续两个 TU 不 reset，验证 done 清零 |
 
 **its_core_500 回归 (94 个)** — 500MHz 核功能验证，与 wrapper 使用相同测试向量。
@@ -356,6 +358,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.2** | `v5.2-wrapper-exhaustive-regression-1537` | Wrapper 穷举回归 1537 测试（迁移 its_tb 全量 + CDC 协议 + 反压），1537/1537 PASS | +0.058ns | 1537/1537 |
 | **v5.1** | `v5.1-wrapper-500mhz-timing-clean` | XPM BRAM in_mem + load pipeline + FWFT reg slice，wrapper OOC 500MHz 时序闭合 | **+0.058ns** | 1444+93+94 |
 | **v5.0** | `v5.0-500mhz-wrapper` | 500MHz wrapper: async FIFO CDC, 赛题接口等价, 内部输出计数, 多 TU 支持 | +0.024ns | 1444+14+94 |
 | **v4.2** | `v4.2-area-optimization` | 面积优化：LUT -10.7%, DistRAM -28.2%, 控制集 -32.4% | +0.024ns | 1444/1444 |
