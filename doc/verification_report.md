@@ -224,6 +224,8 @@ ALL TESTS PASSED!
 
 ### 3.3 统计
 
+**its_top 单时钟回归 (1444 个)**：
+
 | 指标 | 值 |
 |------|-----|
 | DCT2 回归测试 | 225 (25 尺寸 × 9 LFNST) |
@@ -237,16 +239,33 @@ ALL TESTS PASSED!
 | 协议违规 | 0 |
 | 仿真耗时 | ~17 秒 |
 
-### 3.4 500MHz Wrapper 验证 (14 个测试)
+**its_top_500_wrapper 双时钟回归 (1537 个)**：
+
+| 指标 | 值 |
+|------|-----|
+| DCT2/MTS 穷举回归 | 1377 |
+| 反压测试 (3on/2off + 手写) | 40 |
+| 协议测试 (end_same_cycle + continuous) | 30 |
+| 两 TU 无复位 | 1 |
+| 测试用例总数 | 1537 |
+| 通过 | 1537 |
+| 失败 | 0 |
+| 仿真耗时 | ~7 分钟 |
+
+### 3.4 500MHz Wrapper 验证 (1537 个测试)
 
 **DUT**: `its_top_500_wrapper.v` (赛题接口 ↔ async FIFO CDC ↔ its_core_500)
 **TB**: `its_tb_500.v` (双时钟: clk_if=100MHz, clk_core=200MHz sim-safe)
 
-| 类别 | 测试项 | 结果 |
-|------|--------|------|
-| Happy path | dct2_4x4, dct2_8x8, dct2_16x16, dct2_32x32, dct8_8x8, dst7_8x8, lfnst16, lfnst48, dct2_8x16, dct2_64x64 | 10/10 PASS |
-| 反压 | bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48 (1:4 duty cycle) | 3/3 PASS |
-| 两 TU 无复位 | two_tu_dct2_4x4 (连续两 TU 不 reset) | 1/1 PASS |
+| 类别 | 数量 | 测试项 | 结果 |
+|------|------|--------|------|
+| DCT2/MTS 穷举回归 | 1377 | case_0000 ~ case_1376，与 its_top 相同测试向量 | 1377/1377 PASS |
+| 反压 (3on/2off) | 37 | 从 1377 中采样，覆盖全尺寸×变换×LFNST | 37/37 PASS |
+| 反压 (手写) | 3 | bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48 (1:4 duty) | 3/3 PASS |
+| 协议 (end_same_cycle) | 10 | it_data_end 与最后输入同拍 | 10/10 PASS |
+| 协议 (continuous) | 20 | 无复位连续 TU 处理 | 20/20 PASS |
+| 两 TU 无复位 | 1 | two_tu_dct2_4x4 (连续两 TU 不 reset) | 1/1 PASS |
+| **合计** | **1537** | | **1537/1537 PASS** |
 
 **CDC 验证要点：**
 - 异步 FIFO Gray-code 指针同步 (2-FF)
@@ -285,16 +304,17 @@ ALL TESTS PASSED!
 
 ## 5. 验证结论
 
-1. **功能正确性**：全部 1444 个测试用例通过，RTL 输出与 Python 参考模型 bit-exact 匹配
+1. **功能正确性**：its_top 1444 + wrapper 1537 + core_500 94 = 1675 个测试全部通过，RTL 输出与 Python 参考模型 bit-exact 匹配
 2. **穷举回归**：1377 个 (尺寸×变换×LFNST) 组合全覆盖，与 VVC 赛题对标
 3. **变换覆盖**：DCT2 (25 种) + DCT8/DST7 (16 尺寸 × 8 MTS 组合) 全覆盖
-4. **LFNST 覆盖**：9 LFNST 配置 (lfnst0/1/2 × 4 setIdx) × 全部尺寸组合
+4. **LFNST 覆盖**：9 LFNST 配置 (lfnst0/1/2 × 4 setIdx) × 全部尺寸组合，覆盖 nTrs=16 和 nTrs=48 两种场景
 5. **光栅扫描输出**：out_mem 按 row-major 写入，golden 按 flatten_raster() 生成
-6. **反压协议**：37 个反压测试通过，3on/2off 模式，全局 monitor 检测 `req=0 → vld=0`，0 违规
+6. **反压协议**：40 个反压测试通过 (37 个 3on/2off + 3 个手写 1:4 duty)，全局 monitor 检测 `req=0 → vld=0`，0 违规
 7. **尾拍保护**：反压测试后验证无重复 vld 脉冲
 8. **it_data_end 时序**：10 个 end_same_cycle 测试通过，支持 end 与最后一个输入同拍
 9. **边界输入**：random_sparse / low_freq / extreme_low_freq 三种模式全覆盖
 10. **连续 TU 处理**：20 个无复位连续 TU 测试通过，in_mem 清零正确
 11. **接口合规性**：22-bit it_info 接口、it_data_end 信号符合赛题规范
+12. **CDC 验证**：wrapper 1537 测试覆盖 async FIFO CDC 路径，含反压、连续 TU、end_same_cycle 等协议压力场景
 
 **验证状态：PASS**
