@@ -56,7 +56,8 @@ module its_core_500_tb;
         .output_fifo_wr_en     (output_fifo_wr_en),
         .output_fifo_full      (output_fifo_full),
         .output_fifo_almost_full(output_fifo_almost_full),
-        .core_done             (core_done)
+        .core_done             (core_done),
+        .core_ready            ()
     );
 
     // ================================================================

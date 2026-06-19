@@ -41,7 +41,8 @@ module its_core_500 (
     input  wire        output_fifo_almost_full,
 
     // Status
-    output reg         core_done             // TU completion pulse
+    output reg         core_done,            // TU completion pulse
+    output wire        core_ready            // HIGH when core can accept input data
 );
 
     // ========================================
@@ -74,6 +75,10 @@ module its_core_500 (
     // Memory clear control
     reg        clearing;
     reg [11:0] clr_cnt;
+
+    // core_ready: HIGH when core is in S_LOAD and not clearing memory.
+    // Used by register slice to gate proactive FIFO fill.
+    assign core_ready = (state == S_LOAD) & ~clearing;
 
     // Input buffer (Block RAM: 1-cycle read latency)
     (* ram_style = "block" *) reg signed [15:0] in_mem [0:4095];

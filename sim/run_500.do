@@ -12,6 +12,7 @@ vlog ../rtl/its_lfnst.v
 vlog ../rtl/its_core_500.v
 vlog ../rtl/rst_sync.v
 vlog ../rtl/async_fifo.v
+vlog ../rtl/fifo_fwft_reg_slice.v
 vlog ../rtl/its_top_500_wrapper.v
 
 # Compile testbench

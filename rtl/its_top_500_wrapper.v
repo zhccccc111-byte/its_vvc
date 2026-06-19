@@ -35,13 +35,18 @@ module its_top_500_wrapper (
     wire        cmd_fifo_empty;
     wire        cmd_fifo_rd_en;
 
-    // input_fifo
+    // input_fifo (raw combinational outputs from FIFO)
     wire        input_fifo_full;
     wire        input_fifo_almost_full;
     wire [4:0]  input_fifo_wr_count;
     wire [28:0] input_fifo_rdata;
     wire        input_fifo_empty;
     wire        input_fifo_rd_en;
+
+    // input_fifo registered slice (feeds core_500, breaks critical path)
+    wire [28:0] input_fifo_rdata_r;
+    wire        input_fifo_empty_r;
+    wire        input_fifo_rd_en_from_core;
 
     // output_fifo
     wire [39:0] output_fifo_wdata;
@@ -54,6 +59,7 @@ module its_top_500_wrapper (
 
     // done CDC (toggle-based: clk_core pulse → toggle → clk_if edge detect)
     wire        core_done;
+    wire        core_ready;
     reg         done_toggle;       // clk_core domain: toggles on each core_done
     reg         done_sync1, done_sync2, done_sync3;
 
@@ -142,6 +148,25 @@ module its_top_500_wrapper (
         .rd_en      (input_fifo_rd_en),
         .rd_data    (input_fifo_rdata),
         .empty      (input_fifo_empty)
+    );
+
+    // ================================================================
+    // input_fifo register slice (clk_core domain)
+    // Breaks rd_ptr → FIFO RAM → core in_mem combinational critical path.
+    // FIFO's FWFT combinational outputs → registered → core_500
+    // ================================================================
+    fifo_fwft_reg_slice #(
+        .DATA_WIDTH(29)
+    ) u_input_fifo_reg_slice (
+        .clk        (clk_core),
+        .rst_n      (rst_sync_core_n),
+        .fifo_rdata (input_fifo_rdata),
+        .fifo_empty (input_fifo_empty),
+        .fifo_rd_en (input_fifo_rd_en),
+        .core_rdata (input_fifo_rdata_r),
+        .core_empty (input_fifo_empty_r),
+        .core_rd_en (input_fifo_rd_en_from_core),
+        .core_ready (core_ready)
     );
 
     // ================================================================
@@ -259,14 +284,15 @@ module its_top_500_wrapper (
         .cmd_fifo_rdata     (cmd_fifo_rdata),
         .cmd_fifo_empty     (cmd_fifo_empty),
         .cmd_fifo_rd_en     (cmd_fifo_rd_en),
-        .input_fifo_rdata   (input_fifo_rdata),
-        .input_fifo_empty   (input_fifo_empty),
-        .input_fifo_rd_en   (input_fifo_rd_en),
+        .input_fifo_rdata   (input_fifo_rdata_r),
+        .input_fifo_empty   (input_fifo_empty_r),
+        .input_fifo_rd_en   (input_fifo_rd_en_from_core),
         .output_fifo_wdata  (output_fifo_wdata),
         .output_fifo_wr_en  (output_fifo_wr_en),
         .output_fifo_full   (output_fifo_full),
         .output_fifo_almost_full(output_fifo_almost_full),
-        .core_done          (core_done)
+        .core_done          (core_done),
+        .core_ready         (core_ready)
     );
 
 endmodule
