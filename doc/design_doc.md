@@ -489,6 +489,6 @@ v3.3→v3.9 的 RTL 优化（+0.556ns）消除了全部逻辑瓶颈，剩余 gap
 
 ### 8.5 结论
 
-- **UltraScale+**: 500MHz **已达标**（WNS +0.024ns），相同 RTL 零改动
+- **UltraScale+**: 500MHz **已达标**（its_top_500_wrapper OOC WNS +0.058ns），XPM BRAM in_mem
 - **Artix-7**: 500MHz 不可达（WNS -1.733ns），受限于 DSP48E1 固有物理特性
 - **ASIC**: 500MHz 可行，设计架构已针对高频优化（4 MAC 并行、流水线、寄存器输出）

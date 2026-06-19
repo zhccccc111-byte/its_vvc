@@ -436,7 +436,7 @@ report_power -file synth/core_500_power.rpt
 
 | 优先级 | 优化项 | 预期效果 |
 |--------|--------|---------|
-| P0 | `in_mem`/`tp_buf` 改同步读 | 消除异步读组合逻辑，释放 DistRAM LUT |
+| ~~P0~~ | ~~`in_mem`/`tp_buf` 改同步读~~ | **已完成** (v5.1: XPM BRAM in_mem, tp_buf BRAM, WNS +0.058ns) |
 | P0 | 地址计算改递推计数器 | 消除乘法器，减少逻辑级数 |
 | P1 | MAC 深化到 4 级流水 | 每级 < 1ns，500MHz 可行 |
 | P1 | ROM 地址预计算寄存化 | ROM 地址 → 数据路径拆分 |
