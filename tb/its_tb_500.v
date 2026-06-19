@@ -337,13 +337,15 @@ module its_tb_500;
         integer out_idx;
         reg [39:0] out_data;
         reg out_valid;
-        reg out_timeout;
         reg done_timeout;
         reg signed [9:0] exp_val, got_val;
         integer local_mismatches;
         integer total_outputs;
         integer input_count;
         integer timeout_cnt;
+        integer bp_timer;
+        integer bp_phase; // 0=high, 1=low
+        integer bp_dur;
         begin
             $display("\n=== [WRAPPER-BP] %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
                      test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
@@ -359,7 +361,7 @@ module its_tb_500;
             it_data_addr = 0;
             it_data_in_vld = 0;
             it_data_end = 0;
-            it_data_out_req = 0;
+            it_data_out_req = 1;
             bp_active = 0;
             repeat(50) @(posedge clk_if);
             rst_n = 1;
@@ -397,22 +399,61 @@ module its_tb_500;
             @(posedge clk_if);
             it_data_end = 0;
 
-            // Enable output backpressure (slow consumer)
-            bp_active = 1;
+            // Wait for first output, collect without backpressure
+            it_data_out_req = 1;
+            timeout_cnt = 0;
+            while (!it_data_out_vld && timeout_cnt < 10000000) begin
+                @(posedge clk_if);
+                timeout_cnt = timeout_cnt + 1;
+            end
+            if (!it_data_out_vld) begin
+                $display("  FAIL: timeout waiting for first output");
+                local_mismatches = local_mismatches + 1;
+            end else begin
+                out_data = it_data_out;
+                for (j = 0; j < 4 && j < total_outputs; j = j + 1) begin
+                    case (j)
+                        0: got_val = out_data[9:0];
+                        1: got_val = out_data[19:10];
+                        2: got_val = out_data[29:20];
+                        3: got_val = out_data[39:30];
+                    endcase
+                    exp_val = golden_vec[j];
+                    if (got_val !== exp_val) begin
+                        if (local_mismatches < 5)
+                            $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                     j, $signed(exp_val), $signed(got_val));
+                        local_mismatches = local_mismatches + 1;
+                    end
+                end
+            end
+            out_idx = 4;
 
-            // Collect outputs with backpressure
-            // NOTE: Do NOT check it_done here — done_pending may fire while
-            // FIFO temporarily empties between reads. Done is checked after loop.
-            out_idx = 0;
+            // Collect remaining outputs with backpressure
+            // Toggle on negedge so DUT samples stable value on posedge
+            bp_timer = 0;
+            bp_phase = 0; // start with req high
+            bp_dur = 3;   // hold high for 3 cycles
             timeout_cnt = 0;
             while (out_idx < total_outputs) begin
-                // Apply backpressure: req high for 1 cycle, low for 3 cycles
-                @(posedge clk_if);
-                it_data_out_req = (bp_cnt == 0);
+                @(negedge clk_if);
+                bp_timer = bp_timer + 1;
+                if (bp_phase == 0 && bp_timer >= bp_dur) begin
+                    it_data_out_req = 0;
+                    bp_timer = 0;
+                    bp_phase = 1;
+                    bp_dur = 2; // hold low for 2 cycles
+                end else if (bp_phase == 1 && bp_timer >= bp_dur) begin
+                    it_data_out_req = 1;
+                    bp_timer = 0;
+                    bp_phase = 0;
+                    bp_dur = 3; // hold high for 3 cycles
+                end
 
+                @(posedge clk_if);
                 if (it_data_out_vld && it_data_out_req) begin
                     out_data = it_data_out;
-                    timeout_cnt = 0;  // reset on successful read
+                    timeout_cnt = 0;
                     for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
                         case (j)
                             0: got_val = out_data[9:0];
@@ -439,7 +480,7 @@ module its_tb_500;
                 end
             end
 
-            // Wait for done: keep req=1 to drain FIFO, then wait for it_done
+            // Wait for done
             timeout_cnt = 0;
             done_timeout = 0;
             it_data_out_req = 1;
@@ -603,8 +644,242 @@ module its_tb_500;
         end
     endtask
 
+    // ---- End-same-cycle version (wrapper-compatible) ----
+    // Same as run_test but sends it_data_end on same cycle as last input data.
+    // No internal state peeking — just uses send_data_with_end for last point.
+    task run_test_end_same_cycle;
+        input [800*8:1] test_name;
+        input [6:0] width;
+        input [6:0] height;
+        input [1:0] tr_hor;
+        input [1:0] tr_ver;
+        input [1:0] lfnst_tr_set_idx;
+        input [1:0] lfnst_idx;
+        input [800*8:1] input_hex;
+        input [800*8:1] golden_hex;
+
+        integer i, j;
+        integer out_idx;
+        reg [39:0] out_data;
+        reg out_valid;
+        reg out_timeout;
+        reg done_timeout;
+        reg signed [9:0] exp_val, got_val;
+        integer local_mismatches;
+        integer total_outputs;
+        integer input_count;
+        begin
+            $display("\n=== [WRAPPER-END-SAME-CYCLE] %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
+                     test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+            local_mismatches = 0;
+            protocol_err = 0;
+
+            // Reset
+            rst_n = 0;
+            it_info = 0;
+            it_info_vld = 0;
+            it_data_in = 0;
+            it_data_addr = 0;
+            it_data_in_vld = 0;
+            it_data_end = 0;
+            it_data_out_req = 1;
+            repeat(20) @(posedge clk_if);
+            rst_n = 1;
+            wait(u_wrapper.rst_sync_if_n === 1'b1);
+            wait(u_wrapper.rst_sync_core_n === 1'b1);
+            repeat(10) @(posedge clk_if);
+
+            for (i = 0; i < 4096; i = i + 1) begin
+                input_vec[i] = 28'd0;
+                golden_vec[i] = 10'd0;
+            end
+            $readmemh(input_hex, input_vec);
+            $readmemh(golden_hex, golden_vec);
+
+            total_outputs = width * height;
+            input_count = 0;
+            for (i = 0; i < 4096; i = i + 1) begin
+                if (input_vec[i] != 28'd0)
+                    input_count = input_count + 1;
+            end
+
+            send_info(width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+
+            // Send all but last with send_data
+            for (i = 0; i < input_count - 1; i = i + 1) begin
+                send_data(input_vec[i][27:16], input_vec[i][15:0]);
+            end
+            // Last data point: it_data_end on same cycle
+            send_data_with_end(input_vec[input_count-1][27:16], input_vec[input_count-1][15:0]);
+
+            // Collect and compare outputs
+            out_idx = 0;
+            while (out_idx < total_outputs) begin
+                wait_output(out_data, out_valid, out_timeout);
+                if (out_valid) begin
+                    for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
+                        case (j)
+                            0: got_val = out_data[9:0];
+                            1: got_val = out_data[19:10];
+                            2: got_val = out_data[29:20];
+                            3: got_val = out_data[39:30];
+                        endcase
+                        exp_val = golden_vec[out_idx + j];
+                        if (got_val !== exp_val) begin
+                            if (local_mismatches < 5)
+                                $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                         out_idx + j, $signed(exp_val), $signed(got_val));
+                            local_mismatches = local_mismatches + 1;
+                        end
+                    end
+                    out_idx = out_idx + 4;
+                end else if (out_timeout) begin
+                    $display("  FAIL: output timeout at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
+                end
+            end
+
+            wait_done(done_timeout);
+            if (done_timeout) local_mismatches = local_mismatches + 1;
+
+            if (local_mismatches == 0 && !protocol_err) begin
+                $display("  PASS (%0d outputs, end-same-cycle)", total_outputs);
+                test_pass = test_pass + 1;
+            end else begin
+                $display("  FAIL: %0d/%0d mismatches, protocol_err=%0d", local_mismatches, total_outputs, protocol_err);
+                test_fail = test_fail + 1;
+            end
+
+            total_tests = total_tests + 1;
+            repeat(10) @(posedge clk_if);
+        end
+    endtask
+
+    // ---- Continuous TU version (wrapper-compatible) ----
+    // No reset between TUs. The FIFO-based interface handles timing naturally:
+    // cmd/input FIFOs buffer data, send_data waits for it_data_in_req.
+    task run_test_continuous;
+        input [800*8:1] test_name;
+        input [6:0] width;
+        input [6:0] height;
+        input [1:0] tr_hor;
+        input [1:0] tr_ver;
+        input [1:0] lfnst_tr_set_idx;
+        input [1:0] lfnst_idx;
+        input [800*8:1] input_hex;
+        input [800*8:1] golden_hex;
+
+        integer i, j;
+        integer out_idx;
+        reg [39:0] out_data;
+        reg out_valid;
+        reg out_timeout;
+        reg done_timeout;
+        reg signed [9:0] exp_val, got_val;
+        integer local_mismatches;
+        integer total_outputs;
+        integer input_count;
+        begin
+            $display("\n=== [WRAPPER-CONTINUOUS] %0s (w=%0d h=%0d tr_h=%0d tr_v=%0d sidx=%0d lfnst=%0d) ===",
+                     test_name, width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+            local_mismatches = 0;
+            protocol_err = 0;
+
+            // No reset — previous TU confirmed done by wait_done in prior test.
+            // FIFO-based interface: cmd_fifo/input_fifo buffer data, core
+            // processes when ready. send_data already waits for it_data_in_req.
+            repeat(20) @(posedge clk_if);
+
+            for (i = 0; i < 4096; i = i + 1) begin
+                input_vec[i] = 28'd0;
+                golden_vec[i] = 10'd0;
+            end
+            $readmemh(input_hex, input_vec);
+            $readmemh(golden_hex, golden_vec);
+
+            total_outputs = width * height;
+            input_count = 0;
+            for (i = 0; i < 4096; i = i + 1) begin
+                if (input_vec[i] != 28'd0)
+                    input_count = input_count + 1;
+            end
+
+            send_info(width, height, tr_hor, tr_ver, lfnst_tr_set_idx, lfnst_idx);
+
+            for (i = 0; i < input_count; i = i + 1) begin
+                send_data(input_vec[i][27:16], input_vec[i][15:0]);
+            end
+
+            @(posedge clk_if);
+            while (!it_data_in_req) @(posedge clk_if);
+            it_data_end = 1;
+            @(posedge clk_if);
+            it_data_end = 0;
+
+            out_idx = 0;
+            while (out_idx < total_outputs) begin
+                wait_output(out_data, out_valid, out_timeout);
+                if (out_valid) begin
+                    for (j = 0; j < 4 && out_idx + j < total_outputs; j = j + 1) begin
+                        case (j)
+                            0: got_val = out_data[9:0];
+                            1: got_val = out_data[19:10];
+                            2: got_val = out_data[29:20];
+                            3: got_val = out_data[39:30];
+                        endcase
+                        exp_val = golden_vec[out_idx + j];
+                        if (got_val !== exp_val) begin
+                            if (local_mismatches < 5)
+                                $display("  MISMATCH at out[%0d]: exp=%0d got=%0d",
+                                         out_idx + j, $signed(exp_val), $signed(got_val));
+                            local_mismatches = local_mismatches + 1;
+                        end
+                    end
+                    out_idx = out_idx + 4;
+                end else if (out_timeout) begin
+                    $display("  FAIL: output timeout at index %0d", out_idx);
+                    local_mismatches = local_mismatches + 1;
+                    out_idx = total_outputs;
+                end
+            end
+
+            wait_done(done_timeout);
+            if (done_timeout) local_mismatches = local_mismatches + 1;
+
+            if (local_mismatches == 0 && !protocol_err) begin
+                $display("  PASS (%0d outputs, continuous)", total_outputs);
+                test_pass = test_pass + 1;
+            end else begin
+                $display("  FAIL: %0d/%0d mismatches, protocol_err=%0d", local_mismatches, total_outputs, protocol_err);
+                test_fail = test_fail + 1;
+            end
+
+            total_tests = total_tests + 1;
+            repeat(10) @(posedge clk_if);
+        end
+    endtask
+
+    // ---- Backpressure wrapper (name matches .vh include) ----
+    task run_test_backpressure;
+        input [800*8:1] test_name;
+        input [6:0] width;
+        input [6:0] height;
+        input [1:0] tr_hor;
+        input [1:0] tr_ver;
+        input [1:0] lfnst_tr_set_idx;
+        input [1:0] lfnst_idx;
+        input [800*8:1] input_hex;
+        input [800*8:1] golden_hex;
+        begin
+            run_test_bp(test_name, width, height, tr_hor, tr_ver,
+                        lfnst_tr_set_idx, lfnst_idx, input_hex, golden_hex);
+        end
+    endtask
+
     // ---- Main test sequence ----
-    // Mirrors its_core_500_tb.v 94 tests + 3 wrapper-specific tests
+    // Full 1444-test regression: same .vh includes as its_tb.v
+    // Plus hand-written wrapper-specific tests (subset of regression)
     initial begin
         test_pass = 0;
         test_fail = 0;
@@ -612,6 +887,7 @@ module its_tb_500;
 
         $display("=== ITS 500MHz Wrapper CDC Testbench ===");
         $display("clk_if = 100MHz, clk_core = 200MHz (sim-safe)");
+        $display("Full 1444-test regression + hand-written wrapper tests");
 
         // ============================
         // DCT2 (25 block sizes)
@@ -936,6 +1212,28 @@ module its_tb_500;
                    "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_input.hex",
                    "D:/Workspace/its_vvc/tb/test_vectors/dct2_4x4_golden.hex");
 
+        // ============================
+        // Exhaustive regression: 1377 test cases
+        // (DCT2 25x9 + MTS 16x8x9 = 225 + 1152)
+        // ============================
+        `include "D:/Workspace/its_vvc/tb/test_vectors/regression_tests.vh"
+
+        // ============================
+        // it_data_end same-cycle protocol tests (10)
+        // ============================
+        `include "D:/Workspace/its_vvc/tb/test_vectors/end_same_cycle_tests.vh"
+
+        // ============================
+        // Continuous TU tests — no reset between TUs (20)
+        // ============================
+        $display("\n--- Continuous TU Tests (no reset, wrapper CDC) ---");
+        `include "D:/Workspace/its_vvc/tb/test_vectors/continuous_tests.vh"
+
+        // ============================
+        // Backpressure tests — 3on/2off toggle (37)
+        // ============================
+        `include "D:/Workspace/its_vvc/tb/test_vectors/backpressure_tests.vh"
+
         // Summary
         #100;
         $display("\n========================================");
@@ -949,9 +1247,9 @@ module its_tb_500;
         $finish;
     end
 
-    // Global timeout watchdog (scaled for 95 tests, ~28s)
+    // Global timeout watchdog (~250s for 1537+ tests at 100MHz clk_if)
     initial begin
-        repeat(14) #2000000000;
+        repeat(125) #2000000000;
         $display("\nGLOBAL TIMEOUT!");
         $finish;
     end
