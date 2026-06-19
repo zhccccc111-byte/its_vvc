@@ -76,14 +76,75 @@ module its_core_500 (
     reg        clearing;
     reg [11:0] clr_cnt;
 
+    // Load pipeline registers: break input_fifo → in_mem write critical path
+    reg        load_valid_r;   // registered FIFO read valid
+    reg        load_last_r;    // registered last flag
+    reg [11:0] load_addr_r;    // registered address
+    reg [15:0] load_data_r;    // registered data
+
     // core_ready: HIGH when core is in S_LOAD and not clearing memory.
     // Used by register slice to gate proactive FIFO fill.
     assign core_ready = (state == S_LOAD) & ~clearing;
 
-    // Input buffer (Block RAM: 1-cycle read latency)
-    (* ram_style = "block" *) reg signed [15:0] in_mem [0:4095];
+    // Input buffer: XPM for synthesis, reg array for simulation
     reg [11:0] in_mem_rd_addr;
     reg signed [15:0] in_mem_dout_r;
+
+    // Write port signals (used by both XPM and simulation model)
+    reg        in_mem_wr_en;
+    reg [11:0] in_mem_wr_addr;
+    reg [15:0] in_mem_wr_data;
+
+`ifdef SYNTHESIS
+    wire [15:0] in_mem_dout;
+    xpm_memory_sdpram #(
+        .ADDR_WIDTH_A        (12),
+        .ADDR_WIDTH_B        (12),
+        .BYTE_WRITE_WIDTH_A  (16),
+        .CLOCKING_MODE       ("common_clock"),
+        .ECC_MODE            ("no_ecc"),
+        .MEMORY_INIT_FILE    ("none"),
+        .MEMORY_INIT_PARAM   ("0"),
+        .MEMORY_OPTIMIZATION ("true"),
+        .MEMORY_PRIMITIVE    ("auto"),
+        .MEMORY_SIZE         (65536),
+        .MESSAGE_CONTROL     (0),
+        .READ_DATA_WIDTH_B   (16),
+        .READ_LATENCY_B      (1),
+        .READ_RESET_VALUE_B  ("0"),
+        .RST_MODE_A          ("SYNC"),
+        .RST_MODE_B          ("SYNC"),
+        .SIM_ASSERT_CHK      (0),
+        .USE_MEM_INIT        (0),
+        .USE_MEM_INIT_MMI    (0),
+        .WAKEUP_TIME         ("disable_sleep"),
+        .WRITE_DATA_WIDTH_A  (16),
+        .WRITE_MODE_B        ("no_change"),
+        .WRITE_PROTECT       (1)
+    ) u_in_mem (
+        .clka   (clk_core),
+        .ena    (1'b1),
+        .wea    (in_mem_wr_en ? 1'b1 : 1'b0),
+        .addra  (in_mem_wr_addr),
+        .dina   (in_mem_wr_data),
+        .clkb   (clk_core),
+        .enb    (1'b1),
+        .rstb   (1'b0),
+        .regceb (1'b1),
+        .addrb  (in_mem_rd_addr),
+        .doutb  (in_mem_dout)
+    );
+    // XPM output is already registered (READ_LATENCY_B = 1)
+    always @(*) in_mem_dout_r = in_mem_dout;
+`else
+    // Simulation model: reg array with 1-cycle read latency
+    (* ram_style = "block" *) reg signed [15:0] in_mem [0:4095];
+    always @(posedge clk_core) begin
+        if (in_mem_wr_en)
+            in_mem[in_mem_wr_addr] <= in_mem_wr_data;
+        in_mem_dout_r <= in_mem[in_mem_rd_addr];
+    end
+`endif
 
     // LFNST overlay buffer: small buffer for LFNST results, avoids
     // writing back to large in_mem (eliminates high-fanout write path)
@@ -115,10 +176,8 @@ module its_core_500 (
     // Row engine: absolute address counter (replaces base+offset)
     reg [11:0] row_in_mem_addr;
 
-    // BRAM synchronous read: address registered, data available next cycle
-    always @(posedge clk_core) begin
-        in_mem_dout_r <= in_mem[in_mem_rd_addr];
-    end
+    // BRAM read: moved to combined always block below (with write port)
+    // for proper BRAM inference
 
     // Overlay detection (combinational from registered signals)
     // nTrs=16: LFNST operates on flat in_mem[0..15], overlay covers first 16 addresses
@@ -349,7 +408,24 @@ module its_core_500 (
     // ========================================
     // Input FIFO read (FWFT: data valid when !empty)
     // ========================================
-    assign input_fifo_rd_en = (state == S_LOAD && !clearing && !input_fifo_empty);
+    wire load_fifo_read = (state == S_LOAD && !clearing && !input_fifo_empty);
+    assign input_fifo_rd_en = load_fifo_read;
+
+    // Load pipeline: register FIFO output to break critical path to in_mem
+    wire load_fifo_valid = load_fifo_read && !input_fifo_empty;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n) begin
+            load_valid_r <= 1'b0;
+            load_last_r  <= 1'b0;
+            load_addr_r  <= 12'd0;
+            load_data_r  <= 16'd0;
+        end else begin
+            load_valid_r <= load_fifo_valid;
+            load_last_r  <= input_fifo_rdata[28];
+            load_addr_r  <= input_fifo_rdata[27:16];
+            load_data_r  <= input_fifo_rdata[15:0];
+        end
+    end
 
     // ========================================
     // Input buffer (async read, sync write — same as its_top)
@@ -366,12 +442,21 @@ module its_core_500 (
         clr_cnt  = 12'd0;
     end
 
-    // in_mem write port: clear during S_CLEAR, write during S_LOAD
+    // in_mem write port logic
     always @(posedge clk_core) begin
-        if (clearing)
-            in_mem[clr_cnt] <= 16'sd0;
-        else if (state == S_LOAD && input_fifo_rd_en && !input_fifo_empty && !input_fifo_rdata[28])
-            in_mem[input_fifo_rdata[27:16]] <= input_fifo_rdata[15:0];
+        if (clearing) begin
+            in_mem_wr_en   <= 1'b1;
+            in_mem_wr_addr <= clr_cnt;
+            in_mem_wr_data <= 16'sd0;
+        end else if (state == S_LOAD && load_valid_r && !load_last_r) begin
+            in_mem_wr_en   <= 1'b1;
+            in_mem_wr_addr <= load_addr_r;
+            in_mem_wr_data <= load_data_r;
+        end else begin
+            in_mem_wr_en   <= 1'b0;
+            in_mem_wr_addr <= 12'd0;
+            in_mem_wr_data <= 16'd0;
+        end
     end
 
     // LFNST overlay buffer write (direct, no pipeline — small buffer, low fanout)
@@ -383,13 +468,13 @@ module its_core_500 (
         end
     end
 
-    // Input write counter
+    // Input write counter (registered)
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n) begin
             in_wr_cnt <= 12'd0;
         end else if (cmd_fifo_rd_en_r) begin
             in_wr_cnt <= 12'd0;
-        end else if (state == S_LOAD && input_fifo_rd_en && !input_fifo_empty && !input_fifo_rdata[28]) begin
+        end else if (state == S_LOAD && load_valid_r && !load_last_r) begin
             in_wr_cnt <= in_wr_cnt + 12'd1;
         end
     end
