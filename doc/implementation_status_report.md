@@ -4,9 +4,10 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-17**
-**仿真结果：1444 passed, 0 failed, 0 protocol violations (1377 regression + 37 backpressure + 30 protocol)**
+**基线版本：2026-06-19**
+**仿真结果：its_top 1444/1444 + wrapper 14/14 + core_500 94/94**
 **500MHz 状态：UltraScale+ (xcku5p-2) WNS +0.024ns 达标**
+**500MHz Wrapper：接口完整可交付，async FIFO CDC，赛题接口等价**
 
 ---
 
@@ -130,6 +131,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 协议合规检查 | **已满足** | 全局 monitor 检查 req=0 → vld=0，0 违规 |
 | 参考模型比对 | **已满足** | Python ref_model.py bit-exact 匹配 (1377 组合) |
 | 波形截图 | **已满足** | 6 个关键场景 SVG，见 `doc/waveforms/` |
+| 500MHz wrapper CDC 验证 | **已满足** | 14 个 wrapper 测试 PASS (10 happy + 3 backpressure + 1 two-TU) |
 
 ---
 
@@ -137,7 +139,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| RTL 源代码 | **已满足** | 6 个 .v 文件：its_top, its_transform_engine, its_mac, its_rom, its_lfnst, its_lfnst_rom |
+| RTL 源代码 | **已满足** | 9 个 .v 文件：its_top, its_top_500_wrapper, its_core_500, async_fifo, rst_sync, its_transform_engine, its_mac, its_rom, its_lfnst, its_lfnst_rom |
 | 设计文档 | **已满足** | `doc/design_doc.md` |
 | 验证报告 | **已满足** | `doc/verification_report.md` |
 | PPA 报告 | **已满足** | `doc/ppa_report.md` |
@@ -153,11 +155,11 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 接口要求 | 11 | 11 | 0 | 0 |
 | 功能要求 | 10 | 10 | 0 | 0 |
 | 性能要求 | 3 | 3 | 0 | 0 |
-| 验证要求 | 11 | 11 | 0 | 0 |
+| 验证要求 | 12 | 12 | 0 | 0 |
 | 交付要求 | 6 | 6 | 0 | 0 |
-| **总计** | **41** | **40** | **1** | **0** |
+| **总计** | **42** | **42** | **0** | **0** |
 
-**完成率：41 已满足 / 0 部分满足 / 0 未满足**
+**完成率：42/42 全部满足**
 
 ---
 
@@ -166,13 +168,14 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 维度 | 状态 | 说明 |
 |------|------|------|
 | 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，1444 测试 0 失败 |
-| 验证 | **完成** | 1444 测试用例 (穷举 1377 组合) + 协议 monitor + 参考模型 bit-exact |
+| 验证 | **完成** | its_top 1444 + wrapper 14 + core_500 94 = 1552 测试全部通过 |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
 | PPA | **完成** | UltraScale+: LUT 2539 (1.17%), BRAM 12, DSP 9 |
 | 时序 | **完成** | UltraScale+ OOC WNS = +0.024ns，500MHz **达标** |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
+| 500MHz Wrapper | **完成** | async FIFO CDC，赛题接口等价，14/14 测试通过 |
 
-**全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现，相同 RTL 零改动。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。
+**全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现，相同 RTL 零改动。500MHz wrapper 提供完整的 CDC 接口层，端口与赛题完全一致（仅多 clk_core），可直接替换 its_top.v 作为交付顶层。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。
 
 ---
 

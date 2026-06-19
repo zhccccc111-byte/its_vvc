@@ -1,5 +1,28 @@
 # ITS VVC 修复记录
 
+## 2026-06-19: 500MHz wrapper 多驱动器 + done 逻辑修复
+
+### 问题
+
+1. `core_finished` 被两个相同的 `always` 块驱动（多驱动器 bug），导致仿真中值不确定
+2. `it_done_r` 是电平信号，条件短暂不满足时掉回 0，TB 采不到
+3. TB done-wait 循环用 `disable task` 退出，ModelSim 10.6e 兼容性问题导致假 TIMEOUT
+4. `all_outputs_read` 端口破坏赛题接口等价性
+
+### 修改文件
+
+| 文件 | 修改内容 |
+|------|---------|
+| `rtl/its_top_500_wrapper.v` | 删除重复 `core_finished` always 块；`it_done_r` 改为 sticky；去掉 `all_outputs_read` 端口，内部输出 beat 计数器；`new_tu` 时清零 done 状态 |
+| `tb/its_tb_500.v` | `wait_output`/`wait_done` 改用 seen-flag 替代 `disable`；去掉 `all_outputs_read` 信号；加 two-TU 测试 |
+
+### 验证
+
+- wrapper 14/14 PASS (10 happy + 3 backpressure + 1 two-TU)
+- core_500 94/94 PASS (不受影响)
+
+---
+
 ## 2026-06-07: in_mem 清零逻辑修复
 
 ### 问题

@@ -237,6 +237,25 @@ ALL TESTS PASSED!
 | 协议违规 | 0 |
 | 仿真耗时 | ~17 秒 |
 
+### 3.4 500MHz Wrapper 验证 (14 个测试)
+
+**DUT**: `its_top_500_wrapper.v` (赛题接口 ↔ async FIFO CDC ↔ its_core_500)
+**TB**: `its_tb_500.v` (双时钟: clk_if=100MHz, clk_core=200MHz sim-safe)
+
+| 类别 | 测试项 | 结果 |
+|------|--------|------|
+| Happy path | dct2_4x4, dct2_8x8, dct2_16x16, dct2_32x32, dct8_8x8, dst7_8x8, lfnst16, lfnst48, dct2_8x16, dct2_64x64 | 10/10 PASS |
+| 反压 | bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48 (1:4 duty cycle) | 3/3 PASS |
+| 两 TU 无复位 | two_tu_dct2_4x4 (连续两 TU 不 reset) | 1/1 PASS |
+
+**CDC 验证要点：**
+- 异步 FIFO Gray-code 指针同步 (2-FF)
+- Registered full flag + wr_fire gating
+- Toggle-based done CDC (core_done → toggle → 2-FF sync → edge detect)
+- FWFT 输出: it_data_out_vld = ~empty, 数据在 req=0 时保持稳定
+- 内部输出 beat 计数器 (无 TB 反馈信号)
+- 多 TU 清零: it_info_vld 时清 core_finished、it_done_r、out_beat_count
+
 ---
 
 ## 4. 调试记录

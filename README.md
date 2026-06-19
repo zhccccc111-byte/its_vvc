@@ -32,7 +32,11 @@
 ```
 its_vvc/
 ├── rtl/                            # RTL 源代码
-│   ├── its_top.v                   # 顶层模块 (状态机 + 数据通路)
+│   ├── its_top.v                   # 顶层模块 (单时钟，赛题接口)
+│   ├── its_top_500_wrapper.v       # 500MHz 顶层 wrapper (CDC + 赛题接口)
+│   ├── its_core_500.v              # 500MHz 计算核 (FIFO 接口)
+│   ├── async_fifo.v                # Gray-code 异步 FIFO (CDC)
+│   ├── rst_sync.v                  # 复位同步器 (async assert, sync deassert)
 │   ├── its_transform_engine.v      # 1D 变换引擎 (4 MAC 并行)
 │   ├── its_mac.v                   # 流水线乘累加单元
 │   ├── its_rom.v                   # 变换核 ROM (8176 系数)
@@ -47,9 +51,11 @@ its_vvc/
 │   └── fix_log.md                  # 修复记录
 ├── tb/
 │   ├── its_tb.v                    # 测试平台 (1444 个测试用例)
+│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (14 个测试)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
-│   ├── run.do                      # ModelSim 仿真脚本
+│   ├── run.do                      # its_top ModelSim 仿真脚本
+│   ├── run_500.do                  # 500MHz wrapper 仿真脚本
 │   ├── rom_coeffs.hex              # 变换核系数 (symlink)
 │   └── lfnst_coeffs.hex            # LFNST 系数 (symlink)
 ├── synth/
@@ -167,6 +173,31 @@ it_info [21:0]
 - Stage 1: `product = a * b` (16x16 → 32-bit signed)
 - Stage 2: `result += sign_ext(product)` (40-bit accumulator)
 
+### 4.5 500MHz Wrapper (`its_top_500_wrapper.v`)
+
+双时钟域架构：接口时钟 (clk_if, 100MHz) ↔ 异步 FIFO CDC ↔ 核心时钟 (clk_core, 500MHz)。
+
+```
+                    clk_if 域                                    clk_core 域
+┌─────────────────────────────────────────────┐   ┌──────────────────────────┐
+│                                             │   │                          │
+│  it_info ──→ cmd_fifo (23b, depth 4) ──────│──→│──→ its_core_500          │
+│  it_data ──→ input_fifo (29b, depth 16) ───│──→│──→   (计算核)            │
+│                                             │   │                          │
+│  it_data_out ←── output_fifo (40b, d16) ←──│←──│←── 输出                  │
+│                                             │   │                          │
+│  done CDC: toggle → 2-FF sync → edge detect │   │  core_done → toggle      │
+│  it_done: core_finished && fifo_empty &&    │   │                          │
+│           all_beats_read                    │   │                          │
+└─────────────────────────────────────────────┘   └──────────────────────────┘
+```
+
+**关键设计点：**
+- **异步 FIFO**: Gray-code 指针 + 2-FF 同步器，registered full flag，FWFT 输出
+- **it_done 生成**: 内部计数输出 beat (每 beat = 4 值)，当 core_finished + FIFO empty + 已读 beat ≥ total_points 时置位
+- **多 TU 支持**: 新 TU (it_info_vld) 时清零 core_finished、it_done_r、out_beat_count
+- **端口**: 与赛题接口完全一致，仅多 clk_core 输入
+
 ---
 
 ## 5. 仿真与验证
@@ -174,15 +205,20 @@ it_info [21:0]
 ### 5.1 运行仿真
 
 ```bash
+# its_top 单时钟回归 (1444 个测试)
 cd sim
 vsim -c -do "do run.do"
+
+# 500MHz wrapper 回归 (14 个测试: 10 happy + 3 backpressure + 1 two-TU)
+vsim -c -do "do run_500.do"
+
+# its_core_500 回归 (94 个测试)
+vsim -c work.its_core_500_tb -do "run -all"
 ```
 
-预期输出: `ALL TESTS PASSED!`，1444 个测试用例全部通过。
+### 5.2 测试用例覆盖
 
-### 5.2 测试用例覆盖 (共 1444 个)
-
-穷举覆盖 VVC 赛题要求的所有 (尺寸×变换×LFNST) 组合：
+**its_top 回归 (1444 个)** — 穷举覆盖所有 (尺寸×变换×LFNST) 组合：
 
 | 类别 | 数量 | 覆盖范围 |
 |------|------|---------|
@@ -191,6 +227,16 @@ vsim -c -do "do run.do"
 | 反压 | 37 | 从 1377 中采样，3on/2off 模式 |
 | 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
 | 协议 (continuous) | 20 | 无复位连续 TU 处理 |
+
+**500MHz wrapper 回归 (14 个)** — CDC 功能 + 接口协议验证：
+
+| 类别 | 数量 | 测试项 |
+|------|------|--------|
+| Happy path | 10 | DCT2 4x4~64x64, DCT8 8x8, DST7 8x8, LFNST 16/48, 8x16 |
+| 反压 | 3 | bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48 (1:4 duty cycle) |
+| 两 TU 无复位 | 1 | 连续两个 TU 不 reset，验证 done 清零 |
+
+**its_core_500 回归 (94 个)** — 500MHz 核功能验证，与 wrapper 使用相同测试向量。
 
 **LFNST 配置** (每种尺寸×变换组合 9 个): lfnst_idx=0 random_sparse (1) + lfnst_idx=1 set0~3 low_freq (4) + lfnst_idx=2 set0~3 extreme_low_freq (4)
 
@@ -313,6 +359,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.0** | `v5.0-500mhz-wrapper` | 500MHz wrapper: async FIFO CDC, 赛题接口等价, 内部输出计数, 多 TU 支持 | +0.024ns | 1444+14+94 |
 | **v4.2** | `v4.2-area-optimization` | 面积优化：LUT -10.7%, DistRAM -28.2%, 控制集 -32.4% | +0.024ns | 1444/1444 |
 | **v4.1** | `v4.1-exhaustive-regression-1444` | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |
 | **v4.0** | `v4.0-ultrascale-plus-500mhz` | 零改动 RTL 移植 UltraScale+ (xcku5p-2)，500MHz 达标 | **+0.030ns** | 108/108 |
