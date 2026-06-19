@@ -1,13 +1,14 @@
-# ITS Core 500MHz OOC 综合时序报告
+# ITS 500MHz OOC 综合时序报告
 
 ## 1. 结论摘要
 
-| 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
-|------|---------|-----|------------|------|
-| **Kintex UltraScale+ xcku5p** | -2 | **+0.024 ns** | **MET** | v4.2 面积优化后，DSP48E2 消除瓶颈 |
-| Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
+| 设计 | 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
+|------|------|---------|-----|------------|------|
+| **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.058 ns** | **MET** | v5.1: XPM BRAM in_mem + reg slice + load pipeline |
+| its_core_500 | Kintex UltraScale+ xcku5p | -2 | +0.024 ns | MET | v4.2 面积优化后 |
+| its_core_500 | Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
 
-**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上已达标，相同 RTL 零改动。Artix-7 受 DSP48E1 固有特性限制不可达。
+**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以完整 wrapper 系统达标（WNS +0.058ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ---
 
@@ -77,6 +78,41 @@ Dest:    u_lfnst/coeff_buf_reg_192_255_7_13 (RAMD64E)
 | DSP48E2 | ~1.6ns | ~625MHz | 可行 |
 
 UltraScale+ 的 Block RAM (RAMB36E2) 最小周期约 1.8ns，500MHz (2.0ns) 有充足余量。
+
+---
+
+## 2.6 Wrapper OOC 时序 (v5.1 完整系统)
+
+its_top_500_wrapper 包含：赛题接口 + async FIFO CDC + FWFT reg slice + its_core_500。
+
+### 时序优化历程
+
+| 阶段 | WNS | 关键改动 |
+|------|-----|---------|
+| 初始 wrapper | -1.108ns | FIFO 组合输出→in_mem DistRAM MUX 树 |
+| +FWFT reg slice | -0.336ns | 打断 input_fifo→core 组合路径 |
+| +load pipeline | -0.323ns | core_500 入口寄存 FIFO 数据 |
+| +XPM BRAM in_mem | **+0.058ns** | xpm_memory_sdpram 消除 384×RAMD64E MUX 树 |
+
+### XPM BRAM 方案
+
+in_mem (4096×16) 原使用 `(* ram_style = "block" *)` 属性，因异步读模式被 Vivado 拒绝（Infeasible attribute），实际推断为 384×RAMD64E DistRAM，12-bit 地址解码 MUX 树达 6 级逻辑。
+
+解决方案：用 `xpm_memory_sdpram` 原语直接例化，`READ_LATENCY_B=1` 保持单周期读延迟，不需要修改状态机。通过 `ifdef SYNTHESIS` 条件编译：
+- 综合：XPM 原语 → 2×RAMB36E2
+- 仿真：reg 数组（ModelSim 无 XPM 支持）
+
+### Wrapper 最终时序
+
+| 指标 | 值 | 状态 |
+|------|-----|------|
+| WNS (Setup) | +0.058 ns | **MET** |
+| WHS (Hold) | +0.030 ns | MET |
+| DSP48E2 | 9 | — |
+| RAMB36E2 | 12 | 含 in_mem 2× |
+| RAMB18E2 | 5 | — |
+
+Worst path: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑, 纯路由)。
 
 ---
 

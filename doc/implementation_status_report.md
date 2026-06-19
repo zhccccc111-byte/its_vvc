@@ -4,10 +4,10 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-19**
-**仿真结果：its_top 1444/1444 + wrapper 14/14 + core_500 94/94**
-**500MHz 状态：UltraScale+ (xcku5p-2) WNS +0.024ns 达标**
-**500MHz Wrapper：接口完整可交付，async FIFO CDC，赛题接口等价**
+**基线版本：2026-06-19 (v5.1)**
+**仿真结果：its_top 1444/1444 + wrapper 93/93 + core_500 94/94**
+**500MHz 状态：its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS +0.058ns 达标**
+**500MHz Wrapper：接口完整可交付，async FIFO CDC + FWFT reg slice + XPM BRAM in_mem**
 
 ---
 
@@ -66,18 +66,20 @@
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| 工作主频 500MHz | **已满足** | UltraScale+ (xcku5p-2) WNS +0.024ns |
+| 工作主频 500MHz | **已满足** | its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS +0.058ns |
 
-**UltraScale+ 实测数据 (Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
+**UltraScale+ 实测数据 (its_top_500_wrapper, Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | +0.024 ns | **MET** |
+| WNS (Setup) | +0.058 ns | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | +0.020 ns | MET |
+| WHS (Hold) | +0.030 ns | MET |
 | Failing Endpoints | 0 | — |
+| DSP48E2 | 9 | — |
+| RAMB36E2 | 12 | 含 in_mem 2× (XPM BRAM) |
 
-Worst path: LFNST ROM→DistRAM (0 级逻辑, 1.846ns)。DSP48E1 FF→A 瓶颈在 UltraScale+ 上完全消失。
+Worst path: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑)。in_mem 由 XPM_MEMORY_SDPRAM 推断为 2×RAMB36E2，消除了原 DistRAM MUX 树关键路径。
 
 **Artix-7 历史数据 (xc7a200tfbg484-3, 仅供参考)：**
 
