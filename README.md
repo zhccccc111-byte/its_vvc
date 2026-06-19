@@ -51,7 +51,7 @@ its_vvc/
 │   └── fix_log.md                  # 修复记录
 ├── tb/
 │   ├── its_tb.v                    # 测试平台 (1444 个测试用例)
-│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (14 个测试)
+│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (93 个测试)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
 │   ├── run.do                      # its_top ModelSim 仿真脚本
@@ -209,7 +209,7 @@ it_info [21:0]
 cd sim
 vsim -c -do "do run.do"
 
-# 500MHz wrapper 回归 (14 个测试: 10 happy + 3 backpressure + 1 two-TU)
+# 500MHz wrapper 回归 (93 个测试: 89 core_500 向量 + 3 backpressure + 1 two-TU)
 vsim -c -do "do run_500.do"
 
 # its_core_500 回归 (94 个测试)
@@ -228,11 +228,11 @@ vsim -c work.its_core_500_tb -do "run -all"
 | 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
 | 协议 (continuous) | 20 | 无复位连续 TU 处理 |
 
-**500MHz wrapper 回归 (14 个)** — CDC 功能 + 接口协议验证：
+**500MHz wrapper 回归 (93 个)** — CDC 功能 + 接口协议验证：
 
 | 类别 | 数量 | 测试项 |
 |------|------|--------|
-| Happy path | 10 | DCT2 4x4~64x64, DCT8 8x8, DST7 8x8, LFNST 16/48, 8x16 |
+| 核心功能 | 89 | 与 core_500 相同测试向量 (DCT2/DCT8/DST7/LFNST 全尺寸) |
 | 反压 | 3 | bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48 (1:4 duty cycle) |
 | 两 TU 无复位 | 1 | 连续两个 TU 不 reset，验证 done 清零 |
 
@@ -248,33 +248,30 @@ vsim -c work.its_core_500_tb -do "run -all"
 
 ## 6. 综合与 PPA
 
-### 6.1 500MHz OOC 综合结果 — UltraScale+ (v4.0)
+### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.1 Wrapper 完整系统)
 
+**设计**: its_top_500_wrapper（赛题接口 + async FIFO CDC + FWFT reg slice + its_core_500）
 **目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
-**时钟约束**: 500MHz (2ns)
-**综合方式**: Out-of-Context (OOC)，仅测内部时序，不含 I/O pad
-**RTL**: 与 v3.9 完全相同（零改动），仅更换目标器件
+**时钟约束**: clk_if 100MHz, clk_core 500MHz (2ns)
+**综合方式**: Out-of-Context (OOC)
+**关键 RTL 改动**: in_mem 用 xpm_memory_sdpram 替换 DistRAM（`ifdef SYNTHESIS` 条件编译），load pipeline 寄存器，FWFT reg slice
 
-| 资源 | 使用 | 可用 | 利用率 |
-|------|------|------|--------|
-| LUT as Logic | 1,929 | 216,960 | 0.89% |
-| LUT as Memory | 610 | 99,840 | 0.61% |
-| CLB Registers | 2,899 | 433,920 | 0.67% |
-| CARRY8 | 92 | 27,120 | 0.34% |
-| DSP48E2 | 9 | — | ✅ 推断正确 |
-| RAMB36E2 | 12 | — | ✅ 推断正确 |
+| 资源 | 使用 | 说明 |
+|------|------|------|
+| DSP48E2 | 9 | — |
+| RAMB36E2 | 12 | 含 in_mem 2× (XPM BRAM) |
+| RAMB18E2 | 5 | — |
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | **+0.024 ns** | **MET** |
+| WNS (Setup) | **+0.058 ns** | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | +0.020 ns | MET |
-| WPWS (Pulse Width) | +0.431 ns | MET |
+| WHS (Hold) | +0.030 ns | MET |
 | Failing Endpoints | **0** | — |
 
-**Worst Path**: `u_lfnst_rom/coeff_reg_1 (RAMB36E2) → u_lfnst/coeff_buf (DistRAM)`，BRAM→DistRAM 路径，0 级逻辑，data path 1.846ns (logic 52% + route 48%)。Artix-7 上的 DSP48E1 FF→A 瓶颈（WNS -1.733ns）在 UltraScale+ 上完全消失。
+**Worst Path**: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑)。原 in_mem DistRAM MUX 树关键路径（384×RAMD64E, 6 级逻辑）已被 XPM BRAM 消除。
 
-**结论**: v3.9 的 RTL 在 UltraScale+ 上零改动即满足 500MHz。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有特性（FF propagation + 路由 + setup time），DSP48E2 大幅改善了这些参数。
+**结论**: its_top_500_wrapper 完整系统在 UltraScale+ 上 500MHz 达标。in_mem 由 XPM_MEMORY_SDPRAM 推断为 2×RAMB36E2，消除了 DistRAM MUX 树关键路径。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ### 6.2 500MHz OOC 综合结果 — Artix-7 (v3.9)
 
@@ -348,7 +345,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ✅ | UltraScale+ (xcku5p-2) WNS=+0.024ns 达标；Artix-7 WNS=-1.733ns 不可达，详见 6.1/6.2 节 |
+| 500MHz 主频 | ✅ | its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS=+0.058ns 达标；Artix-7 WNS=-1.733ns 不可达，详见 6.1/6.2 节 |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -359,6 +356,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.1** | `v5.1-wrapper-500mhz-timing-clean` | XPM BRAM in_mem + load pipeline + FWFT reg slice，wrapper OOC 500MHz 时序闭合 | **+0.058ns** | 1444+93+94 |
 | **v5.0** | `v5.0-500mhz-wrapper` | 500MHz wrapper: async FIFO CDC, 赛题接口等价, 内部输出计数, 多 TU 支持 | +0.024ns | 1444+14+94 |
 | **v4.2** | `v4.2-area-optimization` | 面积优化：LUT -10.7%, DistRAM -28.2%, 控制集 -32.4% | +0.024ns | 1444/1444 |
 | **v4.1** | `v4.1-exhaustive-regression-1444` | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |
