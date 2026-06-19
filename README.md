@@ -51,7 +51,7 @@ its_vvc/
 │   └── fix_log.md                  # 修复记录
 ├── tb/
 │   ├── its_tb.v                    # 测试平台 (1444 个测试用例)
-│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (93 个测试)
+│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (1537 个测试)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
 │   ├── run.do                      # its_top ModelSim 仿真脚本
@@ -209,7 +209,7 @@ it_info [21:0]
 cd sim
 vsim -c -do "do run.do"
 
-# 500MHz wrapper 回归 (93 个测试: 89 core_500 向量 + 3 backpressure + 1 two-TU)
+# 500MHz wrapper 回归 (1537 个测试: 1377 回归 + 40 反压 + 30 协议 + 1 two-TU)
 vsim -c -do "do run_500.do"
 
 # its_core_500 回归 (94 个测试)
@@ -359,7 +359,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
 | **v5.2** | `v5.2-wrapper-exhaustive-regression-1537` | Wrapper 穷举回归 1537 测试（迁移 its_tb 全量 + CDC 协议 + 反压），1537/1537 PASS | +0.058ns | 1537/1537 |
-| **v5.1** | `v5.1-wrapper-500mhz-timing-clean` | XPM BRAM in_mem + load pipeline + FWFT reg slice，wrapper OOC 500MHz 时序闭合 | **+0.058ns** | 1444+93+94 |
+| **v5.1** | `v5.1-wrapper-500mhz-timing-clean` | XPM BRAM in_mem + load pipeline + FWFT reg slice，wrapper OOC 500MHz 时序闭合 | **+0.058ns** | 93/93 |
 | **v5.0** | `v5.0-500mhz-wrapper` | 500MHz wrapper: async FIFO CDC, 赛题接口等价, 内部输出计数, 多 TU 支持 | +0.024ns | 1444+14+94 |
 | **v4.2** | `v4.2-area-optimization` | 面积优化：LUT -10.7%, DistRAM -28.2%, 控制集 -32.4% | +0.024ns | 1444/1444 |
 | **v4.1** | `v4.1-exhaustive-regression-1444` | 穷举回归测试扩展：1377 组合 + 37 反压 + 30 协议 = 1444 测试 | +0.030ns | 1444/1444 |

@@ -4,8 +4,8 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-19 (v5.1)**
-**仿真结果：its_top 1444/1444 + wrapper 93/93 + core_500 94/94**
+**基线版本：2026-06-20 (v5.2)**
+**仿真结果：its_top 1444/1444 + wrapper 1537/1537 + core_500 94/94**
 **500MHz 状态：its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS +0.058ns 达标**
 **500MHz Wrapper：接口完整可交付，async FIFO CDC + FWFT reg slice + XPM BRAM in_mem**
 
@@ -133,7 +133,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 协议合规检查 | **已满足** | 全局 monitor 检查 req=0 → vld=0，0 违规 |
 | 参考模型比对 | **已满足** | Python ref_model.py bit-exact 匹配 (1377 组合) |
 | 波形截图 | **已满足** | 6 个关键场景 SVG，见 `doc/waveforms/` |
-| 500MHz wrapper CDC 验证 | **已满足** | 14 个 wrapper 测试 PASS (10 happy + 3 backpressure + 1 two-TU) |
+| 500MHz wrapper CDC 验证 | **已满足** | 1537 个 wrapper 测试 PASS (1377 回归 + 40 反压 + 30 协议 + 1 two-TU) |
 
 ---
 
@@ -145,7 +145,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 设计文档 | **已满足** | `doc/design_doc.md` |
 | 验证报告 | **已满足** | `doc/verification_report.md` |
 | PPA 报告 | **已满足** | `doc/ppa_report.md` |
-| 测试用例 | **已满足** | 1444 个测试全部通过 (1377 回归 + 37 反压 + 30 协议) |
+| 测试用例 | **已满足** | its_top 1444 + wrapper 1537 + core_500 94 = 1675 测试全部通过 |
 | 波形截图 | **已满足** | 6 个关键场景 SVG 波形，见 `doc/waveforms/` |
 
 ---
@@ -169,20 +169,20 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 | 维度 | 状态 | 说明 |
 |------|------|------|
-| 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，1444 测试 0 失败 |
-| 验证 | **完成** | its_top 1444 + wrapper 14 + core_500 94 = 1552 测试全部通过 |
+| 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，1537 测试 0 失败 |
+| 验证 | **完成** | its_top 1444 + wrapper 1537 + core_500 94 = 1675 测试全部通过 |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
 | PPA | **完成** | UltraScale+: LUT 2539 (1.17%), BRAM 12, DSP 9 |
 | 时序 | **完成** | UltraScale+ OOC WNS = +0.024ns，500MHz **达标** |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
-| 500MHz Wrapper | **完成** | async FIFO CDC，赛题接口等价，14/14 测试通过 |
+| 500MHz Wrapper | **完成** | async FIFO CDC，赛题接口等价，1537/1537 测试通过 |
 
 **全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现，相同 RTL 零改动。500MHz wrapper 提供完整的 CDC 接口层，端口与赛题完全一致（仅多 clk_core），可直接替换 its_top.v 作为交付顶层。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。
 
 ---
 
-*报告生成时间：2026-06-17*
-*基线：1444 passed, 0 failed, 0 protocol violations (1377 regression + 37 backpressure + 30 protocol)*
+*报告生成时间：2026-06-20*
+*基线：1537 passed, 0 failed (wrapper: 1377 regression + 40 backpressure + 30 protocol + 1 two-TU)*
 *综合工具：Vivado 2024.1*
 *目标器件：Kintex UltraScale+ xcku5p-ffvb676-2-e / Artix-7 xc7a200tfbg484-3*
 *仿真工具：ModelSim SE-64 10.6e*
