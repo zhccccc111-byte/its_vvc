@@ -1,26 +1,35 @@
 # ModelSim
 sim/work/
 sim/msim/
+sim/work_*/
 sim/*.wlf
 sim/*.vcd
 sim/*.log
 sim/transcript
 sim/vish_stacktrace.vstf
+sim/vsim_stacktrace.vstf
 sim/sim_*.txt
 sim/capture_*.do
+sim/modelsim.ini
 tb/work/
 tb/transcript
 tb/vish_stacktrace.vstf
 work/
 transcript
+vish_stacktrace.vstf
 vsim.wlf
+*.vcd
 
 # Vivado
 synth/its_vvc_synth/
+synth/.Xil/
 synth/*.jou
 synth/*.log
 synth/*.dcp
+synth/*.rpt
+synth/*.txt
 synth/vivado_*.backup.*
+synth/vivado_synth.*
 
 # Python
 scripts/__pycache__/
