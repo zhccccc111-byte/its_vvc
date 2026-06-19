@@ -91,6 +91,11 @@ module its_core_500 (
     reg [6:0]  col_idx;
     reg [11:0] row_base_addr;
 
+    // Forward declarations (used before defined)
+    wire        lfnst_ntrs_is_48;
+    wire        lfnst_active;
+    reg         out_done;
+
     // Engine address signals
     reg [11:0] col_eng_rd_addr;
 
@@ -111,11 +116,27 @@ module its_core_500 (
     end
 
     // Overlay detection (combinational from registered signals)
+    // nTrs=16: LFNST operates on flat in_mem[0..15], overlay covers first 16 addresses
+    // nTrs=48: 3 blocks — blk0(r0-3,c0-3) blk1(r0-3,c4-7) blk2(r4-7,c0-3)
     wire [11:0] col_in_row = row_in_mem_addr - row_base_addr;
-    wire        overlay_row_ok = lfnst_ntrs_is_48 ? (row_idx < 7'd12) : (row_idx < 7'd4);
-    wire        overlay_col_ok = (col_in_row < 12'd4);
-    wire        overlay_hit = lfnst_active && overlay_row_ok && overlay_col_ok;
-    wire [5:0]  overlay_idx = {row_idx[5:0], 2'b00} + col_in_row[1:0];  // row*4 + col
+    wire        is_blk1    = lfnst_ntrs_is_48 && (col_in_row >= 12'd4 && col_in_row < 12'd8);
+    wire        is_blk2    = lfnst_ntrs_is_48 && (row_idx >= 7'd4 && row_idx < 7'd8) && (col_in_row < 12'd4);
+    // nTrs=48: (row<4 && col<8) || (row>=4 && row<8 && col<4), excluding corner (r4-7,c4-7)
+    wire        overlay_corner = lfnst_ntrs_is_48 && (row_idx >= 7'd4) && (col_in_row >= 12'd4);
+    wire        overlay_row_ok_48 = (row_idx < 7'd8);
+    wire        overlay_col_ok_48 = (col_in_row < 12'd8);
+    // nTrs=16: flat linear check on absolute address
+    wire        overlay_hit_16 = lfnst_active && (row_in_mem_addr < 12'd16);
+    wire        overlay_hit_48 = lfnst_active && overlay_row_ok_48 && overlay_col_ok_48 && !overlay_corner;
+    wire        overlay_hit = lfnst_ntrs_is_48 ? overlay_hit_48 : overlay_hit_16;
+
+    // overlay_idx: map position → lfnst_out_buf index
+    // nTrs=16: flat linear (buf[k] = LFNST output[k] for in_mem[k], k=0..15)
+    // nTrs=48: block-based (blk0:base=0, blk1:base=16, blk2:base=32)
+    wire [5:0] overlay_idx_ntrs48 = is_blk1 ? (6'd16 + {row_idx[1:0], col_in_row[1:0]}) :
+                                    is_blk2 ? (6'd32 + {row_idx[1:0], col_in_row[1:0]}) :
+                                    {1'b0, row_idx[2:0], col_in_row[1:0]};
+    wire [5:0] overlay_idx = lfnst_ntrs_is_48 ? overlay_idx_ntrs48 : row_in_mem_addr[5:0];
 
     // Registered overlay selection (aligns with BRAM 1-cycle read latency)
     reg        overlay_hit_r;
@@ -130,24 +151,20 @@ module its_core_500 (
         end
     end
 
-    // Overlay data: synchronous read from lfnst_out_buf
+    // Overlay data: read from lfnst_out_buf (DistRAM, combinational)
     wire [15:0] overlay_data = lfnst_out_buf[overlay_idx_r];
 
     // Mux: overlay vs in_mem BRAM output
     wire [15:0] row_in_mem_data = overlay_hit_r ? overlay_data : in_mem_dout_r;
 
-    // Row engine data pipeline (1 cycle: aligns with BRAM/overlay latency)
-    reg [15:0] row_in_mem_data_r;
+    // Row engine valid (1 cycle: aligns with BRAM read latency)
     reg        row_data_in_vld_r;
 
     always @(posedge clk_core or negedge rst_n) begin
-        if (!rst_n) begin
-            row_in_mem_data_r <= 16'd0;
+        if (!rst_n)
             row_data_in_vld_r <= 1'b0;
-        end else begin
-            row_in_mem_data_r <= row_in_mem_data;
+        else
             row_data_in_vld_r <= (state == S_ROW_RUN);
-        end
     end
 
     // Column engine signals
@@ -180,7 +197,7 @@ module its_core_500 (
     wire        lfnst_done;
     wire        lfnst_data_in_req;
 
-    wire        lfnst_ntrs_is_48 = (tu_width >= 7'd8 && tu_height >= 7'd8);
+    assign      lfnst_ntrs_is_48 = (tu_width >= 7'd8 && tu_height >= 7'd8);
     wire [5:0]  lfnst_ntrs = lfnst_ntrs_is_48 ? 6'd48 : 6'd16;
 
     reg [5:0]  lfnst_rd_addr;
@@ -234,40 +251,29 @@ module its_core_500 (
                     (row48_times_width(lfnst_row48, tu_width) + {9'd0, lfnst_col48}) :
                     {6'd0, lfnst_wr_addr};
 
-    // LFNST BRAM read pipeline: delay data_in_vld by 2 cycles to match
-    // BRAM latency + address register
+    // LFNST BRAM read pipeline: delay data_in_vld by 1 cycle to match BRAM read latency
     reg        lfnst_data_in_vld_d;
-    reg        lfnst_data_in_vld_dd;
 
-    always @(posedge clk_core or negedge rst_n) begin
-        if (!rst_n) begin
-            lfnst_data_in_vld_d  <= 1'b0;
-            lfnst_data_in_vld_dd <= 1'b0;
-        end else begin
-            lfnst_data_in_vld_d  <= (state == S_LFNST && lfnst_data_in_req);
-            lfnst_data_in_vld_dd <= lfnst_data_in_vld_d;
-        end
-    end
-
-    // in_mem read address mux: LFNST vs row engine (registered to break critical path)
-    reg [11:0] in_mem_rd_addr_r;
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
-            in_mem_rd_addr_r <= 12'd0;
-        else if (state == S_LFNST)
-            in_mem_rd_addr_r <= lfnst_rd_mem_addr;
+            lfnst_data_in_vld_d <= 1'b0;
         else
-            in_mem_rd_addr_r <= row_in_mem_addr;
+            lfnst_data_in_vld_d <= (state == S_LFNST && lfnst_data_in_req);
     end
 
+
+    // in_mem read address mux: LFNST vs row engine (combinational)
     always @(*) begin
-        in_mem_rd_addr = in_mem_rd_addr_r;
+        if (state == S_LFNST)
+            in_mem_rd_addr = lfnst_rd_mem_addr;
+        else
+            in_mem_rd_addr = row_in_mem_addr;
     end
 
     wire [12:0] lfnst_rom_addr;
     wire [15:0] lfnst_rom_coeff;
 
-    wire        lfnst_active = (lfnst_idx != 2'd0);
+    assign      lfnst_active = (lfnst_idx != 2'd0);
     wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_hor;
     wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_ver;
 
@@ -338,7 +344,7 @@ module its_core_500 (
     // ========================================
     // Input FIFO read (FWFT: data valid when !empty)
     // ========================================
-    assign input_fifo_rd_en = (state == S_LOAD && !input_fifo_empty);
+    assign input_fifo_rd_en = (state == S_LOAD && !clearing && !input_fifo_empty);
 
     // ========================================
     // Input buffer (async read, sync write — same as its_top)
@@ -355,10 +361,11 @@ module its_core_500 (
         clr_cnt  = 12'd0;
     end
 
-    // in_mem write port (simple single-write for BRAM inference)
-    // No clearing branch: S_CLEAR state completes before S_LOAD writes data
+    // in_mem write port: clear during S_CLEAR, write during S_LOAD
     always @(posedge clk_core) begin
-        if (state == S_LOAD && input_fifo_rd_en && !input_fifo_empty && !input_fifo_rdata[28])
+        if (clearing)
+            in_mem[clr_cnt] <= 16'sd0;
+        else if (state == S_LOAD && input_fifo_rd_en && !input_fifo_empty && !input_fifo_rdata[28])
             in_mem[input_fifo_rdata[27:16]] <= input_fifo_rdata[15:0];
     end
 
@@ -416,7 +423,7 @@ module its_core_500 (
         .tu_width        (tu_width),
         .tu_height       (tu_height),
         .data_in         (in_mem_dout_r),
-        .data_in_vld     (lfnst_data_in_vld_dd),
+        .data_in_vld     (lfnst_data_in_vld_d),
         .data_in_req     (lfnst_data_in_req),
         .data_out        (lfnst_data_out),
         .data_out_vld    (lfnst_data_out_vld),
@@ -590,7 +597,7 @@ module its_core_500 (
         .start      (state == S_ROW_START),
         .tr_type    (row_tr_type),
         .size       (tu_width[6:0]),
-        .data_in    (row_in_mem_data_r),
+        .data_in    (row_in_mem_data),
         .data_in_vld(row_data_in_vld_r),
         .data_in_req(row_data_in_req),
         .rom_addr   (row_rom_addr),
@@ -760,7 +767,6 @@ module its_core_500 (
 
     // out_done: registered exit condition for state machine
     // Breaks out_pipe_flush → state_reg/CE combinational path
-    reg out_done;
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             out_done <= 1'b0;
