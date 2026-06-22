@@ -32,8 +32,9 @@ set rtl_files [list \
 add_files -norecurse $rtl_files
 add_files -fileset constrs_1 -norecurse "$constraint_dir/timing.xdc"
 
-# Set top module
+# Set top module and include path
 set_property top $top_module [current_fileset]
+set_property include_dirs [list [file normalize $rtl_dir]] [current_fileset]
 
 # Synthesis settings
 # Use default strategy for initial synthesis run

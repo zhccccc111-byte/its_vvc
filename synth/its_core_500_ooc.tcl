@@ -18,6 +18,7 @@ read_verilog [file join $rtl_dir its_lfnst_rom.v]
 
 # Enable SYNTHESIS define for conditional compilation
 set_property verilog_define {SYNTHESIS} [current_fileset]
+set_property include_dirs [list $rtl_dir] [current_fileset]
 
 # Read constraints
 set xdc_dir [file dirname [file normalize [info script]]]

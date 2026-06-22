@@ -35,8 +35,10 @@ its_vvc/
 │   ├── its_top.v                   # 顶层模块 (单时钟，赛题接口)
 │   ├── its_top_500_wrapper.v       # 500MHz 顶层 wrapper (CDC + 赛题接口)
 │   ├── its_core_500.v              # 500MHz 计算核 (FIFO 接口)
+│   ├── its_pkg.v                   # 共享 package (状态编码 + 位移乘法函数)
 │   ├── async_fifo.v                # Gray-code 异步 FIFO (CDC)
 │   ├── rst_sync.v                  # 复位同步器 (async assert, sync deassert)
+│   ├── fifo_fwft_reg_slice.v       # FWFT 寄存器切片 (打断关键路径)
 │   ├── its_transform_engine.v      # 1D 变换引擎 (4 MAC 并行)
 │   ├── its_mac.v                   # 流水线乘累加单元
 │   ├── its_rom.v                   # 变换核 ROM (8176 系数)
@@ -45,22 +47,29 @@ its_vvc/
 │   ├── rom_coeffs.hex              # 变换核系数数据
 │   └── lfnst_coeffs.hex            # LFNST 系数数据
 ├── doc/
+│   ├── ITS_VVC_技术报告.docx       # 竞赛技术报告 (含 15 张架构图)
+│   ├── ITS_VVC_完全学习指南.md     # 面向零基础的完整学习指南
 │   ├── design_doc.md               # 设计文档
 │   ├── verification_report.md      # 验证报告
 │   ├── ppa_report.md               # PPA 报告
-│   └── fix_log.md                  # 修复记录
+│   ├── fix_log.md                  # 修复记录
+│   └── images/                     # 技术架构图 (15 张 PNG)
 ├── tb/
 │   ├── its_tb.v                    # 测试平台 (1444 个测试用例)
 │   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (1537 个测试)
+│   ├── its_core_500_tb.v           # core_500 测试平台 (94 个测试)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
 │   ├── run.do                      # its_top ModelSim 仿真脚本
 │   ├── run_500.do                  # 500MHz wrapper 仿真脚本
+│   ├── run_core_500.do             # core_500 仿真脚本
 │   ├── rom_coeffs.hex              # 变换核系数 (symlink)
 │   └── lfnst_coeffs.hex            # LFNST 系数 (symlink)
 ├── synth/
-│   ├── its_synth.tcl               # Vivado 综合脚本
-│   └── timing.xdc                  # 时序约束
+│   ├── its_core_500_ooc_usp.tcl    # UltraScale+ OOC 综合脚本 (500MHz 达标)
+│   ├── its_wrapper_500_ooc_usp.tcl # Wrapper OOC 综合脚本
+│   ├── its_core_500_ooc.tcl        # Artix-7 OOC 综合脚本
+│   └── timing*.xdc                 # 时序约束文件
 └── scripts/
     ├── gen_rom_coeffs.py           # 变换核系数生成
     ├── gen_test_vectors.py         # 测试向量生成
@@ -250,7 +259,28 @@ vsim -c work.its_core_500_tb -do "run -all"
 
 ## 6. 综合与 PPA
 
-### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.1 Wrapper 完整系统)
+### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.3 its_core_500)
+
+**设计**: its_core_500（500MHz 计算核心，含行/列引擎 + LFNST + XPM BRAM in_mem）
+**目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
+**时钟约束**: clk_core 500MHz (2ns)
+**综合方式**: Out-of-Context (OOC)
+
+| 资源 | 使用 | 说明 |
+|------|------|------|
+| DSP48E2 | 9 | — |
+| Block RAM Tile | 14 | 含 in_mem (XPM BRAM) |
+| CLB LUT | 2843 | — |
+| CLB Register | 2882 | — |
+
+| 指标 | 值 | 状态 |
+|------|-----|------|
+| WNS (Setup) | **+0.030 ns** | **MET** |
+| TNS | 0.000 ns | — |
+| WHS (Hold) | +0.020 ns | MET |
+| Failing Endpoints | **0** | — |
+
+### 6.1b 500MHz OOC 综合结果 — UltraScale+ (v5.1 Wrapper 完整系统)
 
 **设计**: its_top_500_wrapper（赛题接口 + async FIFO CDC + FWFT reg slice + its_core_500）
 **目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
@@ -358,6 +388,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.3** | | 代码质量清理：提取 its_pkg.v 共享 package，参数化魔数 (ROUND_SHIFT/CONST, LFNST_CLIP)，-sv 编译标志，删除调试残留，添加学习指南 | +0.030ns | 1444+1537+94=3075 |
 | **v5.2** | `v5.2-wrapper-exhaustive-regression-1537` | Wrapper 穷举回归 1537 测试（迁移 its_tb 全量 + CDC 协议 + 反压），1537/1537 PASS | +0.058ns | 1537/1537 |
 | **v5.1** | `v5.1-wrapper-500mhz-timing-clean` | XPM BRAM in_mem + load pipeline + FWFT reg slice，wrapper OOC 500MHz 时序闭合 | **+0.058ns** | 93/93 |
 | **v5.0** | `v5.0-500mhz-wrapper` | 500MHz wrapper: async FIFO CDC, 赛题接口等价, 内部输出计数, 多 TU 支持 | +0.024ns | 1444+14+94 |
