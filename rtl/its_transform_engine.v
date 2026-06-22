@@ -42,6 +42,10 @@ module its_transform_engine (
     localparam S_COMPUTE = 3'd3;
     localparam S_OUTPUT  = 3'd4;
 
+    // Transform rounding parameters
+    localparam ROUND_SHIFT = 6;
+    localparam ROUND_CONST = 40'sd32;  // 2^(ROUND_SHIFT-1)
+
     reg [2:0] state;
 
     // Line buffer (input data) - shared across all row groups
@@ -584,10 +588,10 @@ module its_transform_engine (
     // Capture MAC results into result_buf (no async reset for Block RAM inference)
     always @(posedge clk) begin
         if (mac_final_ok && mac_valid[0]) begin
-            result_buf[comp_row_base - 6'd4]         <= (mac_result[0] + 40'sd32) >>> 6;
-            result_buf[comp_row_base - 6'd4 + 6'd1] <= (mac_result[1] + 40'sd32) >>> 6;
-            result_buf[comp_row_base - 6'd4 + 6'd2] <= (mac_result[2] + 40'sd32) >>> 6;
-            result_buf[comp_row_base - 6'd4 + 6'd3] <= (mac_result[3] + 40'sd32) >>> 6;
+            result_buf[comp_row_base - 6'd4]         <= (mac_result[0] + ROUND_CONST) >>> ROUND_SHIFT;
+            result_buf[comp_row_base - 6'd4 + 6'd1] <= (mac_result[1] + ROUND_CONST) >>> ROUND_SHIFT;
+            result_buf[comp_row_base - 6'd4 + 6'd2] <= (mac_result[2] + ROUND_CONST) >>> ROUND_SHIFT;
+            result_buf[comp_row_base - 6'd4 + 6'd3] <= (mac_result[3] + ROUND_CONST) >>> ROUND_SHIFT;
         end
     end
 

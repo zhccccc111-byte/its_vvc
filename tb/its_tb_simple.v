@@ -13,7 +13,7 @@ module its_tb_simple;
     // Transform engine signals
     reg         start;
     reg  [1:0]  tr_type;
-    reg  [5:0]  size;
+    reg  [6:0]  size;
     reg  [15:0] data_in;
     reg         data_in_vld;
     wire        data_in_req;

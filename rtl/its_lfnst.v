@@ -55,6 +55,12 @@ module its_lfnst (
     localparam S_DONE     = 3'd6;
     localparam S_OUTPUT_CLIP = 3'd7;
 
+    // LFNST rounding and clipping parameters
+    localparam LFNST_ROUND_SHIFT = 7;
+    localparam LFNST_ROUND_CONST = 40'sd64;  // 2^(LFNST_ROUND_SHIFT-1)
+    localparam LFNST_CLIP_HIGH   = 40'sd32767;
+    localparam LFNST_CLIP_LOW    = -40'sd32768;
+
     reg [2:0] state;
 
     // ========================================
@@ -348,7 +354,7 @@ module its_lfnst (
         if (!rst_n)
             shifted_r <= 40'd0;
         else if (state == S_OUTPUT)
-            shifted_r <= (captured_result + 40'sd64) >>> 7;
+            shifted_r <= (captured_result + LFNST_ROUND_CONST) >>> LFNST_ROUND_SHIFT;
     end
 
     always @(posedge clk or negedge rst_n) begin
@@ -366,9 +372,9 @@ module its_lfnst (
             data_out_wr_en <= 1'b0;
         end else if (state == S_OUTPUT_CLIP) begin
             // Pipeline stage 2: clip from registered shifted_r
-            if ($signed(shifted_r) > 40'sd32767)
+            if ($signed(shifted_r) > LFNST_CLIP_HIGH)
                 data_out <= 16'h7FFF;
-            else if ($signed(shifted_r) < -40'sd32768)
+            else if ($signed(shifted_r) < LFNST_CLIP_LOW)
                 data_out <= 16'h8000;
             else
                 data_out <= shifted_r[15:0];

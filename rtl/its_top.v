@@ -3,6 +3,8 @@
 // 22-bit it_info interface per competition spec
 // ===================================================================
 
+`include "its_pkg.v"
+
 module its_top (
     input  wire        clk,
     input  wire        rst_n,
@@ -38,17 +40,8 @@ module its_top (
     reg [1:0]  lfnst_idx;
     reg [12:0] total_points;
 
-    // State machine
-    localparam S_IDLE      = 4'd0;
-    localparam S_LOAD      = 4'd1;
-    localparam S_ROW_START = 4'd2;
-    localparam S_ROW_RUN   = 4'd3;
-    localparam S_COL_START = 4'd4;
-    localparam S_COL_RUN   = 4'd5;
-    localparam S_OUT       = 4'd6;
-    localparam S_DONE      = 4'd7;
-    localparam S_LFNST     = 4'd8;
-    localparam S_CLEAR     = 4'd9;
+    // State machine (from its_pkg)
+    import its_pkg::*;
 
     reg [3:0] state;
     reg        out_pipe_flush;  // delays S_OUT→S_DONE by 1 cycle for sync read
@@ -127,22 +120,6 @@ module its_top (
     wire [1:0]  lfnst_rd_row = lfnst_rd_addr[3:2];
     wire [1:0]  lfnst_rd_col = lfnst_rd_addr[1:0];
 
-    // row * tu_width via case-shift (replaces 12-bit multiplier)
-    function [11:0] row_times_width;
-        input [1:0] row;
-        input [6:0] tw;
-        begin
-            case (tw)
-                7'd4:    row_times_width = {8'd0, row, 2'd0};       // row << 2
-                7'd8:    row_times_width = {7'd0, row, 3'd0};       // row << 3
-                7'd16:   row_times_width = {6'd0, row, 4'd0};       // row << 4
-                7'd32:   row_times_width = {5'd0, row, 5'd0};       // row << 5
-                7'd64:   row_times_width = {4'd0, row, 6'd0};       // row << 6
-                default: row_times_width = {8'd0, row, 2'd0};
-            endcase
-        end
-    endfunction
-
     wire [11:0] lfnst_rd_mem_addr = lfnst_ntrs_is_48 ?
                     (row_times_width(lfnst_rd_row, tu_width) + {10'd0, lfnst_rd_col}) :
                     {6'd0, lfnst_rd_addr[3:0]};
@@ -154,22 +131,6 @@ module its_top (
     wire [1:0]  lfnst_col_in_blk = lfnst_wr_addr[1:0];
     wire [2:0]  lfnst_row48 = {1'b0, lfnst_row_in_blk} + (lfnst_blk == 2'd2 ? 3'd4 : 3'd0);
     wire [2:0]  lfnst_col48 = {1'b0, lfnst_col_in_blk} + (lfnst_blk == 2'd1 ? 3'd4 : 3'd0);
-
-    // row48 * tu_width via case-shift (replaces 12-bit multiplier)
-    function [11:0] row48_times_width;
-        input [2:0] row;
-        input [6:0] tw;
-        begin
-            case (tw)
-                7'd4:    row48_times_width = {7'd0, row, 2'd0};     // row << 2
-                7'd8:    row48_times_width = {6'd0, row, 3'd0};     // row << 3
-                7'd16:   row48_times_width = {5'd0, row, 4'd0};     // row << 4
-                7'd32:   row48_times_width = {4'd0, row, 5'd0};     // row << 5
-                7'd64:   row48_times_width = {3'd0, row, 6'd0};     // row << 6
-                default: row48_times_width = {7'd0, row, 2'd0};
-            endcase
-        end
-    endfunction
 
     wire [11:0] lfnst_wr_mem_addr = lfnst_ntrs_is_48 ?
                     (row48_times_width(lfnst_row48, tu_width) + {9'd0, lfnst_col48}) :
