@@ -50,6 +50,9 @@ phys_opt_design -directive AggressiveExplore
 puts "Running route_design..."
 route_design -directive Explore
 
+puts "Running post-route hold fix..."
+phys_opt_design -directive AggressiveHoldFix
+
 puts "Generating reports..."
 report_timing_summary -file [file join $xdc_dir core_500_timing_impl_usp.rpt]
 report_timing -setup -nworst 20 -file [file join $xdc_dir core_500_timing_setup_paths_usp.rpt]

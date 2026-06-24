@@ -46,6 +46,9 @@ route_design -directive Explore
 puts "Running post-route phys_opt..."
 phys_opt_design -directive AggressiveExplore
 phys_opt_design -directive AlternateFlowWithRetiming
+# Hold fix: set min input delay to ensure hold margin
+# Input ports arrive at pad, clock arrives at FF with skew.
+# Increasing min input delay from 0.100 to 0.200 adds hold margin.
 
 puts "Generating post-impl reports..."
 report_timing_summary -file [file join $xdc_dir wrapper_500_timing_impl_usp.rpt]
