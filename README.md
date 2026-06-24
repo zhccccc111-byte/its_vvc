@@ -280,13 +280,14 @@ vsim -c work.its_core_500_tb -do "run -all"
 | WHS (Hold) | +0.020 ns | MET |
 | Failing Endpoints | **0** | — |
 
-### 6.1b 500MHz OOC 综合结果 — UltraScale+ (v5.1 Wrapper 完整系统)
+### 6.1b 500MHz OOC 综合结果 — UltraScale+ (v5.3 Wrapper 完整系统)
 
 **设计**: its_top_500_wrapper（赛题接口 + async FIFO CDC + FWFT reg slice + its_core_500）
 **目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
 **时钟约束**: clk_if 100MHz, clk_core 500MHz (2ns)
 **综合方式**: Out-of-Context (OOC)
 **关键 RTL 改动**: in_mem 用 xpm_memory_sdpram 替换 DistRAM（`ifdef SYNTHESIS` 条件编译），load pipeline 寄存器，FWFT reg slice
+**XDC 约束**: min input/output delay 0.200ns（hold margin 修复）
 
 | 资源 | 使用 | 说明 |
 |------|------|------|
@@ -298,7 +299,7 @@ vsim -c work.its_core_500_tb -do "run -all"
 |------|-----|------|
 | WNS (Setup) | **+0.058 ns** | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | +0.030 ns | MET |
+| WHS (Hold) | **+0.038 ns** | **MET** |
 | Failing Endpoints | **0** | — |
 
 **Worst Path**: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑)。原 in_mem DistRAM MUX 树关键路径（384×RAMD64E, 6 级逻辑）已被 XPM BRAM 消除。
@@ -388,7 +389,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v5.3** | | 代码质量清理：提取 its_pkg.v 共享 package，参数化魔数 (ROUND_SHIFT/CONST, LFNST_CLIP)，-sv 编译标志，删除调试残留，添加学习指南 | +0.030ns | 1444+1537+94=3075 |
+| **v5.3** | | 代码质量清理：提取 its_pkg.v 共享 package，参数化魔数，-sv 编译标志，删除调试残留，添加学习指南；综合脚本适配 SystemVerilog；XDC hold 修复 (min delay 0.1→0.2ns) | +0.058ns (wrapper) | 1444+1537+94=3075 |
 | **v5.2** | `v5.2-wrapper-exhaustive-regression-1537` | Wrapper 穷举回归 1537 测试（迁移 its_tb 全量 + CDC 协议 + 反压），1537/1537 PASS | +0.058ns | 1537/1537 |
 | **v5.1** | `v5.1-wrapper-500mhz-timing-clean` | XPM BRAM in_mem + load pipeline + FWFT reg slice，wrapper OOC 500MHz 时序闭合 | **+0.058ns** | 93/93 |
 | **v5.0** | `v5.0-500mhz-wrapper` | 500MHz wrapper: async FIFO CDC, 赛题接口等价, 内部输出计数, 多 TU 支持 | +0.024ns | 1444+14+94 |
