@@ -9,16 +9,22 @@ create_project -in_memory -part xc7a200tfbg484-3 -force
 
 # Read RTL sources
 set rtl_dir [file dirname [file normalize [info script]]]/../rtl
-read_verilog [file join $rtl_dir its_core_500.v]
-read_verilog [file join $rtl_dir its_transform_engine.v]
-read_verilog [file join $rtl_dir its_mac.v]
-read_verilog [file join $rtl_dir its_rom.v]
-read_verilog [file join $rtl_dir its_lfnst.v]
-read_verilog [file join $rtl_dir its_lfnst_rom.v]
 
-# Enable SYNTHESIS define for conditional compilation
+# Set include path and defines BEFORE adding files
+set_property include_dirs [list [file normalize $rtl_dir]] [current_fileset]
 set_property verilog_define {SYNTHESIS} [current_fileset]
-set_property include_dirs [list $rtl_dir] [current_fileset]
+
+set sv_files [list \
+    [file join $rtl_dir its_pkg.v] \
+    [file join $rtl_dir its_core_500.v] \
+    [file join $rtl_dir its_transform_engine.v] \
+    [file join $rtl_dir its_mac.v] \
+    [file join $rtl_dir its_rom.v] \
+    [file join $rtl_dir its_lfnst.v] \
+    [file join $rtl_dir its_lfnst_rom.v] \
+]
+add_files -fileset sources_1 $sv_files
+set_property file_type {SystemVerilog} [get_files $sv_files]
 
 # Read constraints
 set xdc_dir [file dirname [file normalize [info script]]]

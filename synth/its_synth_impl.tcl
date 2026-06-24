@@ -21,6 +21,7 @@ create_project $project_name ./$project_name -part $part -force
 
 # Add RTL source files
 set rtl_files [list \
+    "$rtl_dir/its_pkg.v" \
     "$rtl_dir/its_mac.v" \
     "$rtl_dir/its_rom.v" \
     "$rtl_dir/its_lfnst_rom.v" \

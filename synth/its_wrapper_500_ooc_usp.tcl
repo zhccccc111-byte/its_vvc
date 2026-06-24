@@ -8,22 +8,14 @@ create_project -in_memory -part xcku5p-ffvb676-2-e -force
 
 set rtl_dir [file dirname [file normalize [info script]]]/../rtl
 
-# Wrapper + CDC infrastructure
-read_verilog [file join $rtl_dir its_top_500_wrapper.v]
-read_verilog [file join $rtl_dir async_fifo.v]
-read_verilog [file join $rtl_dir rst_sync.v]
-read_verilog [file join $rtl_dir fifo_fwft_reg_slice.v]
-
-# its_core_500 and all its dependencies
-read_verilog [file join $rtl_dir its_core_500.v]
-read_verilog [file join $rtl_dir its_transform_engine.v]
-read_verilog [file join $rtl_dir its_mac.v]
-read_verilog [file join $rtl_dir its_rom.v]
-read_verilog [file join $rtl_dir its_lfnst.v]
-read_verilog [file join $rtl_dir its_lfnst_rom.v]
-
+# Set include path and defines BEFORE adding files
+set_property include_dirs [list [file normalize $rtl_dir]] [current_fileset]
 set_property verilog_define {SYNTHESIS} [current_fileset]
-set_property include_dirs [list $rtl_dir] [current_fileset]
+
+# Add all RTL files as SystemVerilog (import/package syntax requires -sv)
+set sv_files [glob -nocomplain [file join $rtl_dir *.v]]
+add_files -fileset sources_1 $sv_files
+set_property file_type {SystemVerilog} [get_files $sv_files]
 
 set xdc_dir [file dirname [file normalize [info script]]]
 read_xdc [file join $xdc_dir timing_wrapper_500.xdc]
