@@ -2,6 +2,17 @@
 
 ## 1. 验证策略
 
+### v5.5 最新验证摘要
+
+| DUT | 脚本 | 结果 | 说明 |
+|-----|------|------|------|
+| `its_top` | `sim/run.do` | 1444/1444 PASS | 原始单时钟功能基线 |
+| `its_top_500_singleclk` | `sim/run_500_singleclk.do` | 1537/1537 PASS | 推荐 500MHz 单时钟提交顶层 |
+| `its_top_500_wrapper` | `sim/run_500.do` | 1537/1537 PASS | 双时钟 CDC wrapper |
+| `its_core_500` | `sim/run_core_500.do` | 94/94 PASS | FIFO 接口计算核 |
+
+`its_top_500_singleclk` 复用 wrapper 的 1537 个测试向量，覆盖 1377 个穷举回归、40 个反压场景、30 个协议场景和 1 个 two-TU no-reset 场景。
+
 ### 1.1 验证方法
 
 采用 **参考模型对比验证** 方法：
@@ -304,7 +315,7 @@ ALL TESTS PASSED!
 
 ## 5. 验证结论
 
-1. **功能正确性**：its_top 1444 + wrapper 1537 + core_500 94 = 1675 个测试全部通过，RTL 输出与 Python 参考模型 bit-exact 匹配
+1. **功能正确性**：its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94 = 4612 个测试全部通过，RTL 输出与 Python 参考模型 bit-exact 匹配
 2. **穷举回归**：1377 个 (尺寸×变换×LFNST) 组合全覆盖，与 VVC 赛题对标
 3. **变换覆盖**：DCT2 (25 种) + DCT8/DST7 (16 尺寸 × 8 MTS 组合) 全覆盖
 4. **LFNST 覆盖**：9 LFNST 配置 (lfnst0/1/2 × 4 setIdx) × 全部尺寸组合，覆盖 nTrs=16 和 nTrs=48 两种场景

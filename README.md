@@ -33,6 +33,7 @@
 its_vvc/
 ├── rtl/                            # RTL 源代码
 │   ├── its_top.v                   # 顶层模块 (单时钟，赛题接口)
+│   ├── its_top_500_singleclk.v     # 500MHz 提交顶层 (单时钟，赛题接口)
 │   ├── its_top_500_wrapper.v       # 500MHz 顶层 wrapper (CDC + 赛题接口)
 │   ├── its_core_500.v              # 500MHz 计算核 (FIFO 接口)
 │   ├── its_pkg.v                   # 共享 package (状态编码 + 位移乘法函数)
@@ -61,12 +62,14 @@ its_vvc/
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
 │   ├── run.do                      # its_top ModelSim 仿真脚本
+│   ├── run_500_singleclk.do        # 500MHz 单时钟提交顶层仿真脚本
 │   ├── run_500.do                  # 500MHz wrapper 仿真脚本
 │   ├── run_core_500.do             # core_500 仿真脚本
 │   ├── rom_coeffs.hex              # 变换核系数 (symlink)
 │   └── lfnst_coeffs.hex            # LFNST 系数 (symlink)
 ├── synth/
 │   ├── its_core_500_ooc_usp.tcl    # UltraScale+ OOC 综合脚本 (500MHz 达标)
+│   ├── its_top_500_singleclk_ooc_usp.tcl # 单时钟提交顶层 OOC 综合脚本
 │   ├── its_wrapper_500_ooc_usp.tcl # Wrapper OOC 综合脚本
 │   ├── its_core_500_ooc.tcl        # Artix-7 OOC 综合脚本
 │   └── timing*.xdc                 # 时序约束文件
@@ -205,7 +208,17 @@ it_info [21:0]
 - **异步 FIFO**: Gray-code 指针 + 2-FF 同步器，registered full flag，FWFT 输出
 - **it_done 生成**: 内部计数输出 beat (每 beat = 4 值)，当 core_finished + FIFO empty + 已读 beat ≥ total_points 时置位
 - **多 TU 支持**: 新 TU (it_info_vld) 时清零 core_finished、it_done_r、out_beat_count
-- **端口**: 与赛题接口完全一致，仅多 clk_core 输入
+- **端口**: 继承赛题接口并额外提供 `clk_core`；最终单时钟提交入口见 4.6 节
+
+### 4.6 500MHz 提交顶层 (`its_top_500_singleclk.v`)
+
+`its_top_500_singleclk` 是推荐提交顶层，端口与赛题 `its_top` 单时钟接口完全一致。内部复用已经验证的 `its_top_500_wrapper`，并将 `clk_if` 和 `clk_core` 同接到外部 `clk`，用于 500MHz 单时钟 OOC 评估。
+
+| 顶层 | 用途 | 时钟 | 接口 |
+|------|------|------|------|
+| `its_top` | Artix-7/原始单时钟功能基线 | 单 `clk` | 赛题接口 |
+| `its_top_500_wrapper` | 双时钟 CDC 完整系统验证 | `clk_if` + `clk_core` | 赛题接口 + `clk_core` |
+| `its_top_500_singleclk` | **最终推荐提交顶层** | 单 `clk` = 500MHz | **赛题接口完全一致** |
 
 ---
 
@@ -221,8 +234,11 @@ vsim -c -do "do run.do"
 # 500MHz wrapper 回归 (1537 个测试: 1377 回归 + 40 反压 + 30 协议 + 1 two-TU)
 vsim -c -do "do run_500.do"
 
+# 500MHz 单时钟提交顶层回归 (同一套 1537 个测试)
+vsim -c -do "do run_500_singleclk.do"
+
 # its_core_500 回归 (94 个测试)
-vsim -c work.its_core_500_tb -do "run -all"
+vsim -c -do "do run_core_500.do"
 ```
 
 ### 5.2 测试用例覆盖
@@ -249,6 +265,8 @@ vsim -c work.its_core_500_tb -do "run -all"
 
 **its_core_500 回归 (94 个)** — 500MHz 核功能验证，与 wrapper 使用相同测试向量。
 
+**500MHz 单时钟提交顶层回归 (1537 个)** — `its_top_500_singleclk` 使用与 wrapper 相同的 1537 个测试，验证赛题单时钟接口形态下功能等价。
+
 **LFNST 配置** (每种尺寸×变换组合 9 个): lfnst_idx=0 random_sparse (1) + lfnst_idx=1 set0~3 low_freq (4) + lfnst_idx=2 set0~3 extreme_low_freq (4)
 
 **MTS 变换对** (8 种): DCT8×DST7, DST7×DCT8, DST7×DST7, DCT8×DCT8, DCT2×DST7, DST7×DCT2, DCT2×DCT8, DCT8×DCT2
@@ -258,6 +276,32 @@ vsim -c work.its_core_500_tb -do "run -all"
 ---
 
 ## 6. 综合与 PPA
+
+### 6.0 推荐提交顶层 OOC 综合结果 — UltraScale+ (v5.5 `its_top_500_singleclk`)
+
+**设计**: `its_top_500_singleclk`（赛题单时钟接口 + 500MHz wrapper/core）
+**目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
+**时钟约束**: clk 500MHz (2ns)
+**综合方式**: Out-of-Context (OOC)
+**XDC 约束**: min input/output delay 0.200ns（hold margin 修复）
+
+| 资源 | 使用 | 说明 |
+|------|------|------|
+| CLB LUT | 1801 | 0.83% |
+| LUT as Memory | 368 | 0.37% |
+| CLB Register | 2117 | 0.49% |
+| DSP48E2 | 5 | 行/列 transform engine 共享 |
+| RAMB36E2 | 12 | 含 in_mem 2× (XPM BRAM) |
+| RAMB18E2 | 5 | — |
+
+| 指标 | 值 | 状态 |
+|------|-----|------|
+| WNS (Setup) | **+0.057 ns** | **MET** |
+| TNS | 0.000 ns | — |
+| WHS (Hold) | **+0.038 ns** | **MET** |
+| Failing Endpoints | **0** | — |
+
+**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz，是最终推荐提交顶层。
 
 ### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.3 its_core_500)
 
@@ -355,7 +399,11 @@ vsim -c work.its_core_500_tb -do "run -all"
 ### 6.4 运行综合
 
 ```bash
-# 500MHz Wrapper OOC 综合 — UltraScale+ (推荐，500MHz 达标)
+# 500MHz 单时钟提交顶层 OOC 综合 — UltraScale+ (推荐，500MHz 达标)
+cd synth
+vivado -mode batch -source its_top_500_singleclk_ooc_usp.tcl
+
+# 500MHz 双时钟 wrapper OOC 综合 — UltraScale+ (CDC 完整系统)
 cd synth
 vivado -mode batch -source its_wrapper_500_ooc_usp.tcl
 
@@ -381,7 +429,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ✅ | its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS=+0.084ns 达标；Artix-7 WNS=-1.733ns 不可达，详见 6.1/6.2 节 |
+| 500MHz 主频 | ✅ | 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.057ns/WHS=+0.038ns 达标；双时钟 wrapper WNS=+0.084ns；Artix-7 WNS=-1.733ns 不可达，详见 6.0/6.1/6.2 节 |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -392,6 +440,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.5** | `v5.5-submission-top` | 新增赛题接口完全一致的 500MHz 单时钟提交顶层 `its_top_500_singleclk`；新增单时钟仿真/OOC 脚本；wrapper 输出点数计算改移位函数 | +0.057ns (singleclk) | 1444+1537+1537+94=4612 |
 | **v5.4** | `v5.4-shared-transform-engine` | 行/列 transform engine 共享复用，DSP48E2 9→5；LFNST overlay buffer 去除清零写；wrapper OOC CDC 检查脚本修正 | +0.084ns (wrapper) | 1444+1537+94=3075 |
 | **v5.3** | | 代码质量清理：提取 its_pkg.v 共享 package，参数化魔数，-sv 编译标志，删除调试残留，添加学习指南；综合脚本适配 SystemVerilog；XDC hold 修复 (min delay 0.1→0.2ns) | +0.058ns (wrapper) | 1444+1537+94=3075 |
 | **v5.2** | `v5.2-wrapper-exhaustive-regression-1537` | Wrapper 穷举回归 1537 测试（迁移 its_tb 全量 + CDC 协议 + 反压），1537/1537 PASS | +0.058ns | 1537/1537 |

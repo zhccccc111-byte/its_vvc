@@ -4,10 +4,21 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-20 (v5.2)**
-**仿真结果：its_top 1444/1444 + wrapper 1537/1537 + core_500 94/94**
-**500MHz 状态：its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS +0.058ns 达标**
-**500MHz Wrapper：接口完整可交付，async FIFO CDC + FWFT reg slice + XPM BRAM in_mem**
+**基线版本：2026-06-28 (v5.5)**
+**仿真结果：its_top 1444/1444 + singleclk 1537/1537 + wrapper 1537/1537 + core_500 94/94**
+**500MHz 状态：its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.057ns / WHS +0.038ns 达标**
+**推荐提交顶层：rtl/its_top_500_singleclk.v，端口与赛题 its_top 单时钟接口完全一致**
+
+### v5.5 更新摘要
+
+| 项目 | 结果 |
+|------|------|
+| 推荐提交顶层 | `its_top_500_singleclk` |
+| 顶层接口 | 单 `clk`，与赛题接口一致 |
+| 单时钟提交顶层回归 | 1537/1537 PASS |
+| UltraScale+ OOC | WNS +0.057ns, WHS +0.038ns, 0 failing endpoints |
+| 资源 | DSP48E2=5, RAMB36E2=12, RAMB18E2=5 |
+| 交付说明 | `SUBMISSION.md` |
 
 ---
 
@@ -66,20 +77,21 @@
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| 工作主频 500MHz | **已满足** | its_top_500_wrapper OOC UltraScale+ (xcku5p-2) WNS +0.058ns |
+| 工作主频 500MHz | **已满足** | its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.057ns / WHS +0.038ns |
 
-**UltraScale+ 实测数据 (its_top_500_wrapper, Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
+**UltraScale+ 实测数据 (its_top_500_singleclk, Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | +0.058 ns | **MET** |
+| WNS (Setup) | +0.057 ns | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | +0.030 ns | MET |
+| WHS (Hold) | +0.038 ns | MET |
 | Failing Endpoints | 0 | — |
-| DSP48E2 | 9 | — |
+| DSP48E2 | 5 | 行/列 transform engine 共享 |
 | RAMB36E2 | 12 | 含 in_mem 2× (XPM BRAM) |
+| RAMB18E2 | 5 | — |
 
-Worst path: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑)。in_mem 由 XPM_MEMORY_SDPRAM 推断为 2×RAMB36E2，消除了原 DistRAM MUX 树关键路径。
+Worst path: shared ROM→LFNST coeff_buf (BRAM→DistRAM, 0 级逻辑)。in_mem 由 XPM_MEMORY_SDPRAM 推断为 2×RAMB36E2，消除了原 DistRAM MUX 树关键路径。
 
 **Artix-7 历史数据 (xc7a200tfbg484-3, 仅供参考)：**
 
@@ -98,14 +110,16 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 ### 4.3 资源利用
 
-**UltraScale+ (xcku5p-2, OOC, v4.2 面积优化后)：**
+**UltraScale+ (xcku5p-2, OOC, v5.5 推荐提交顶层)：**
 
 | 资源 | 使用量 | 可用量 | 利用率 |
 |------|--------|--------|--------|
-| CLB LUTs | 2,539 | 216,960 | 1.17% |
-| CLB Registers | 2,899 | 433,920 | 0.67% |
-| DSP48E2 | 9 | — | ✅ |
+| CLB LUTs | 1,801 | 216,960 | 0.83% |
+| CLB Registers | 2,117 | 433,920 | 0.49% |
+| LUT as Memory | 368 | 99,840 | 0.37% |
+| DSP48E2 | 5 | — | ✅ |
 | RAMB36E2 | 12 | — | ✅ |
+| RAMB18E2 | 5 | — | ✅ |
 
 **Artix-7 (xc7a200t-3, 全芯片, 仅供参考)：**
 
@@ -141,11 +155,11 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| RTL 源代码 | **已满足** | 9 个 .v 文件：its_top, its_top_500_wrapper, its_core_500, async_fifo, rst_sync, its_transform_engine, its_mac, its_rom, its_lfnst, its_lfnst_rom |
+| RTL 源代码 | **已满足** | 包含 `its_top.v`、`its_top_500_singleclk.v`、`its_top_500_wrapper.v`、`its_core_500.v` 及 transform/LFNST/ROM/FIFO 支撑模块 |
 | 设计文档 | **已满足** | `doc/design_doc.md` |
 | 验证报告 | **已满足** | `doc/verification_report.md` |
 | PPA 报告 | **已满足** | `doc/ppa_report.md` |
-| 测试用例 | **已满足** | its_top 1444 + wrapper 1537 + core_500 94 = 1675 测试全部通过 |
+| 测试用例 | **已满足** | its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94 = 4612 测试全部通过 |
 | 波形截图 | **已满足** | 6 个关键场景 SVG 波形，见 `doc/waveforms/` |
 
 ---
@@ -169,20 +183,20 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 
 | 维度 | 状态 | 说明 |
 |------|------|------|
-| 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，1537 测试 0 失败 |
-| 验证 | **完成** | its_top 1444 + wrapper 1537 + core_500 94 = 1675 测试全部通过 |
+| 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，主功能与提交顶层均 0 失败 |
+| 验证 | **完成** | its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94 = 4612 测试全部通过 |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
-| PPA | **完成** | UltraScale+: LUT 2539 (1.17%), BRAM 12, DSP 9 |
-| 时序 | **完成** | UltraScale+ OOC WNS = +0.024ns，500MHz **达标** |
+| PPA | **完成** | UltraScale+: CLB LUT 1801 (0.83%), RAMB36E2 12, RAMB18E2 5, DSP48E2 5 |
+| 时序 | **完成** | UltraScale+ OOC WNS = +0.057ns / WHS = +0.038ns，500MHz **达标** |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
-| 500MHz Wrapper | **完成** | async FIFO CDC，赛题接口等价，1537/1537 测试通过 |
+| 500MHz 提交顶层 | **完成** | `its_top_500_singleclk` 赛题单时钟接口完全一致，1537/1537 测试通过 |
 
-**全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现，相同 RTL 零改动。500MHz wrapper 提供完整的 CDC 接口层，端口与赛题完全一致（仅多 clk_core），可直接替换 its_top.v 作为交付顶层。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。
+**全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现。最终推荐交付入口为 `its_top_500_singleclk`，端口与赛题 `its_top` 单时钟接口完全一致；双时钟 `its_top_500_wrapper` 保留用于显式 CDC 集成。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。
 
 ---
 
-*报告生成时间：2026-06-20*
-*基线：1537 passed, 0 failed (wrapper: 1377 regression + 40 backpressure + 30 protocol + 1 two-TU)*
+*报告生成时间：2026-06-28*
+*基线：4612 passed, 0 failed (its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94)*
 *综合工具：Vivado 2024.1*
 *目标器件：Kintex UltraScale+ xcku5p-ffvb676-2-e / Artix-7 xc7a200tfbg484-3*
 *仿真工具：ModelSim SE-64 10.6e*

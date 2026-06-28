@@ -4,11 +4,13 @@
 
 | 设计 | 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
 |------|------|---------|-----|------------|------|
+| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.057 ns** | **MET** | v5.5: 赛题单时钟接口提交顶层 |
+| **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.084 ns** | **MET** | v5.4: shared transform engine, DSP48E2 9→5 |
 | **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.058 ns** | **MET** | v5.1: XPM BRAM in_mem + reg slice + load pipeline |
 | its_core_500 | Kintex UltraScale+ xcku5p | -2 | +0.024 ns | MET | v4.2 面积优化后 |
 | its_core_500 | Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
 
-**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以完整 wrapper 系统达标（WNS +0.058ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
+**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（WNS +0.057ns, WHS +0.038ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ---
 
@@ -111,6 +113,13 @@ in_mem (4096×16) 原使用 `(* ram_style = "block" *)` 属性，因异步读模
 | DSP48E2 | 9 | — |
 | RAMB36E2 | 12 | 含 in_mem 2× |
 | RAMB18E2 | 5 | — |
+
+### v5.4/v5.5 后续结果
+
+| 设计 | WNS | WHS | DSP48E2 | 说明 |
+|------|-----|-----|---------|------|
+| `its_top_500_wrapper` | +0.084ns | +0.028ns | 5 | 行/列 transform engine 共享，双时钟 CDC wrapper |
+| `its_top_500_singleclk` | +0.057ns | +0.038ns | 5 | 赛题单时钟接口提交顶层，推荐交付入口 |
 
 Worst path: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑, 纯路由)。
 

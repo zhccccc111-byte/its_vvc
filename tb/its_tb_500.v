@@ -1,6 +1,7 @@
 // ===================================================================
-// ITS 500MHz Wrapper Testbench — Dual-clock CDC verification
-// Uses its_top_500_wrapper with async FIFOs between clk_if and clk_core.
+// ITS 500MHz Wrapper Testbench — CDC and single-clock submission verification.
+// Default DUT: its_top_500_wrapper with async FIFOs between clk_if and clk_core.
+// Define SINGLECLK_SUBMISSION to test its_top_500_singleclk with the same vectors.
 // ===================================================================
 
 `timescale 1ns / 1ps
@@ -44,6 +45,23 @@ module its_tb_500;
     always #2.5 clk_core = ~clk_core;
 
     // DUT instantiation
+`ifdef SINGLECLK_SUBMISSION
+    its_top_500_singleclk u_wrapper (
+        .clk            (clk_if),
+        .rst_n          (rst_n),
+        .it_info        (it_info),
+        .it_info_vld    (it_info_vld),
+        .it_data_in     (it_data_in),
+        .it_data_addr   (it_data_addr),
+        .it_data_in_vld (it_data_in_vld),
+        .it_data_end    (it_data_end),
+        .it_data_in_req (it_data_in_req),
+        .it_data_out    (it_data_out),
+        .it_data_out_vld(it_data_out_vld),
+        .it_data_out_req(it_data_out_req),
+        .it_done        (it_done)
+    );
+`else
     its_top_500_wrapper u_wrapper (
         .clk_if         (clk_if),
         .clk_core       (clk_core),
@@ -60,6 +78,7 @@ module its_tb_500;
         .it_data_out_req(it_data_out_req),
         .it_done        (it_done)
     );
+`endif
 
     // Protocol monitor: with FWFT FIFO, vld can be high when req=0
     // (data stable in FIFO until rd_en). Check that data doesn't CHANGE
@@ -222,8 +241,13 @@ module its_tb_500;
             repeat(20) @(posedge clk_if);
             rst_n = 1;
             // Wait for reset synchronizers to release
+`ifdef SINGLECLK_SUBMISSION
+            wait(u_wrapper.u_wrapper.rst_sync_if_n === 1'b1);
+            wait(u_wrapper.u_wrapper.rst_sync_core_n === 1'b1);
+`else
             wait(u_wrapper.rst_sync_if_n === 1'b1);
             wait(u_wrapper.rst_sync_core_n === 1'b1);
+`endif
             repeat(10) @(posedge clk_if);
 
             // Clear test vector arrays
@@ -365,8 +389,13 @@ module its_tb_500;
             bp_active = 0;
             repeat(50) @(posedge clk_if);
             rst_n = 1;
+`ifdef SINGLECLK_SUBMISSION
+            wait(u_wrapper.u_wrapper.rst_sync_if_n === 1'b1);
+            wait(u_wrapper.u_wrapper.rst_sync_core_n === 1'b1);
+`else
             wait(u_wrapper.rst_sync_if_n === 1'b1);
             wait(u_wrapper.rst_sync_core_n === 1'b1);
+`endif
             repeat(20) @(posedge clk_if);
 
             for (i = 0; i < 4096; i = i + 1) begin
@@ -553,8 +582,13 @@ module its_tb_500;
             it_data_out_req = 1;
             repeat(20) @(posedge clk_if);
             rst_n = 1;
+`ifdef SINGLECLK_SUBMISSION
+            wait(u_wrapper.u_wrapper.rst_sync_if_n === 1'b1);
+            wait(u_wrapper.u_wrapper.rst_sync_core_n === 1'b1);
+`else
             wait(u_wrapper.rst_sync_if_n === 1'b1);
             wait(u_wrapper.rst_sync_core_n === 1'b1);
+`endif
             repeat(10) @(posedge clk_if);
 
             for (i = 0; i < 4096; i = i + 1) begin
@@ -685,8 +719,13 @@ module its_tb_500;
             it_data_out_req = 1;
             repeat(20) @(posedge clk_if);
             rst_n = 1;
+`ifdef SINGLECLK_SUBMISSION
+            wait(u_wrapper.u_wrapper.rst_sync_if_n === 1'b1);
+            wait(u_wrapper.u_wrapper.rst_sync_core_n === 1'b1);
+`else
             wait(u_wrapper.rst_sync_if_n === 1'b1);
             wait(u_wrapper.rst_sync_core_n === 1'b1);
+`endif
             repeat(10) @(posedge clk_if);
 
             for (i = 0; i < 4096; i = i + 1) begin
@@ -886,7 +925,11 @@ module its_tb_500;
         total_tests = 0;
 
         $display("=== ITS 500MHz Wrapper CDC Testbench ===");
+`ifdef SINGLECLK_SUBMISSION
+        $display("SINGLECLK_SUBMISSION: its_top_500_singleclk, clk = 100MHz sim-safe");
+`else
         $display("clk_if = 100MHz, clk_core = 200MHz (sim-safe)");
+`endif
         $display("Full 1444-test regression + hand-written wrapper tests");
 
         // ============================

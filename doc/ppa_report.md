@@ -2,6 +2,24 @@
 
 ## 1. 综合配置
 
+### v5.5 UltraScale+ 500MHz 推荐提交顶层
+
+| 项目 | 配置/结果 |
+|------|-----------|
+| 推荐顶层 | `its_top_500_singleclk` |
+| 工具 | Vivado 2024.1 |
+| 目标器件 | Kintex UltraScale+ xcku5p-ffvb676-2-e |
+| 时钟约束 | 500MHz (2ns) |
+| OOC 脚本 | `synth/its_top_500_singleclk_ooc_usp.tcl` |
+| WNS / WHS | +0.057ns / +0.038ns |
+| Failing endpoints | 0 |
+| CLB LUT / Register | 1801 / 2117 |
+| LUT as Memory | 368 |
+| DSP48E2 | 5 |
+| RAMB36E2 / RAMB18E2 | 12 / 5 |
+
+结论：`its_top_500_singleclk` 以赛题单时钟接口形态在 UltraScale+ 上满足 500MHz。以下 Artix-7 100MHz/P&R 数据保留为历史对照。
+
 | 项目 | 配置 |
 |------|------|
 | 工具 | Vivado 2024.1 |

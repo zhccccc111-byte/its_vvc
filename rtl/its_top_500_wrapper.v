@@ -200,6 +200,21 @@ module its_top_500_wrapper (
     // ================================================================
     // Output beat counter & done generation
     // ================================================================
+    function [12:0] points_from_size;
+        input [6:0] width;
+        input [6:0] height;
+        begin
+            case (height)
+                7'd4:    points_from_size = {4'd0, width, 2'd0};
+                7'd8:    points_from_size = {3'd0, width, 3'd0};
+                7'd16:   points_from_size = {2'd0, width, 4'd0};
+                7'd32:   points_from_size = {1'd0, width, 5'd0};
+                7'd64:   points_from_size = {width, 6'd0};
+                default: points_from_size = {4'd0, width, 2'd0};
+            endcase
+        end
+    endfunction
+
     // Latch total_points from it_info on new TU, clear done state.
     // it_info format: {lfnst_idx[1:0], lfnst_tr_set_idx[1:0],
     //                  tr_ver[1:0], tr_hor[1:0], height[6:0], width[6:0]}
@@ -213,7 +228,7 @@ module its_top_500_wrapper (
             total_points   <= 13'd0;
             out_beat_count <= 13'd0;
         end else if (new_tu) begin
-            total_points   <= it_info[6:0] * it_info[13:7];
+            total_points   <= points_from_size(it_info[6:0], it_info[13:7]);
             out_beat_count <= 13'd0;
         end else if (output_fifo_rd_en) begin
             out_beat_count <= out_beat_count + 13'd1;
