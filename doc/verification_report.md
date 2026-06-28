@@ -2,16 +2,15 @@
 
 ## 1. 验证策略
 
-### v5.5 最新验证摘要
+### v5.8 最新验证摘要
 
 | DUT | 脚本 | 结果 | 说明 |
 |-----|------|------|------|
-| `its_top` | `sim/run.do` | 1444/1444 PASS | 原始单时钟功能基线 |
-| `its_top_500_singleclk` | `sim/run_500_singleclk.do` | 1537/1537 PASS | 推荐 500MHz 单时钟提交顶层 |
-| `its_top_500_wrapper` | `sim/run_500.do` | 1537/1537 PASS | 双时钟 CDC wrapper |
-| `its_core_500` | `sim/run_core_500.do` | 94/94 PASS | FIFO 接口计算核 |
+| `its_top_500_singleclk` | `sim/run_500_singleclk.do` | **ALL PASS** | 推荐 500MHz 单时钟提交顶层 (1537 + overlap) |
+| `its_core_500` | `sim/run_core_500.do` | **94/94 PASS** | FIFO 接口计算核 |
+| `its_top` | `sim/run.do` | 1444/1444 PASS | Legacy 基线 (v5.5 RTL, 冻结) |
 
-`its_top_500_singleclk` 复用 wrapper 的 1537 个测试向量，覆盖 1377 个穷举回归、40 个反压场景、30 个协议场景和 1 个 two-TU no-reset 场景。
+v5.8 在 v5.5 的 1537 个测试基础上新增 overlap 专项测试（2 TUs 连续发送后读取输出），验证 P0 #11 TU metadata queue 协议正确性。
 
 ### 1.1 验证方法
 

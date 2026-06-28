@@ -4,13 +4,12 @@
 
 | 设计 | 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
 |------|------|---------|-----|------------|------|
+| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.053 ns** | **MET** | **v5.8**: TU queue hardening + OOC 重综合 |
 | **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.057 ns** | **MET** | v5.5: 赛题单时钟接口提交顶层 |
 | **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.084 ns** | **MET** | v5.4: shared transform engine, DSP48E2 9→5 |
-| **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.058 ns** | **MET** | v5.1: XPM BRAM in_mem + reg slice + load pipeline |
-| its_core_500 | Kintex UltraScale+ xcku5p | -2 | +0.024 ns | MET | v4.2 面积优化后 |
 | its_core_500 | Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
 
-**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（WNS +0.057ns, WHS +0.038ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
+**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（v5.8: WNS +0.053ns, WHS +0.035ns）。v5.8 新增 TU queue 和 can_accept_tu 流控未影响时序。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ---
 

@@ -1,8 +1,9 @@
-# ITS VVC v5.5 Submission Guide
+# ITS VVC v5.8 Submission Guide
 
 ## Recommended Top
 
 Use `rtl/its_top_500_singleclk.v` for the final 500MHz submission.
+See `doc/implementation_status_report.md` for official Q&A compliance mapping.
 
 This module has the same single-clock competition interface as `its_top.v`:
 
@@ -44,14 +45,13 @@ vsim -c -do "do run_500.do"
 vsim -c -do "do run_core_500.do"
 ```
 
-Latest verified results:
+Latest verified results (v5.8):
 
 | Target | Result |
 |--------|--------|
-| `its_top` | 1444/1444 PASS |
-| `its_top_500_singleclk` | 1537/1537 PASS |
-| `its_top_500_wrapper` | 1537/1537 PASS |
+| `its_top_500_singleclk` | ALL PASS (1537 + overlap tests) |
 | `its_core_500` | 94/94 PASS |
+| `its_top` | legacy baseline (1444/1444 with v5.5 RTL) |
 
 ## Timing Command
 
@@ -61,21 +61,27 @@ Run from `synth/` with Vivado 2024.1:
 vivado -mode batch -source its_top_500_singleclk_ooc_usp.tcl
 ```
 
-UltraScale+ OOC result on `xcku5p-ffvb676-2-e`:
+UltraScale+ OOC result (v5.8) on `xcku5p-ffvb676-2-e`:
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| WNS | +0.057 ns | MET |
+| WNS | +0.053 ns | MET |
 | TNS | 0.000 ns | MET |
-| WHS | +0.038 ns | MET |
+| WHS | +0.035 ns | MET |
 | Failing endpoints | 0 | MET |
 | DSP48E2 | 5 | — |
 | RAMB36E2 | 12 | — |
 | RAMB18E2 | 5 | — |
 
+## Official Q&A Compliance (v5.6–v5.8)
+
+| Ref | Requirement | Fix |
+|-----|-------------|-----|
+| P0 #4 | 2D transform: vertical first, then horizontal | v5.6: ref_model + its_core_500 |
+| P0 #11 | Next TU accepted before current output fully read | v5.7: TU metadata queue; v5.8: can_accept_tu hardening |
+
 ## Notes
 
-- `its_top.v` remains as the original Artix-7/single-clock functional baseline.
-- `its_top_500_wrapper.v` remains useful for explicit dual-clock CDC integration.
-- `its_top_500_singleclk.v` is the recommended final submission top when the evaluator requires a single `clk` port.
-- Artix-7 500MHz remains infeasible for this architecture because the DSP48E1/BRAM primitive timing is the limiting factor; UltraScale+ meets the 500MHz requirement.
+- `its_top.v` is frozen as legacy Artix-7 baseline; submission uses `its_top_500_singleclk`.
+- `its_top_500_wrapper.v` implements the dual-clock CDC + TU queue architecture.
+- v5.8 timing re-verified: WNS +0.053ns at 500MHz, 0 failing endpoints.

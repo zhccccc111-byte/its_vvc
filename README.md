@@ -206,8 +206,8 @@ it_info [21:0]
 
 **关键设计点：**
 - **异步 FIFO**: Gray-code 指针 + 2-FF 同步器，registered full flag，FWFT 输出
-- **it_done 生成**: 内部计数输出 beat (每 beat = 4 值)，当 core_finished + FIFO empty + 已读 beat ≥ total_points 时置位
-- **多 TU 支持**: 新 TU (it_info_vld) 时清零 core_finished、it_done_r、out_beat_count
+- **TU metadata queue**: 4 深度队列存储每 TU 的 expected_beats 和已读 beat 数，`core_done_pending` 计数器跟踪 CDC 同步的完成脉冲。`it_done` 为 1-cycle pulse，只对应队首 TU，不受后续 TU info 影响 (v5.7/5.8)
+- **can_accept_tu**: `~cmd_fifo_full & ~tuq_full` 统一流控，cmd_fifo wr_en 同受此门控，防止静默丢弃 info (v5.8)
 - **端口**: 继承赛题接口并额外提供 `clk_core`；最终单时钟提交入口见 4.6 节
 
 ### 4.6 500MHz 提交顶层 (`its_top_500_singleclk.v`)
@@ -277,13 +277,12 @@ vsim -c -do "do run_core_500.do"
 
 ## 6. 综合与 PPA
 
-### 6.0 推荐提交顶层 OOC 综合结果 — UltraScale+ (v5.5 `its_top_500_singleclk`)
+### 6.0 推荐提交顶层 OOC 综合结果 — UltraScale+ (v5.8 `its_top_500_singleclk`)
 
-**设计**: `its_top_500_singleclk`（赛题单时钟接口 + 500MHz wrapper/core）
+**设计**: `its_top_500_singleclk`（赛题单时钟接口 + 500MHz wrapper/core + TU metadata queue）
 **目标器件**: Kintex UltraScale+ xcku5p-ffvb676-2-e
 **时钟约束**: clk 500MHz (2ns)
-**综合方式**: Out-of-Context (OOC)
-**XDC 约束**: min input/output delay 0.200ns（hold margin 修复）
+**综合方式**: Out-of-Context (OOC)，含 P&R + PhysOpt
 
 | 资源 | 使用 | 说明 |
 |------|------|------|
@@ -296,12 +295,12 @@ vsim -c -do "do run_core_500.do"
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | **+0.057 ns** | **MET** |
+| WNS (Setup) | **+0.053 ns** | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | **+0.038 ns** | **MET** |
+| WHS (Hold) | **+0.035 ns** | **MET** |
 | Failing Endpoints | **0** | — |
 
-**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz，是最终推荐提交顶层。
+**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz。v5.8 新增 TU metadata queue 和 can_accept_tu 流控未影响时序收敛。
 
 ### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.3 its_core_500)
 
@@ -429,7 +428,8 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ✅ | 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.057ns/WHS=+0.038ns 达标；双时钟 wrapper WNS=+0.084ns；Artix-7 WNS=-1.733ns 不可达，详见 6.0/6.1/6.2 节 |
+| 500MHz 主频 | ✅ | v5.8: 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.053ns/WHS=+0.035ns 达标，详见 6.0 节 |
+| 官方 Q&A 合规 | ✅ | v5.6: 2D 变换顺序改为先垂直后水平 (P0 #4)；v5.7/5.8: TU 输出未完时可接下一 TU (P0 #11) |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -440,6 +440,9 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.8** | `v5.8` | TU queue 加固: can_accept_tu 统一流控, tuq_next_count 组合逻辑; UltraScale+ OOC 重新综合 | **+0.053ns** | 94+1539 |
+| **v5.7** | `v5.7` | P0 #11: TU metadata queue (4 深度), core_done_pending 计数器, it_done pulse; 新增 overlap 测试 | +0.057ns | 94+1539 |
+| **v5.6** | `v5.6` | P0 #4: 2D 变换顺序改为先垂直后水平; LFNST pipeline 修复; ROM 同步 gen_rom_coeffs.py | +0.057ns | 94+1537 |
 | **v5.5** | `v5.5-submission-top` | 新增赛题接口完全一致的 500MHz 单时钟提交顶层 `its_top_500_singleclk`；新增单时钟仿真/OOC 脚本；wrapper 输出点数计算改移位函数 | +0.057ns (singleclk) | 1444+1537+1537+94=4612 |
 | **v5.4** | `v5.4-shared-transform-engine` | 行/列 transform engine 共享复用，DSP48E2 9→5；LFNST overlay buffer 去除清零写；wrapper OOC CDC 检查脚本修正 | +0.084ns (wrapper) | 1444+1537+94=3075 |
 | **v5.3** | | 代码质量清理：提取 its_pkg.v 共享 package，参数化魔数，-sv 编译标志，删除调试残留，添加学习指南；综合脚本适配 SystemVerilog；XDC hold 修复 (min delay 0.1→0.2ns) | +0.058ns (wrapper) | 1444+1537+94=3075 |

@@ -4,21 +4,21 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-28 (v5.5)**
-**仿真结果：its_top 1444/1444 + singleclk 1537/1537 + wrapper 1537/1537 + core_500 94/94**
-**500MHz 状态：its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.057ns / WHS +0.038ns 达标**
+**基线版本：2026-06-28 (v5.8)**
+**仿真结果：singleclk ALL PASS (1537 + overlap) + core_500 94/94**
+**500MHz 状态：its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.053ns / WHS +0.035ns 达标**
 **推荐提交顶层：rtl/its_top_500_singleclk.v，端口与赛题 its_top 单时钟接口完全一致**
+**its_top.v：冻结为 legacy 基线（v5.5 RTL, 1444/1444 PASS），最终提交入口只认 its_top_500_singleclk**
 
-### v5.5 更新摘要
+### v5.8 更新摘要
 
 | 项目 | 结果 |
 |------|------|
-| 推荐提交顶层 | `its_top_500_singleclk` |
-| 顶层接口 | 单 `clk`，与赛题接口一致 |
-| 单时钟提交顶层回归 | 1537/1537 PASS |
-| UltraScale+ OOC | WNS +0.057ns, WHS +0.038ns, 0 failing endpoints |
-| 资源 | DSP48E2=5, RAMB36E2=12, RAMB18E2=5 |
-| 交付说明 | `SUBMISSION.md` |
+| P0 #4 垂直优先变换 | v5.6: ref_model + its_core_500 ✅ |
+| P0 #11 TU metadata queue | v5.7: 4 深度队列 + v5.8: can_accept_tu 加固 ✅ |
+| 单时钟提交顶层回归 | ALL PASS (1537 + overlap tests) |
+| UltraScale+ OOC (重综合) | WNS +0.053ns, WHS +0.035ns, 0 failing |
+| TU overlap 测试 | imm_4x4 + imm_8x8 + noread_4x4 + mixed 4x4→8x8 ✅ |
 
 ---
 
