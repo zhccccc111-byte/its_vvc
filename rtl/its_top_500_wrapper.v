@@ -95,6 +95,19 @@ module its_top_500_wrapper (
     );
 
     // ================================================================
+    // TU metadata queue — depth counter (arrays below output section)
+    // Declared early: tuq_full gates cmd_fifo wr_en to prevent silent
+    // info drops when the queue is full.
+    // ================================================================
+    localparam TUQ_DEPTH = 4;
+    localparam TUQ_PTRW  = 2;  // log2(TUQ_DEPTH)
+
+    reg [2:0]  tuq_count;                        // 0..4 entries
+    wire tuq_full  = (tuq_count >= 3'd4);
+    wire tuq_empty = (tuq_count == 3'd0);
+    wire can_accept_tu = ~cmd_fifo_full & ~tuq_full;
+
+    // ================================================================
     // cmd_fifo: 23-bit, depth 4, clk_if → clk_core
     // ================================================================
     async_fifo #(
@@ -103,7 +116,7 @@ module its_top_500_wrapper (
     ) u_cmd_fifo (
         .wr_clk     (clk_if),
         .wr_rst_n   (rst_sync_if_n),
-        .wr_en      (it_info_vld & ~cmd_fifo_full),
+        .wr_en      (it_info_vld & can_accept_tu),
         .wr_data    ({1'b0, it_info}),
         .full       (cmd_fifo_full),
         .almost_full(cmd_fifo_almost_full),
@@ -206,9 +219,6 @@ module its_top_500_wrapper (
     //
     // Queue depth 4 matches cmd_fifo depth — worst case 4 TUs queued.
     // ================================================================
-    localparam TUQ_DEPTH = 4;
-    localparam TUQ_PTRW  = 2;  // log2(TUQ_DEPTH)
-
     function [12:0] points_from_size;
         input [6:0] width;
         input [6:0] height;
@@ -240,20 +250,19 @@ module its_top_500_wrapper (
     reg [12:0] tuq_beats_rd  [0:TUQ_DEPTH-1];   // beats read so far
     reg [TUQ_PTRW-1:0] tuq_wr_ptr;              // next push slot
     reg [TUQ_PTRW-1:0] tuq_rd_ptr;              // front slot (next to pop)
-    reg [2:0]  tuq_count;                        // 0..4 entries
     reg [2:0]  core_done_pending;                // core_done pulses not yet consumed
 
-    wire tuq_full  = (tuq_count >= 3'd4);
-    wire tuq_empty = (tuq_count == 3'd0);
-
     // Push: accept new TU into queue
-    // Guard: queue not full AND cmd_fifo can accept (implicit flow control)
-    wire new_tu = it_info_vld & ~cmd_fifo_full;
+    wire new_tu = it_info_vld & can_accept_tu;
 
     // Pop: front TU is fully done
-    // Conditions: core_done pending, all beats read, output FIFO drained
+    // Conditions: core_done pending, all beats read
     wire front_beats_done = ({tuq_beats_rd[tuq_rd_ptr], 2'b00} >= tuq_beats_due[tuq_rd_ptr]);
     wire front_done = (core_done_pending > 0) & front_beats_done;
+
+    // Combinational next-state for same-cycle push+pop correctness
+    wire [2:0] tuq_next_count = tuq_count + (new_tu ? 3'd1 : 3'd0)
+                                            - (front_done ? 3'd1 : 3'd0);
 
     // ================================================================
     // core_done CDC: toggle-based synchronizer (clk_core → clk_if)
@@ -292,25 +301,27 @@ module its_top_500_wrapper (
             core_done_pending <= 3'd0;
         end else begin
             // --- core_done accumulation (CDC-synchronized pulse) ---
+            // Combinational delta accounts for simultaneous pulse+pop:
+            //   pulse adds 1, pop subtracts 1 → net handled correctly
             if (core_done_pulse & ~front_done)
                 core_done_pending <= core_done_pending + 3'd1;
             else if (~core_done_pulse & front_done)
                 core_done_pending <= core_done_pending - 3'd1;
-            // simultaneous pulse+pop: net zero
+            // simultaneous pulse+pop: net zero (both conditions skip)
 
             // --- Push new TU into queue ---
             if (new_tu) begin
                 tuq_beats_due[tuq_wr_ptr] <= expected_beats(it_info[6:0], it_info[13:7]);
                 tuq_beats_rd[tuq_wr_ptr]  <= 13'd0;
                 tuq_wr_ptr <= tuq_wr_ptr + {{TUQ_PTRW-1{1'b0}}, 1'b1};
-                tuq_count  <= tuq_count + 3'd1;
             end
 
             // --- Pop completed TU from queue ---
-            if (front_done) begin
+            if (front_done)
                 tuq_rd_ptr <= tuq_rd_ptr + {{TUQ_PTRW-1{1'b0}}, 1'b1};
-                tuq_count  <= tuq_count - 3'd1;
-            end
+
+            // --- Unified count (handles same-cycle push+pop correctly) ---
+            tuq_count <= tuq_next_count;
 
             // --- Beat counting: increment front entry's read count ---
             if (output_fifo_rd_en & ~tuq_empty)
