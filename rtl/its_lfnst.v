@@ -134,6 +134,7 @@ module its_lfnst (
     reg [5:0]  comp_cnt;
     reg [1:0]  drain_cnt;
     reg        first_compute;  // Flag for first compute cycle (pipeline flush)
+    reg [1:0]  mac_flush;      // 0=normal, 1..2=flush after mac_cnt wraps
 
     // ========================================
     // State machine
@@ -151,7 +152,7 @@ module its_lfnst (
                         else if (load_idle_cnt >= 4'd15 && load_cnt > 6'd0) state <= S_PREFETCH;
             S_PREFETCH: if (pf_cnt >= pf_total && !pf_active)
                             state <= S_COMPUTE;
-            S_COMPUTE:  if (mac_cnt == 4'd15 && mac_en)
+            S_COMPUTE:  if (mac_flush == 2'd2)
                             state <= S_DRAIN;
             S_DRAIN:    if (drain_cnt == 2'd2)
                             state <= S_OUTPUT;
@@ -263,9 +264,13 @@ module its_lfnst (
             in_buf_rd_data    <= 16'd0;
         end else if (state == S_COMPUTE) begin
             in_buf_rd_data <= in_buf[mac_cnt];  // DistRAM combinational read, registered here
-            if (mac_cnt >= 4'd15)
+            if (mac_flush == 2'd2) begin
+                // Last flush: advance coeff_buf addr to next row
                 coeff_buf_rd_addr <= {comp_cnt[5:0] + 6'd1, 4'd0};
-            else
+            end else if (mac_cnt >= 4'd15 || mac_flush > 0) begin
+                // Keep addr at T[c][15] through flush so BRAM output stays correct
+                coeff_buf_rd_addr <= {comp_cnt[5:0], 4'd0} + 10'd15;
+            end else
                 coeff_buf_rd_addr <= {comp_cnt[5:0], 4'd0} + {4'd0, mac_cnt[3:0]} + 10'd1;
         end
     end
@@ -285,16 +290,18 @@ module its_lfnst (
             mac_a         <= 16'd0;
             mac_b         <= 16'd0;
             first_compute <= 1'b0;
+            mac_flush     <= 2'd0;
         end else if (state == S_LOAD && load_done) begin
-            mac_cnt  <= 4'd0;
-            comp_cnt <= 6'd0;
-            mac_clr  <= 1'b1;
+            mac_cnt       <= 4'd0;
+            comp_cnt      <= 6'd0;
+            mac_clr       <= 1'b1;
             first_compute <= 1'b1;
+            mac_flush     <= 2'd0;
         end else if (state == S_COMPUTE) begin
             // Both mac_a and mac_b use registered values (1-cycle delay from address/data)
             mac_a   <= in_buf_rd_data;
             mac_b   <= coeff_buf_rd_data;
-            mac_en  <= 1'b1;
+            mac_en  <= !first_compute && (mac_flush != 2'd2);
             if (first_compute) begin
                 mac_clr      <= 1'b1;
                 first_compute <= 1'b0;
@@ -302,13 +309,24 @@ module its_lfnst (
                 mac_clr <= 1'b0;
             end
 
-            if (mac_cnt >= 4'd15) begin
-                mac_cnt  <= 4'd0;
-                comp_cnt <= comp_cnt + 6'd1;
+            if (mac_flush == 2'd2) begin
+                // Flush done: wrap mac_cnt, advance comp_cnt, go to S_DRAIN
+                mac_cnt   <= 4'd0;
+                comp_cnt  <= comp_cnt + 6'd1;
+                mac_flush <= 2'd0;
+            end else if (mac_flush == 2'd1) begin
+                // First flush: pipeline naturally propagates in_buf[15]/T[c][15]
+                // from registered mac_a/mac_b into MAC stage1.
+                mac_flush <= 2'd2;
+            end else if (mac_cnt >= 4'd15) begin
+                // All 16 in_buf elements fed; start pipeline flush
+                mac_flush <= 2'd1;
             end else begin
                 mac_cnt <= mac_cnt + 4'd1;
             end
         end else if (state == S_DRAIN) begin
+            // Product 15 (in_buf[15]*T[c][15]) already entered MAC stage1
+            // during the hold cycle.  Standard drain is sufficient.
             mac_en  <= 1'b0;
             mac_clr <= 1'b0;
         end else if (state == S_OUTPUT) begin
@@ -318,6 +336,8 @@ module its_lfnst (
             mac_clr <= 1'b1;
             mac_en  <= 1'b0;
             mac_cnt <= 4'd0;
+            first_compute <= 1'b1;
+            mac_flush <= 2'd0;
         end else begin
             mac_en  <= 1'b0;
             mac_clr <= 1'b0;

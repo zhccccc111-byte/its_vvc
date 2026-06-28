@@ -126,6 +126,20 @@ result = clip(result, -32768, 32767)  // 裁剪到 16 位有符号范围
 
 `>>>` 是算术右移（保持符号位），`>>` 是逻辑右移。这里用 `>>>` 因为结果可能是负数。
 
+**v5.3 参数化命名常数：** 这些魔数在 v5.3 中被提取为命名常数，提高可读性：
+
+```verilog
+// its_transform_engine.v
+localparam ROUND_SHIFT = 6;
+localparam ROUND_CONST = 40'sd32;  // 2^(ROUND_SHIFT-1)
+
+// its_lfnst.v
+localparam LFNST_ROUND_SHIFT = 7;
+localparam LFNST_ROUND_CONST = 40'sd64;
+localparam LFNST_CLIP_HIGH   = 40'sd32767;
+localparam LFNST_CLIP_LOW    = -40'sd32768;
+```
+
 ---
 
 ## 3. 整体架构总览
@@ -319,12 +333,29 @@ S_IDLE → S_LOAD → S_PREFETCH → S_COMPUTE → S_PREFETCH → ... → S_OUTP
 | 系数来源 | 共享 ROM（its_rom） | 专用 ROM（its_lfnst_rom） |
 | 输入来源 | 外部端口 | 从 in_mem 读取 |
 | 输出去向 | 外部端口 | 写回 in_mem |
-| 舍入 | +32 >>> 6 | +64 >>> 7 |
-| 裁剪 | 无（中间结果） | clip3(-32768, 32767) |
+| 舍入 | +32 >>> 6 (ROUND_CONST) | +64 >>> 7 (LFNST_ROUND_CONST) |
+| 裁剪 | 无（中间结果） | clip3(LFNST_CLIP_LOW, LFNST_CLIP_HIGH) |
 
 **LFNST 的串行 MAC 设计：**
 
 由于 LFNST 最多只有 48 个输入、16/48 个输出，计算量小，用 1 个 MAC 串行处理即可（16 或 48 个周期 × 16 次累加）。不需要 4 路并行。
+
+**LFNST 状态机：**
+
+```
+S_IDLE → S_LOAD → S_PREFETCH → S_COMPUTE → S_DRAIN → S_OUTPUT → S_OUTPUT_CLIP → S_DONE
+                         ↑                              |
+                         └──────────────────────────────┘
+                                    （循环 nTrs 次）
+```
+
+- `S_LOAD`：加载 16 个低频系数（15 周期空闲超时机制）
+- `S_PREFETCH`：从 LFNST ROM 预取系数到 coeff_buf（nTrs×16+1 周期）
+- `S_COMPUTE`：单 MAC 串行计算（每 16 周期一个输出点）
+- `S_DRAIN`：等待 MAC 流水线排空（2 周期）
+- `S_OUTPUT`：计算 (sum+64)>>>7
+- `S_OUTPUT_CLIP`：执行 clip3 饱和并输出
+- `S_DONE`：完成脉冲
 
 ### 4.7 its_top.v — 单时钟顶层
 
@@ -856,4 +887,4 @@ cd sim && vsim -c -do "source run_core_500.do; quit -f"
 
 ---
 
-*本报告由 Claude Code 根据 RTL 源码自动生成，适用于 ITS-VVC v4.0 版本。*
+*本报告由 Claude Code 根据 RTL 源码自动生成，适用于 ITS-VVC v5.3 版本。*
