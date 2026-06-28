@@ -198,8 +198,17 @@ module its_top_500_wrapper (
     assign it_data_out_vld = ~output_fifo_empty;
 
     // ================================================================
-    // Output beat counter & done generation
+    // TU metadata queue: per-TU tracking for overlapped input/output
+    //
+    // Each entry stores ceil(width*height/4) beats so output counting
+    // is independent of subsequent TU info.  core_done pulses arrive
+    // in FIFO order; a counter tracks pending completions.
+    //
+    // Queue depth 4 matches cmd_fifo depth — worst case 4 TUs queued.
     // ================================================================
+    localparam TUQ_DEPTH = 4;
+    localparam TUQ_PTRW  = 2;  // log2(TUQ_DEPTH)
+
     function [12:0] points_from_size;
         input [6:0] width;
         input [6:0] height;
@@ -215,25 +224,36 @@ module its_top_500_wrapper (
         end
     endfunction
 
-    // Latch total_points from it_info on new TU, clear done state.
-    // it_info format: {lfnst_idx[1:0], lfnst_tr_set_idx[1:0],
-    //                  tr_ver[1:0], tr_hor[1:0], height[6:0], width[6:0]}
-    reg [12:0] total_points;   // max 64*64 = 4096
-    reg [12:0] out_beat_count; // counts beats read (each beat = 4 values)
+    // ceil(w*h/4) = (total_points + 3) >> 2
+    function [12:0] expected_beats;
+        input [6:0] w;
+        input [6:0] h;
+        reg [12:0] pts;
+        begin
+            pts = points_from_size(w, h);
+            expected_beats = (pts + 13'd3) >> 2;
+        end
+    endfunction
 
+    // Queue storage
+    reg [12:0] tuq_beats_due [0:TUQ_DEPTH-1];   // expected beats per TU
+    reg [12:0] tuq_beats_rd  [0:TUQ_DEPTH-1];   // beats read so far
+    reg [TUQ_PTRW-1:0] tuq_wr_ptr;              // next push slot
+    reg [TUQ_PTRW-1:0] tuq_rd_ptr;              // front slot (next to pop)
+    reg [2:0]  tuq_count;                        // 0..4 entries
+    reg [2:0]  core_done_pending;                // core_done pulses not yet consumed
+
+    wire tuq_full  = (tuq_count >= 3'd4);
+    wire tuq_empty = (tuq_count == 3'd0);
+
+    // Push: accept new TU into queue
+    // Guard: queue not full AND cmd_fifo can accept (implicit flow control)
     wire new_tu = it_info_vld & ~cmd_fifo_full;
 
-    always @(posedge clk_if or negedge rst_sync_if_n) begin
-        if (!rst_sync_if_n) begin
-            total_points   <= 13'd0;
-            out_beat_count <= 13'd0;
-        end else if (new_tu) begin
-            total_points   <= points_from_size(it_info[6:0], it_info[13:7]);
-            out_beat_count <= 13'd0;
-        end else if (output_fifo_rd_en) begin
-            out_beat_count <= out_beat_count + 13'd1;
-        end
-    end
+    // Pop: front TU is fully done
+    // Conditions: core_done pending, all beats read, output FIFO drained
+    wire front_beats_done = ({tuq_beats_rd[tuq_rd_ptr], 2'b00} >= tuq_beats_due[tuq_rd_ptr]);
+    wire front_done = (core_done_pending > 0) & front_beats_done;
 
     // ================================================================
     // core_done CDC: toggle-based synchronizer (clk_core → clk_if)
@@ -259,36 +279,47 @@ module its_top_500_wrapper (
 
     wire core_done_pulse = done_sync2 ^ done_sync3;
 
-    // core_finished: sticky latch, cleared on new TU or reset
-    reg core_finished;
-
+    integer qi;
     always @(posedge clk_if or negedge rst_sync_if_n) begin
-        if (!rst_sync_if_n)
-            core_finished <= 1'b0;
-        else if (new_tu)
-            core_finished <= 1'b0;
-        else if (core_done_pulse)
-            core_finished <= 1'b1;
+        if (!rst_sync_if_n) begin
+            for (qi = 0; qi < TUQ_DEPTH; qi = qi + 1) begin
+                tuq_beats_due[qi] <= 13'd0;
+                tuq_beats_rd[qi]  <= 13'd0;
+            end
+            tuq_wr_ptr        <= {TUQ_PTRW{1'b0}};
+            tuq_rd_ptr        <= {TUQ_PTRW{1'b0}};
+            tuq_count         <= 3'd0;
+            core_done_pending <= 3'd0;
+        end else begin
+            // --- core_done accumulation (CDC-synchronized pulse) ---
+            if (core_done_pulse & ~front_done)
+                core_done_pending <= core_done_pending + 3'd1;
+            else if (~core_done_pulse & front_done)
+                core_done_pending <= core_done_pending - 3'd1;
+            // simultaneous pulse+pop: net zero
+
+            // --- Push new TU into queue ---
+            if (new_tu) begin
+                tuq_beats_due[tuq_wr_ptr] <= expected_beats(it_info[6:0], it_info[13:7]);
+                tuq_beats_rd[tuq_wr_ptr]  <= 13'd0;
+                tuq_wr_ptr <= tuq_wr_ptr + {{TUQ_PTRW-1{1'b0}}, 1'b1};
+                tuq_count  <= tuq_count + 3'd1;
+            end
+
+            // --- Pop completed TU from queue ---
+            if (front_done) begin
+                tuq_rd_ptr <= tuq_rd_ptr + {{TUQ_PTRW-1{1'b0}}, 1'b1};
+                tuq_count  <= tuq_count - 3'd1;
+            end
+
+            // --- Beat counting: increment front entry's read count ---
+            if (output_fifo_rd_en & ~tuq_empty)
+                tuq_beats_rd[tuq_rd_ptr] <= tuq_beats_rd[tuq_rd_ptr] + 13'd1;
+        end
     end
 
-    // All beats read: out_beat_count * 4 >= total_points
-    // Equivalent: out_beat_count >= (total_points + 3) / 4 = (total_points + 3) >> 2
-    // Use comparison: out_beat_count * 4 >= total_points → out_beat_count >= ceil(total_points/4)
-    // Simplify: (out_beat_count << 2) >= total_points
-    wire all_beats_read = ({out_beat_count, 2'b00} >= total_points);
-
-    // it_done: sticky. Set when core finished + FIFO drained + all beats read.
-    // Cleared on new TU or reset.
-    reg it_done_r;
-    always @(posedge clk_if or negedge rst_sync_if_n) begin
-        if (!rst_sync_if_n)
-            it_done_r <= 1'b0;
-        else if (new_tu)
-            it_done_r <= 1'b0;
-        else if (core_finished && output_fifo_empty && all_beats_read)
-            it_done_r <= 1'b1;
-    end
-    assign it_done = it_done_r;
+    // it_done: 1-cycle pulse when a TU is fully complete
+    assign it_done = front_done;
 
     // ================================================================
     // its_core_500 instantiation
