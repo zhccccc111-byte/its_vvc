@@ -75,9 +75,20 @@ puts " Checking cross-domain paths..."
 puts "=========================================="
 set cross_paths [get_timing_paths -from [get_clocks clk_if] -to [get_clocks clk_core] -quiet]
 if {[llength $cross_paths] > 0} {
-    puts "WARNING: [llength $cross_paths] cross-domain paths found (should be 0)"
-    report_timing -from [get_clocks clk_if] -to [get_clocks clk_core] -nworst 5 \
-        -file [file join $xdc_dir wrapper_500_cross_domain_violations.rpt]
+    set active_cross_paths 0
+    foreach path $cross_paths {
+        set exception [get_property EXCEPTION $path]
+        if {$exception ne "Asynchronous Clock Groups"} {
+            incr active_cross_paths
+        }
+    }
+    if {$active_cross_paths > 0} {
+        puts "WARNING: $active_cross_paths active cross-domain paths found (should be 0)"
+        report_timing -from [get_clocks clk_if] -to [get_clocks clk_core] -nworst 5 \
+            -file [file join $xdc_dir wrapper_500_cross_domain_violations.rpt]
+    } else {
+        puts "OK: Cross-domain paths are covered by asynchronous clock group exceptions"
+    }
 } else {
     puts "OK: No cross-domain timing paths (clock_groups isolation working)"
 }

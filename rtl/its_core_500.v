@@ -421,11 +421,10 @@ module its_core_500 (
         end
     end
 
-    // LFNST overlay buffer write (direct, no pipeline — small buffer, low fanout)
+    // LFNST overlay buffer write (direct, no pipeline, small buffer, low fanout)
+    // No clearing is needed: the LFNST module writes all active entries before use.
     always @(posedge clk_core) begin
-        if (clearing && clr_cnt < 12'd48) begin
-            lfnst_out_buf[clr_cnt[5:0]] <= 16'sd0;
-        end else if (lfnst_data_out_wr_en) begin
+        if (lfnst_data_out_wr_en) begin
             lfnst_out_buf[lfnst_wr_addr] <= lfnst_data_out;
         end
     end
@@ -444,18 +443,14 @@ module its_core_500 (
     // ========================================
     // ROM Instantiation (shared: row/col engines are strictly sequential)
     // ========================================
-    wire        is_col_phase = (state == S_COL_START || state == S_COL_RUN);
-    wire [13:0] shared_rom_addr = is_col_phase ? col_rom_addr : row_rom_addr;
+    wire [13:0] shared_eng_rom_addr;
     wire [15:0] shared_rom_coeff;
 
     its_rom u_shared_rom (
         .clk   (clk_core),
-        .addr  (shared_rom_addr),
+        .addr  (shared_eng_rom_addr),
         .coeff (shared_rom_coeff)
     );
-
-    assign row_rom_coeff = shared_rom_coeff;
-    assign col_rom_coeff = shared_rom_coeff;
 
     its_lfnst_rom u_lfnst_rom (
         .clk   (clk_core),
@@ -641,26 +636,82 @@ module its_core_500 (
     end
 
     // ========================================
-    // Row Transform Engine
+    // Column Engine Input Pipeline
     // ========================================
-    its_transform_engine u_row_engine (
+    // Pipeline register: break tp_buf DistRAM to engine line_buf path.
+    reg signed [15:0] tp_buf_rd_data;
+    always @(posedge clk_core) begin
+        tp_buf_rd_data <= tp_buf[tp_rd_base + col_eng_rd_addr];
+    end
+
+    // Delay data_in_vld to align with pipelined tp_buf_rd_data.
+    reg col_data_in_vld_d;
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            col_data_in_vld_d <= 1'b0;
+        else
+            col_data_in_vld_d <= (state == S_COL_RUN);
+    end
+
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            col_eng_rd_addr <= 12'd0;
+        else if (state == S_COL_START)
+            col_eng_rd_addr <= {6'd0, col_idx[6:0]};
+        else if (state == S_COL_RUN && col_data_in_req)
+            col_eng_rd_addr <= col_eng_rd_addr + {5'd0, tu_width[6:0]};
+        else if (state != S_COL_RUN)
+            col_eng_rd_addr <= 12'd0;
+    end
+
+    // ========================================
+    // Shared Transform Engine
+    // ========================================
+    // Row and column transforms are serialized, so one transform engine is reused.
+    wire        is_row_phase = (state == S_ROW_START) || (state == S_ROW_RUN);
+    wire        is_col_phase_eng = (state == S_COL_START) || (state == S_COL_RUN);
+
+    wire [15:0] shared_data_in = is_row_phase ? row_in_mem_data : tp_buf_rd_data;
+    wire        shared_data_in_vld = is_row_phase ? row_data_in_vld_r : col_data_in_vld_d;
+    wire [1:0]  shared_tr_type = is_row_phase ? row_tr_type : col_tr_type;
+    wire [6:0]  shared_size = is_row_phase ? tu_width[6:0] : tu_height[6:0];
+
+    wire        shared_done;
+    wire        shared_data_in_req;
+    wire [15:0] shared_eng_out_data;
+    wire        shared_eng_out_vld;
+
+    its_transform_engine u_shared_engine (
         .clk        (clk_core),
         .rst_n      (rst_n),
-        .start      (state == S_ROW_START),
-        .tr_type    (row_tr_type),
-        .size       (tu_width[6:0]),
-        .data_in    (row_in_mem_data),
-        .data_in_vld(row_data_in_vld_r),
-        .data_in_req(row_data_in_req),
-        .rom_addr   (row_rom_addr),
-        .rom_coeff  (row_rom_coeff),
-        .data_out   (row_out_data),
-        .data_out_vld(row_out_vld),
+        .start      (is_row_phase ? (state == S_ROW_START) : (state == S_COL_START)),
+        .tr_type    (shared_tr_type),
+        .size       (shared_size),
+        .data_in    (shared_data_in),
+        .data_in_vld(shared_data_in_vld),
+        .data_in_req(shared_data_in_req),
+        .rom_addr   (shared_eng_rom_addr),
+        .rom_coeff  (shared_rom_coeff),
+        .data_out   (shared_eng_out_data),
+        .data_out_vld(shared_eng_out_vld),
         .data_out_req(1'b1),
-        .done       (row_done)
+        .done       (shared_done)
     );
 
-    // Row engine absolute address counter (replaces base + offset)
+    assign row_out_data = shared_eng_out_data;
+    assign row_out_vld = is_row_phase ? shared_eng_out_vld : 1'b0;
+    assign row_done = is_row_phase ? shared_done : 1'b0;
+    assign col_out_data = shared_eng_out_data;
+    assign col_out_vld = is_col_phase_eng ? shared_eng_out_vld : 1'b0;
+    assign col_done = is_col_phase_eng ? shared_done : 1'b0;
+
+    assign row_rom_addr = shared_eng_rom_addr;
+    assign col_rom_addr = shared_eng_rom_addr;
+
+    assign row_data_in_req = is_row_phase ? shared_data_in_req : 1'b0;
+    assign col_data_in_req = is_col_phase_eng ? shared_data_in_req : 1'b0;
+
+    // Row engine absolute address counter
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             row_in_mem_addr <= 12'd0;
@@ -675,8 +726,6 @@ module its_core_500 (
     // ========================================
     // Transpose Buffer Write
     // ========================================
-    // tp_col_cnt removed — debug-only, unused by logic
-
     always @(posedge clk_core) begin
         if (state == S_ROW_RUN && row_out_vld)
             tp_buf[tp_wr_cnt] <= row_out_data;
@@ -690,52 +739,6 @@ module its_core_500 (
         end else if (state == S_ROW_RUN && row_out_vld) begin
             tp_wr_cnt <= tp_wr_cnt + 12'd1;
         end
-    end
-
-    // ========================================
-    // Column Transform Engine
-    // ========================================
-    // Pipeline register: break tp_buf DistRAM → col_engine line_buf path
-    reg signed [15:0] tp_buf_rd_data;
-    always @(posedge clk_core) begin
-        tp_buf_rd_data <= tp_buf[tp_rd_base + col_eng_rd_addr];
-    end
-
-    // Delay data_in_vld to align with pipelined tp_buf_rd_data
-    reg col_data_in_vld_d;
-    always @(posedge clk_core or negedge rst_n) begin
-        if (!rst_n)
-            col_data_in_vld_d <= 1'b0;
-        else
-            col_data_in_vld_d <= (state == S_COL_RUN);
-    end
-
-    its_transform_engine u_col_engine (
-        .clk        (clk_core),
-        .rst_n      (rst_n),
-        .start      (state == S_COL_START),
-        .tr_type    (col_tr_type),
-        .size       (tu_height[6:0]),
-        .data_in    (tp_buf_rd_data),
-        .data_in_vld(col_data_in_vld_d),
-        .data_in_req(col_data_in_req),
-        .rom_addr   (col_rom_addr),
-        .rom_coeff  (col_rom_coeff),
-        .data_out   (col_out_data),
-        .data_out_vld(col_out_vld),
-        .data_out_req(1'b1),
-        .done       (col_done)
-    );
-
-    always @(posedge clk_core or negedge rst_n) begin
-        if (!rst_n)
-            col_eng_rd_addr <= 12'd0;
-        else if (state == S_COL_START)
-            col_eng_rd_addr <= {6'd0, col_idx[6:0]};
-        else if (state == S_COL_RUN && col_data_in_req)
-            col_eng_rd_addr <= col_eng_rd_addr + {5'd0, tu_width[6:0]};
-        else if (state != S_COL_RUN)
-            col_eng_rd_addr <= 12'd0;
     end
 
     // ========================================
