@@ -160,23 +160,25 @@ def lfnst_inverse(input_vec: List[int], ntrs: int,
 
 
 # ============================================================
-# 2D inverse transform (separable: row then column)
+# 2D inverse transform (separable: vertical then horizontal)
 # ============================================================
 
 def inverse_transform_2d(coeff: List[List[int]], tr_type_hor: int,
                          tr_type_ver: int, width: int, height: int) -> List[List[int]]:
-    # Row transform
-    row_result = []
-    for i in range(height):
-        row_result.append(inverse_transform_1d(coeff[i], tr_type_hor, width))
-
-    # Column transform
-    result = [[0]*width for _ in range(height)]
+    # Vertical transform first: process each column with tr_type_ver, size=height
+    col_result = [[0]*height for _ in range(width)]
     for j in range(width):
-        col = [row_result[i][j] for i in range(height)]
+        col = [coeff[i][j] for i in range(height)]
         col_out = inverse_transform_1d(col, tr_type_ver, height)
         for i in range(height):
-            result[i][j] = col_out[i]
+            col_result[j][i] = col_out[i]
+
+    # Horizontal transform second: process each row with tr_type_hor, size=width
+    result = [[0]*width for _ in range(height)]
+    for i in range(height):
+        row = [col_result[j][i] for j in range(width)]
+        row_out = inverse_transform_1d(row, tr_type_hor, width)
+        result[i] = row_out
 
     return result
 

@@ -149,6 +149,7 @@ module its_core_500 (
     reg [6:0]  row_idx;
     reg [6:0]  col_idx;
     reg [11:0] row_base_addr;
+    reg [6:0]  ver_step;     // row-within-column during vertical phase
 
     // Forward declarations (used before defined)
     wire        lfnst_ntrs_is_48;
@@ -175,13 +176,15 @@ module its_core_500 (
     // Overlay detection (combinational from registered signals)
     // nTrs=16: LFNST operates on flat in_mem[0..15], overlay covers first 16 addresses
     // nTrs=48: 3 blocks — blk0(r0-3,c0-3) blk1(r0-3,c4-7) blk2(r4-7,c0-3)
-    wire [11:0] col_in_row = row_in_mem_addr - row_base_addr;
-    wire        is_blk1    = lfnst_ntrs_is_48 && (col_in_row >= 12'd4 && col_in_row < 12'd8);
-    wire        is_blk2    = lfnst_ntrs_is_48 && (row_idx >= 7'd4 && row_idx < 7'd8) && (col_in_row < 12'd4);
+    // Vertical-first: ver_step = row coord within column, row_idx = col coord
+    wire [6:0]  over_row = ver_step;
+    wire [6:0]  over_col = row_idx[6:0];
+    wire        is_blk1    = lfnst_ntrs_is_48 && (over_col >= 7'd4 && over_col < 7'd8);
+    wire        is_blk2    = lfnst_ntrs_is_48 && (over_row >= 7'd4 && over_row < 7'd8) && (over_col < 7'd4);
     // nTrs=48: (row<4 && col<8) || (row>=4 && row<8 && col<4), excluding corner (r4-7,c4-7)
-    wire        overlay_corner = lfnst_ntrs_is_48 && (row_idx >= 7'd4) && (col_in_row >= 12'd4);
-    wire        overlay_row_ok_48 = (row_idx < 7'd8);
-    wire        overlay_col_ok_48 = (col_in_row < 12'd8);
+    wire        overlay_corner = lfnst_ntrs_is_48 && (over_row >= 7'd4) && (over_col >= 7'd4);
+    wire        overlay_row_ok_48 = (over_row < 7'd8);
+    wire        overlay_col_ok_48 = (over_col < 7'd8);
     // nTrs=16: flat linear check on absolute address
     wire        overlay_hit_16 = lfnst_active && (row_in_mem_addr < 12'd16);
     wire        overlay_hit_48 = lfnst_active && overlay_row_ok_48 && overlay_col_ok_48 && !overlay_corner;
@@ -190,9 +193,9 @@ module its_core_500 (
     // overlay_idx: map position → lfnst_out_buf index
     // nTrs=16: flat linear (buf[k] = LFNST output[k] for in_mem[k], k=0..15)
     // nTrs=48: block-based (blk0:base=0, blk1:base=16, blk2:base=32)
-    wire [5:0] overlay_idx_ntrs48 = is_blk1 ? (6'd16 + {row_idx[1:0], col_in_row[1:0]}) :
-                                    is_blk2 ? (6'd32 + {row_idx[1:0], col_in_row[1:0]}) :
-                                    {1'b0, row_idx[2:0], col_in_row[1:0]};
+    wire [5:0] overlay_idx_ntrs48 = is_blk1 ? (6'd16 + {over_row[1:0], over_col[1:0]}) :
+                                    is_blk2 ? (6'd32 + {over_row[1:0], over_col[1:0]}) :
+                                    {1'b0, over_row[2:0], over_col[1:0]};
     wire [5:0] overlay_idx = lfnst_ntrs_is_48 ? overlay_idx_ntrs48 : row_in_mem_addr[5:0];
 
     // Registered overlay selection (aligns with BRAM 1-cycle read latency)
@@ -300,8 +303,8 @@ module its_core_500 (
     wire [15:0] lfnst_rom_coeff;
 
     assign      lfnst_active = (lfnst_idx != 2'd0);
-    wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_hor;
-    wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_ver;
+    wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_ver;   // first phase = vertical
+    wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_hor;   // second phase = horizontal
 
     // ========================================
     // Command FIFO read pipeline (registered)
@@ -569,7 +572,7 @@ module its_core_500 (
             end
             S_ROW_RUN: begin
                 if (row_done) begin
-                    if (row_idx + 7'd1 >= tu_height[6:0])
+                    if (row_idx + 7'd1 >= tu_width[6:0])
                         state <= S_COL_START;
                     else
                         state <= S_ROW_START;
@@ -580,7 +583,7 @@ module its_core_500 (
             end
             S_COL_RUN: begin
                 if (col_done) begin
-                    if (col_idx + 7'd1 >= tu_width[6:0]) begin
+                    if (col_idx + 7'd1 >= tu_height[6:0]) begin
                         state <= S_OUT;
                     end else
                         state <= S_COL_START;
@@ -610,9 +613,9 @@ module its_core_500 (
         end else if (state == S_LOAD && input_last_detected && lfnst_idx == 2'd0) begin
             row_idx       <= 7'd0;
             row_base_addr <= 12'd0;
-        end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 < tu_height[6:0]) begin
+        end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 < tu_width[6:0]) begin
             row_idx       <= row_idx + 7'd1;
-            row_base_addr <= row_base_addr + {5'd0, tu_width[6:0]};
+            row_base_addr <= row_base_addr + 12'd1;
         end else if (state != S_ROW_START && state != S_ROW_RUN && state != S_LFNST) begin
             row_idx       <= 7'd0;
             row_base_addr <= 12'd0;
@@ -623,16 +626,30 @@ module its_core_500 (
         if (!rst_n) begin
             col_idx     <= 7'd0;
             tp_rd_base  <= 12'd0;
-        end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 >= tu_height[6:0]) begin
+        end else if (state == S_ROW_RUN && row_done && row_idx + 7'd1 >= tu_width[6:0]) begin
             col_idx     <= 7'd0;
             tp_rd_base  <= 12'd0;
-        end else if (state == S_COL_RUN && col_done && col_idx + 7'd1 < tu_width[6:0]) begin
+        end else if (state == S_COL_RUN && col_done && col_idx + 7'd1 < tu_height[6:0]) begin
             col_idx    <= col_idx + 7'd1;
-            tp_rd_base <= 12'd0;
+            tp_rd_base <= tp_rd_base + {5'd0, tu_width[6:0]};
         end else if (state != S_COL_START && state != S_COL_RUN) begin
             col_idx     <= 7'd0;
             tp_rd_base  <= 12'd0;
         end
+    end
+
+    // ========================================
+    // ver_step — row-within-column counter for vertical phase overlay
+    // ========================================
+    always @(posedge clk_core or negedge rst_n) begin
+        if (!rst_n)
+            ver_step <= 7'd0;
+        else if (state == S_ROW_START)
+            ver_step <= 7'd0;
+        else if (state == S_ROW_RUN && row_data_in_req)
+            ver_step <= ver_step + 7'd1;
+        else if (state != S_ROW_RUN)
+            ver_step <= 7'd0;
     end
 
     // ========================================
@@ -657,9 +674,9 @@ module its_core_500 (
         if (!rst_n)
             col_eng_rd_addr <= 12'd0;
         else if (state == S_COL_START)
-            col_eng_rd_addr <= {6'd0, col_idx[6:0]};
+            col_eng_rd_addr <= 12'd0;
         else if (state == S_COL_RUN && col_data_in_req)
-            col_eng_rd_addr <= col_eng_rd_addr + {5'd0, tu_width[6:0]};
+            col_eng_rd_addr <= col_eng_rd_addr + 12'd1;
         else if (state != S_COL_RUN)
             col_eng_rd_addr <= 12'd0;
     end
@@ -674,7 +691,7 @@ module its_core_500 (
     wire [15:0] shared_data_in = is_row_phase ? row_in_mem_data : tp_buf_rd_data;
     wire        shared_data_in_vld = is_row_phase ? row_data_in_vld_r : col_data_in_vld_d;
     wire [1:0]  shared_tr_type = is_row_phase ? row_tr_type : col_tr_type;
-    wire [6:0]  shared_size = is_row_phase ? tu_width[6:0] : tu_height[6:0];
+    wire [6:0]  shared_size = is_row_phase ? tu_height[6:0] : tu_width[6:0];
 
     wire        shared_done;
     wire        shared_data_in_req;
@@ -711,14 +728,14 @@ module its_core_500 (
     assign row_data_in_req = is_row_phase ? shared_data_in_req : 1'b0;
     assign col_data_in_req = is_col_phase_eng ? shared_data_in_req : 1'b0;
 
-    // Row engine absolute address counter
+    // Row engine address counter — column-major read from in_mem
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             row_in_mem_addr <= 12'd0;
         else if (state == S_ROW_START)
-            row_in_mem_addr <= row_base_addr;
+            row_in_mem_addr <= {5'd0, row_idx[6:0]};
         else if (state == S_ROW_RUN && row_data_in_req)
-            row_in_mem_addr <= row_in_mem_addr + 12'd1;
+            row_in_mem_addr <= row_in_mem_addr + {5'd0, tu_width[6:0]};
         else if (state != S_ROW_RUN)
             row_in_mem_addr <= 12'd0;
     end
@@ -736,8 +753,10 @@ module its_core_500 (
             tp_wr_cnt <= 12'd0;
         end else if (cmd_fifo_rd_en_r) begin
             tp_wr_cnt <= 12'd0;
+        end else if (state == S_ROW_START) begin
+            tp_wr_cnt <= {5'd0, row_idx[6:0]};
         end else if (state == S_ROW_RUN && row_out_vld) begin
-            tp_wr_cnt <= tp_wr_cnt + 12'd1;
+            tp_wr_cnt <= tp_wr_cnt + {5'd0, tu_width[6:0]};
         end
     end
 
@@ -805,7 +824,7 @@ module its_core_500 (
     always @(posedge clk_core or negedge rst_n) begin
         if (!rst_n)
             last_out_cnt <= 12'd0;
-        else if (state == S_COL_RUN && col_done && col_idx + 7'd1 >= tu_width[6:0])
+        else if (state == S_COL_RUN && col_done && col_idx + 7'd1 >= tu_height[6:0])
             last_out_cnt <= total_points[11:0] - 12'd4;
     end
 
@@ -842,9 +861,9 @@ module its_core_500 (
         if (!rst_n || cmd_fifo_rd_en_r)
             out_mem_wr_addr <= 12'd0;
         else if (state == S_COL_START)
-            out_mem_wr_addr <= {5'd0, col_idx[6:0]};
+            out_mem_wr_addr <= tp_rd_base;
         else if (state == S_COL_RUN && col_out_vld)
-            out_mem_wr_addr <= out_mem_wr_addr + {5'd0, tu_width[6:0]};
+            out_mem_wr_addr <= out_mem_wr_addr + 12'd1;
     end
 
     // out_row_cnt / out_col_cnt always block removed — debug-only
