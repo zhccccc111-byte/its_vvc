@@ -4,12 +4,12 @@
 
 | 设计 | 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
 |------|------|---------|-----|------------|------|
-| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.053 ns** | **MET** | **v5.8**: TU queue hardening + OOC 重综合；v5.8.1 功能小修待复刷 |
-| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.057 ns** | **MET** | v5.5: 赛题单时钟接口提交顶层 |
+| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.047 ns** | **MET** | **v5.8.1**: P0 #11 closing 窗口修复 + input FIFO 边界加固 |
+| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.053 ns** | **MET** | v5.8: TU queue hardening + can_accept_tu 流控 |
 | **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.084 ns** | **MET** | v5.4: shared transform engine, DSP48E2 9→5 |
 | its_core_500 | Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
 
-**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（v5.8: WNS +0.053ns, WHS +0.035ns）。v5.8 新增 TU queue 和 can_accept_tu 流控未影响时序。v5.8.1 修复 input end-marker closing 窗口，当前环境 Vivado launcher 无法启动，需在 Vivado 可用环境复刷 post-route 报告。Artix-7 受 DSP48E1 固有特性限制不可达。
+**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（v5.8.1: WNS +0.047ns, WHS +0.034ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ---
 

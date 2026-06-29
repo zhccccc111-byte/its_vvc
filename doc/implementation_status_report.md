@@ -77,15 +77,15 @@
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| 工作主频 500MHz | **已满足** | its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.057ns / WHS +0.038ns |
+| 工作主频 500MHz | **已满足** | its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.047ns / WHS +0.034ns (v5.8.1) |
 
 **UltraScale+ 实测数据 (its_top_500_singleclk, Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | +0.057 ns | **MET** |
+| WNS (Setup) | +0.047 ns | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | +0.038 ns | MET |
+| WHS (Hold) | +0.034 ns | MET |
 | Failing Endpoints | 0 | — |
 | DSP48E2 | 5 | 行/列 transform engine 共享 |
 | RAMB36E2 | 12 | 含 in_mem 2× (XPM BRAM) |
@@ -187,7 +187,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 验证 | **完成** | 最终提交顶层 1539/1539 + core_500 94/94 通过 |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
 | PPA | **完成** | UltraScale+: CLB LUT 1801 (0.83%), RAMB36E2 12, RAMB18E2 5, DSP48E2 5 |
-| 时序 | **完成** | v5.8 UltraScale+ OOC WNS = +0.053ns / WHS = +0.035ns，500MHz **达标**；v5.8.1 小修后待复刷 |
+| 时序 | **完成** | v5.8.1 UltraScale+ OOC WNS = +0.047ns / WHS = +0.034ns，500MHz **达标** |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
 | 500MHz 提交顶层 | **完成** | `its_top_500_singleclk` 赛题单时钟接口完全一致，1539/1539 测试通过 |
 
