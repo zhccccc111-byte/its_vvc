@@ -75,9 +75,8 @@ module its_core_500 (
     reg [11:0] load_addr_r;    // registered address
     reg [15:0] load_data_r;    // registered data
 
-    // core_ready: HIGH when core is in S_LOAD and not clearing memory.
-    // Used by register slice to gate proactive FIFO fill.
-    assign core_ready = (state == S_LOAD) & ~clearing;
+    // core_ready is assigned with load_accepting below, after the end-marker
+    // detector is declared.
 
     // Input buffer: XPM for synthesis, reg array for simulation
     reg [11:0] in_mem_rd_addr;
@@ -372,8 +371,14 @@ module its_core_500 (
 
     // ========================================
     // Input FIFO read (FWFT: data valid when !empty)
+    // Stop immediately after the end marker is observed.  The state machine
+    // leaves S_LOAD one cycle later, so this prevents the next TU's first data
+    // word from being consumed by the current TU.
     // ========================================
-    wire load_fifo_read = (state == S_LOAD && !clearing && !input_fifo_empty);
+    wire load_accepting = (state == S_LOAD) && !clearing && !input_last_detected;
+    assign core_ready = load_accepting;
+
+    wire load_fifo_read = load_accepting && !input_fifo_empty;
     assign input_fifo_rd_en = load_fifo_read;
 
     // Load pipeline: register FIFO output to break critical path to in_mem

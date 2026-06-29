@@ -4,21 +4,21 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-28 (v5.8)**
-**仿真结果：singleclk ALL PASS (1537 + overlap) + core_500 94/94**
-**500MHz 状态：its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.053ns / WHS +0.035ns 达标**
+**基线版本：2026-06-29 (v5.8.1)**
+**仿真结果：singleclk 1539/1539 PASS + core_500 94/94 PASS**
+**500MHz 状态：v5.8 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS +0.053ns / WHS +0.035ns 达标；v5.8.1 小修后待 Vivado 复刷**
 **推荐提交顶层：rtl/its_top_500_singleclk.v，端口与赛题 its_top 单时钟接口完全一致**
 **its_top.v：冻结为 legacy 基线（v5.5 RTL, 1444/1444 PASS），最终提交入口只认 its_top_500_singleclk**
 
-### v5.8 更新摘要
+### v5.8.1 更新摘要
 
 | 项目 | 结果 |
 |------|------|
 | P0 #4 垂直优先变换 | v5.6: ref_model + its_core_500 ✅ |
-| P0 #11 TU metadata queue | v5.7: 4 深度队列 + v5.8: can_accept_tu 加固 ✅ |
-| 单时钟提交顶层回归 | ALL PASS (1537 + overlap tests) |
-| UltraScale+ OOC (重综合) | WNS +0.053ns, WHS +0.035ns, 0 failing |
-| TU overlap 测试 | imm_4x4 + imm_8x8 + noread_4x4 + mixed 4x4→8x8 ✅ |
+| P0 #11 TU metadata queue | v5.7: 4 深度队列 + v5.8: can_accept_tu 加固 + v5.8.1: input closing 窗口修复 ✅ |
+| 单时钟提交顶层回归 | 1539/1539 PASS |
+| UltraScale+ OOC (最新报告) | v5.8: WNS +0.053ns, WHS +0.035ns, 0 failing；v5.8.1 待复刷 |
+| TU overlap 测试 | immediate overlap 4x4 + 8x8 ✅ |
 
 ---
 
@@ -147,7 +147,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 协议合规检查 | **已满足** | 全局 monitor 检查 req=0 → vld=0，0 违规 |
 | 参考模型比对 | **已满足** | Python ref_model.py bit-exact 匹配 (1377 组合) |
 | 波形截图 | **已满足** | 6 个关键场景 SVG，见 `doc/waveforms/` |
-| 500MHz wrapper CDC 验证 | **已满足** | 1537 个 wrapper 测试 PASS (1377 回归 + 40 反压 + 30 协议 + 1 two-TU) |
+| 500MHz 提交顶层验证 | **已满足** | `its_top_500_singleclk` 1539/1539 PASS (含 immediate overlap) |
 
 ---
 
@@ -159,7 +159,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 设计文档 | **已满足** | `doc/design_doc.md` |
 | 验证报告 | **已满足** | `doc/verification_report.md` |
 | PPA 报告 | **已满足** | `doc/ppa_report.md` |
-| 测试用例 | **已满足** | its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94 = 4612 测试全部通过 |
+| 测试用例 | **已满足** | singleclk 1539/1539 + core_500 94/94 已通过；历史 its_top 1444 与 wrapper 1537 回归保留 |
 | 波形截图 | **已满足** | 6 个关键场景 SVG 波形，见 `doc/waveforms/` |
 
 ---
@@ -184,19 +184,19 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 维度 | 状态 | 说明 |
 |------|------|------|
 | 功能 | **完成** | DCT2/DCT8/DST7/LFNST 全覆盖，主功能与提交顶层均 0 失败 |
-| 验证 | **完成** | its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94 = 4612 测试全部通过 |
+| 验证 | **完成** | 最终提交顶层 1539/1539 + core_500 94/94 通过 |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
 | PPA | **完成** | UltraScale+: CLB LUT 1801 (0.83%), RAMB36E2 12, RAMB18E2 5, DSP48E2 5 |
-| 时序 | **完成** | UltraScale+ OOC WNS = +0.057ns / WHS = +0.038ns，500MHz **达标** |
+| 时序 | **完成** | v5.8 UltraScale+ OOC WNS = +0.053ns / WHS = +0.035ns，500MHz **达标**；v5.8.1 小修后待复刷 |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
-| 500MHz 提交顶层 | **完成** | `its_top_500_singleclk` 赛题单时钟接口完全一致，1537/1537 测试通过 |
+| 500MHz 提交顶层 | **完成** | `its_top_500_singleclk` 赛题单时钟接口完全一致，1539/1539 测试通过 |
 
 **全部赛题要求已满足。** 500MHz 目标通过 UltraScale+ (xcku5p-ffvb676-2-e) 实现。最终推荐交付入口为 `its_top_500_singleclk`，端口与赛题 `its_top` 单时钟接口完全一致；双时钟 `its_top_500_wrapper` 保留用于显式 CDC 集成。Artix-7 上的 WNS -1.733ns 来自 DSP48E1 固有物理特性（FF propagation + 路由 + setup time），非设计问题。
 
 ---
 
 *报告生成时间：2026-06-28*
-*基线：4612 passed, 0 failed (its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94)*
+*当前主验证：1633 passed, 0 failed (singleclk 1539 + core_500 94)。历史回归：its_top 1444、wrapper 1537。*
 *综合工具：Vivado 2024.1*
 *目标器件：Kintex UltraScale+ xcku5p-ffvb676-2-e / Artix-7 xc7a200tfbg484-3*
 *仿真工具：ModelSim SE-64 10.6e*

@@ -57,7 +57,7 @@ its_vvc/
 │   └── images/                     # 技术架构图 (15 张 PNG)
 ├── tb/
 │   ├── its_tb.v                    # 测试平台 (1444 个测试用例)
-│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (1537 个测试)
+│   ├── its_tb_500.v                # 500MHz wrapper 测试平台 (1539 个测试)
 │   ├── its_core_500_tb.v           # core_500 测试平台 (94 个测试)
 │   └── test_vectors/               # 测试向量 (.hex 文件)
 ├── sim/
@@ -207,7 +207,7 @@ it_info [21:0]
 **关键设计点：**
 - **异步 FIFO**: Gray-code 指针 + 2-FF 同步器，registered full flag，FWFT 输出
 - **TU metadata queue**: 4 深度队列存储每 TU 的 expected_beats 和已读 beat 数，`core_done_pending` 计数器跟踪 CDC 同步的完成脉冲。`it_done` 为 1-cycle pulse，只对应队首 TU，不受后续 TU info 影响 (v5.7/5.8)
-- **can_accept_tu**: `~cmd_fifo_full & ~tuq_full` 统一流控，cmd_fifo wr_en 同受此门控，防止静默丢弃 info (v5.8)
+- **can_accept_tu + input closing**: `~cmd_fifo_full & ~tuq_full` 统一流控，cmd_fifo wr_en 同受此门控；end marker 写入后 `it_data_in_req` 保持低直到 input FIFO 安全越过当前 TU 边界，防止下一 TU 数据被当前 S_LOAD 误读 (v5.8.1)
 - **端口**: 继承赛题接口并额外提供 `clk_core`；最终单时钟提交入口见 4.6 节
 
 ### 4.6 500MHz 提交顶层 (`its_top_500_singleclk.v`)
@@ -231,11 +231,11 @@ it_info [21:0]
 cd sim
 vsim -c -do "do run.do"
 
-# 500MHz wrapper 回归 (1537 个测试: 1377 回归 + 40 反压 + 30 协议 + 1 two-TU)
-vsim -c -do "do run_500.do"
-
-# 500MHz 单时钟提交顶层回归 (同一套 1537 个测试)
+# 500MHz 单时钟提交顶层回归 (1539 个测试: 含 2 个 immediate overlap TU 测试)
 vsim -c -do "do run_500_singleclk.do"
+
+# 500MHz 双时钟 wrapper CDC 诊断回归（非最终提交口径）
+vsim -c -do "do run_500.do"
 
 # its_core_500 回归 (94 个测试)
 vsim -c -do "do run_core_500.do"
@@ -253,19 +253,20 @@ vsim -c -do "do run_core_500.do"
 | 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
 | 协议 (continuous) | 20 | 无复位连续 TU 处理 |
 
-**500MHz wrapper 回归 (1537 个)** — 穷举覆盖 + CDC 协议验证：
+**500MHz 单时钟提交顶层回归 (1539 个)** — 穷举覆盖 + 协议验证：
 
 | 类别 | 数量 | 测试项 |
 |------|------|--------|
-| DCT2/MTS 穷举回归 | 1377 | 与 its_top 相同测试向量，wrapper CDC 路径 |
+| DCT2/MTS 穷举回归 | 1377 | 与 its_top 相同测试向量，singleclk 提交路径 |
 | 反压 | 40 | 37 个 3on/2off 采样 + 3 个手写 (bp_dct2_8x8, bp_dct2_16x16, bp_lfnst48) |
 | 协议 (end_same_cycle) | 10 | 输入结束同周期响应 |
 | 协议 (continuous) | 20 | 无复位连续 TU 处理 |
 | 两 TU 无复位 | 1 | 连续两个 TU 不 reset，验证 done 清零 |
+| 协议 (immediate overlap) | 2 | TU0 输入结束后按 `it_data_in_req` 立即发送 TU1，验证 metadata queue 与 input closing |
 
 **its_core_500 回归 (94 个)** — 500MHz 核功能验证，与 wrapper 使用相同测试向量。
 
-**500MHz 单时钟提交顶层回归 (1537 个)** — `its_top_500_singleclk` 使用与 wrapper 相同的 1537 个测试，验证赛题单时钟接口形态下功能等价。
+**500MHz 双时钟 wrapper 回归** — `its_top_500_wrapper` 保留为 CDC 集成版本；最终提交和最新全绿验证口径以 `its_top_500_singleclk` 为准。
 
 **LFNST 配置** (每种尺寸×变换组合 9 个): lfnst_idx=0 random_sparse (1) + lfnst_idx=1 set0~3 low_freq (4) + lfnst_idx=2 set0~3 extreme_low_freq (4)
 
@@ -429,7 +430,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
 | 500MHz 主频 | ✅ | v5.8: 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.053ns/WHS=+0.035ns 达标，详见 6.0 节 |
-| 官方 Q&A 合规 | ✅ | v5.6: 2D 变换顺序改为先垂直后水平 (P0 #4)；v5.7/5.8: TU 输出未完时可接下一 TU (P0 #11) |
+| 官方 Q&A 合规 | ✅ | v5.6: 2D 变换顺序改为先垂直后水平 (P0 #4)；v5.7/v5.8/v5.8.1: TU 输出未完时可接下一 TU，并修复 input end-marker closing 窗口 (P0 #11) |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -440,6 +441,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
+| **v5.8.1** | `v5.8.1` | P0 #11 closing 窗口修复: end marker 写入后暂停新 TU data，直到 input FIFO 安全越过 TU 边界；core S_LOAD 检测 end 后立即停读 | v5.8 报告 +0.053ns，待复刷 | 94+1539 |
 | **v5.8** | `v5.8` | TU queue 加固: can_accept_tu 统一流控, tuq_next_count 组合逻辑; UltraScale+ OOC 重新综合 | **+0.053ns** | 94+1539 |
 | **v5.7** | `v5.7` | P0 #11: TU metadata queue (4 深度), core_done_pending 计数器, it_done pulse; 新增 overlap 测试 | +0.057ns | 94+1539 |
 | **v5.6** | `v5.6` | P0 #4: 2D 变换顺序改为先垂直后水平; LFNST pipeline 修复; ROM 同步 gen_rom_coeffs.py | +0.057ns | 94+1537 |

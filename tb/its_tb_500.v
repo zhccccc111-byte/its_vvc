@@ -604,8 +604,13 @@ module its_tb_500;
                 @(posedge clk_if);
                 while (!it_data_in_req) @(posedge clk_if);
                 it_data_end = 1; @(posedge clk_if); it_data_end = 0;
-                // After TU0 end: wait for core to consume end marker before sending TU1
-                if (tu == 0) repeat(100) @(posedge clk_if);
+                // After TU0 end: send TU1 as soon as the interface says it can
+                // accept the next TU.  This directly covers the official
+                // "next TU depends on it_data_in_req" protocol.
+                if (tu == 0) begin
+                    @(posedge clk_if);
+                    while (!it_data_in_req) @(posedge clk_if);
+                end
             end
 
             // Read output: TU1 then TU2, verify 2 done pulses

@@ -2,15 +2,15 @@
 
 ## 1. 验证策略
 
-### v5.8 最新验证摘要
+### v5.8.1 最新验证摘要
 
 | DUT | 脚本 | 结果 | 说明 |
 |-----|------|------|------|
-| `its_top_500_singleclk` | `sim/run_500_singleclk.do` | **ALL PASS** | 推荐 500MHz 单时钟提交顶层 (1537 + overlap) |
+| `its_top_500_singleclk` | `sim/run_500_singleclk.do` | **1539/1539 PASS** | 推荐 500MHz 单时钟提交顶层，含 immediate overlap |
 | `its_core_500` | `sim/run_core_500.do` | **94/94 PASS** | FIFO 接口计算核 |
 | `its_top` | `sim/run.do` | 1444/1444 PASS | Legacy 基线 (v5.5 RTL, 冻结) |
 
-v5.8 在 v5.5 的 1537 个测试基础上新增 overlap 专项测试（2 TUs 连续发送后读取输出），验证 P0 #11 TU metadata queue 协议正确性。
+v5.8.1 在 v5.5 的 1537 个测试基础上新增 2 个 immediate overlap 专项测试，并修复 input end-marker closing 窗口，验证 P0 #11 TU metadata queue 协议正确性。
 
 ### 1.1 验证方法
 
@@ -249,7 +249,7 @@ ALL TESTS PASSED!
 | 协议违规 | 0 |
 | 仿真耗时 | ~17 秒 |
 
-**its_top_500_wrapper 双时钟回归 (1537 个)**：
+**its_top_500_wrapper 双时钟回归 (历史 1537 个)**：
 
 | 指标 | 值 |
 |------|-----|
@@ -262,7 +262,7 @@ ALL TESTS PASSED!
 | 失败 | 0 |
 | 仿真耗时 | ~7 分钟 |
 
-### 3.4 500MHz Wrapper 验证 (1537 个测试)
+### 3.4 500MHz 提交顶层验证 (1539 个测试)
 
 **DUT**: `its_top_500_wrapper.v` (赛题接口 ↔ async FIFO CDC ↔ its_core_500)
 **TB**: `its_tb_500.v` (双时钟: clk_if=100MHz, clk_core=200MHz sim-safe)
@@ -275,7 +275,8 @@ ALL TESTS PASSED!
 | 协议 (end_same_cycle) | 10 | it_data_end 与最后输入同拍 | 10/10 PASS |
 | 协议 (continuous) | 20 | 无复位连续 TU 处理 | 20/20 PASS |
 | 两 TU 无复位 | 1 | two_tu_dct2_4x4 (连续两 TU 不 reset) | 1/1 PASS |
-| **合计** | **1537** | | **1537/1537 PASS** |
+| immediate overlap | 2 | TU0 输入结束后按 `it_data_in_req` 立即发送 TU1 | **2/2 PASS** |
+| **合计** | **1539** | | **1539/1539 PASS** |
 
 **CDC 验证要点：**
 - 异步 FIFO Gray-code 指针同步 (2-FF)
@@ -314,7 +315,7 @@ ALL TESTS PASSED!
 
 ## 5. 验证结论
 
-1. **功能正确性**：its_top 1444 + singleclk 1537 + wrapper 1537 + core_500 94 = 4612 个测试全部通过，RTL 输出与 Python 参考模型 bit-exact 匹配
+1. **功能正确性**：最终提交顶层 `its_top_500_singleclk` 1539/1539 PASS，core_500 94/94 PASS；RTL 输出与 Python 参考模型 bit-exact 匹配
 2. **穷举回归**：1377 个 (尺寸×变换×LFNST) 组合全覆盖，与 VVC 赛题对标
 3. **变换覆盖**：DCT2 (25 种) + DCT8/DST7 (16 尺寸 × 8 MTS 组合) 全覆盖
 4. **LFNST 覆盖**：9 LFNST 配置 (lfnst0/1/2 × 4 setIdx) × 全部尺寸组合，覆盖 nTrs=16 和 nTrs=48 两种场景
@@ -325,6 +326,6 @@ ALL TESTS PASSED!
 9. **边界输入**：random_sparse / low_freq / extreme_low_freq 三种模式全覆盖
 10. **连续 TU 处理**：20 个无复位连续 TU 测试通过，in_mem 清零正确
 11. **接口合规性**：22-bit it_info 接口、it_data_end 信号符合赛题规范
-12. **CDC 验证**：wrapper 1537 测试覆盖 async FIFO CDC 路径，含反压、连续 TU、end_same_cycle 等协议压力场景
+12. **CDC 验证**：wrapper 历史 1537 测试覆盖 async FIFO CDC 路径；最终提交顶层使用单时钟赛题接口，v5.8.1 重点验证 immediate overlap、反压、连续 TU、end_same_cycle 等协议压力场景
 
 **验证状态：PASS**

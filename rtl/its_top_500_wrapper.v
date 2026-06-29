@@ -67,7 +67,11 @@ module its_top_500_wrapper (
     // end_pending: set when it_data_end coincides with data (defer marker 1 cycle)
     // Cleared ONLY after marker actually written (wr_fire), not just when space available
     reg         end_pending;
+    reg         input_tu_active;  // Info accepted; data/end marker not completed yet
+    reg         input_tu_closing; // End marker queued; wait until FIFO drains it
     wire        can_write_input = (input_fifo_wr_count < 5'd15) & ~input_fifo_full;
+    wire        can_accept_input_tu;
+    wire        new_tu;
     wire        do_write_data   = it_data_in_vld & it_data_in_req & ~end_pending;
     wire        do_write_end    = end_pending;
     wire [28:0] input_fifo_wr_data = do_write_end
@@ -106,6 +110,9 @@ module its_top_500_wrapper (
     wire tuq_full  = (tuq_count >= 3'd4);
     wire tuq_empty = (tuq_count == 3'd0);
     wire can_accept_tu = ~cmd_fifo_full & ~tuq_full;
+    assign can_accept_input_tu = (input_tu_active & ~input_tu_closing)
+                               | (~input_tu_active & can_accept_tu);
+    assign new_tu = it_info_vld & ~input_tu_active & can_accept_tu;
 
     // ================================================================
     // cmd_fifo: 23-bit, depth 4, clk_if → clk_core
@@ -116,7 +123,7 @@ module its_top_500_wrapper (
     ) u_cmd_fifo (
         .wr_clk     (clk_if),
         .wr_rst_n   (rst_sync_if_n),
-        .wr_en      (it_info_vld & can_accept_tu),
+        .wr_en      (new_tu),
         .wr_data    ({1'b0, it_info}),
         .full       (cmd_fifo_full),
         .almost_full(cmd_fifo_almost_full),
@@ -143,7 +150,22 @@ module its_top_500_wrapper (
             end_pending <= 1'b0;
     end
 
-    assign it_data_in_req = can_write_input & ~end_pending;
+    always @(posedge clk_if or negedge rst_sync_if_n) begin
+        if (!rst_sync_if_n) begin
+            input_tu_active <= 1'b0;
+            input_tu_closing <= 1'b0;
+        end else if (new_tu) begin
+            input_tu_active <= 1'b1;
+            input_tu_closing <= 1'b0;
+        end else if (end_wr_fire) begin
+            input_tu_closing <= 1'b1;
+        end else if (input_tu_closing && input_fifo_wr_count == 5'd0) begin
+            input_tu_active <= 1'b0;
+            input_tu_closing <= 1'b0;
+        end
+    end
+
+    assign it_data_in_req = can_write_input & ~end_pending & can_accept_input_tu;
 
     async_fifo #(
         .DATA_WIDTH(29),
@@ -253,7 +275,6 @@ module its_top_500_wrapper (
     reg [2:0]  core_done_pending;                // core_done pulses not yet consumed
 
     // Push: accept new TU into queue
-    wire new_tu = it_info_vld & can_accept_tu;
 
     // Pop: front TU is fully done
     // Conditions: core_done pending, all beats read
