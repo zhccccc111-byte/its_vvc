@@ -4,12 +4,12 @@
 
 | 设计 | 器件 | 速度等级 | WNS | 500MHz 状态 | 备注 |
 |------|------|---------|-----|------------|------|
-| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.047 ns** | **MET** | **v5.9**: P0 #11 closing 窗口修复 + input FIFO 边界加固 |
+| **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.047 ns** | **MET** | **v6.0**: P0 #11 closing 窗口修复 + input FIFO 边界加固 |
 | **its_top_500_singleclk** | **Kintex UltraScale+ xcku5p** | -2 | **+0.053 ns** | **MET** | v5.8: TU queue hardening + can_accept_tu 流控 |
 | **its_top_500_wrapper** | **Kintex UltraScale+ xcku5p** | -2 | **+0.084 ns** | **MET** | v5.4: shared transform engine, DSP48E2 9→5 |
 | its_core_500 | Artix-7 xc7a200t | -3 | -1.733 ns | 未达标 | DSP48E1 FF→A 物理极限 |
 
-**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（v5.9: WNS +0.047ns, WHS +0.034ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
+**最终结论**: 500MHz 目标在 UltraScale+ (xcku5p-2) 上以赛题单时钟提交顶层 `its_top_500_singleclk` 达标（v6.0: WNS +0.047ns, WHS +0.034ns）。Artix-7 受 DSP48E1 固有特性限制不可达。
 
 ---
 
@@ -118,7 +118,7 @@ in_mem (4096×16) 原使用 `(* ram_style = "block" *)` 属性，因异步读模
 | 设计 | WNS | WHS | DSP48E2 | 说明 |
 |------|-----|-----|---------|------|
 | `its_top_500_wrapper` | +0.084ns | +0.028ns | 5 | 行/列 transform engine 共享，双时钟 CDC wrapper |
-| `its_top_500_singleclk` | +0.047ns | +0.034ns | 5 | v5.9: P0 #4 垂直优先 + P0 #11 TU queue + 500MHz 达标 |
+| `its_top_500_singleclk` | +0.047ns | +0.034ns | 5 | v6.0: P0 #4 垂直优先 + P0 #11 TU queue + 500MHz 达标 |
 
 Worst path: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑, 纯路由)。
 

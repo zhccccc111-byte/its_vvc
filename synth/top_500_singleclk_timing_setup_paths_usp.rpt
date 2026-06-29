@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 --------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version      : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-| Date              : Mon Jun 29 13:47:23 2026
+| Date              : Mon Jun 29 15:37:03 2026
 | Host              : lab running 64-bit major release  (build 9200)
 | Command           : report_timing -setup -nworst 20 -file D:/WorkSpace/its_vvc/synth/top_500_singleclk_timing_setup_paths_usp.rpt
 | Design            : its_top_500_singleclk
