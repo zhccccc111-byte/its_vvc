@@ -2,7 +2,7 @@
 
 ## 1. 验证策略
 
-### v5.8.1 最新验证摘要
+### v5.9 最新验证摘要
 
 | DUT | 脚本 | 结果 | 说明 |
 |-----|------|------|------|
@@ -10,7 +10,7 @@
 | `its_core_500` | `sim/run_core_500.do` | **94/94 PASS** | FIFO 接口计算核 |
 | `its_top` | `sim/run.do` | 1444/1444 PASS | Legacy 基线 (v5.5 RTL, 冻结) |
 
-v5.8.1 在 v5.5 的 1537 个测试基础上新增 2 个 immediate overlap 专项测试，并修复 input end-marker closing 窗口，验证 P0 #11 TU metadata queue 协议正确性。
+v5.9 在 v5.5 的 1537 个测试基础上新增 2 个 immediate overlap 专项测试，并修复 input end-marker closing 窗口，验证 P0 #11 TU metadata queue 协议正确性。
 
 ### 1.1 验证方法
 
@@ -326,6 +326,6 @@ ALL TESTS PASSED!
 9. **边界输入**：random_sparse / low_freq / extreme_low_freq 三种模式全覆盖
 10. **连续 TU 处理**：20 个无复位连续 TU 测试通过，in_mem 清零正确
 11. **接口合规性**：22-bit it_info 接口、it_data_end 信号符合赛题规范
-12. **CDC 验证**：wrapper 历史 1537 测试覆盖 async FIFO CDC 路径；最终提交顶层使用单时钟赛题接口，v5.8.1 重点验证 immediate overlap、反压、连续 TU、end_same_cycle 等协议压力场景
+12. **CDC 验证**：wrapper 历史 1537 测试覆盖 async FIFO CDC 路径；最终提交顶层使用单时钟赛题接口，v5.9 重点验证 immediate overlap、反压、连续 TU、end_same_cycle 等协议压力场景
 
 **验证状态：PASS**

@@ -207,7 +207,7 @@ it_info [21:0]
 **关键设计点：**
 - **异步 FIFO**: Gray-code 指针 + 2-FF 同步器，registered full flag，FWFT 输出
 - **TU metadata queue**: 4 深度队列存储每 TU 的 expected_beats 和已读 beat 数，`core_done_pending` 计数器跟踪 CDC 同步的完成脉冲。`it_done` 为 1-cycle pulse，只对应队首 TU，不受后续 TU info 影响 (v5.7/5.8)
-- **can_accept_tu + input closing**: `~cmd_fifo_full & ~tuq_full` 统一流控，cmd_fifo wr_en 同受此门控；end marker 写入后 `it_data_in_req` 保持低直到 input FIFO 安全越过当前 TU 边界，防止下一 TU 数据被当前 S_LOAD 误读 (v5.8.1)
+- **can_accept_tu + input closing**: `~cmd_fifo_full & ~tuq_full` 统一流控，cmd_fifo wr_en 同受此门控；end marker 写入后 `it_data_in_req` 保持低直到 input FIFO 安全越过当前 TU 边界，防止下一 TU 数据被当前 S_LOAD 误读 (v5.9)
 - **端口**: 继承赛题接口并额外提供 `clk_core`；最终单时钟提交入口见 4.6 节
 
 ### 4.6 500MHz 提交顶层 (`its_top_500_singleclk.v`)
@@ -301,7 +301,7 @@ vsim -c -do "do run_core_500.do"
 | WHS (Hold) | **+0.034 ns** | **MET** |
 | Failing Endpoints | **0** | — |
 
-**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz。v5.8.1 新增 input closing 窗口修复未影响时序收敛。
+**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz。v5.9 新增 input closing 窗口修复未影响时序收敛。
 
 ### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.3 its_core_500)
 
@@ -430,7 +430,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
 | 500MHz 主频 | ✅ | v5.8: 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.053ns/WHS=+0.035ns 达标，详见 6.0 节 |
-| 官方 Q&A 合规 | ✅ | v5.6: 2D 变换顺序改为先垂直后水平 (P0 #4)；v5.7/v5.8/v5.8.1: TU 输出未完时可接下一 TU，并修复 input end-marker closing 窗口 (P0 #11) |
+| 官方 Q&A 合规 | ✅ | v5.6: 2D 变换顺序改为先垂直后水平 (P0 #4)；v5.7/v5.8/v5.9: TU 输出未完时可接下一 TU，并修复 input end-marker closing 窗口 (P0 #11) |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |
 | 设计文档 | ✅ | 见 doc/design_doc.md |
@@ -441,7 +441,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v5.8.1** | `v5.8.1` | P0 #11 closing 窗口修复: end marker 写入后暂停新 TU data，直到 input FIFO 安全越过 TU 边界；core S_LOAD 检测 end 后立即停读 | **+0.047ns** | 94+1539 |
+| **v5.9** | `v5.9` | P0 #11 closing 窗口修复: end marker 写入后暂停新 TU data，直到 input FIFO 安全越过 TU 边界；core S_LOAD 检测 end 后立即停读 | **+0.047ns** | 94+1539 |
 | **v5.8** | `v5.8` | TU queue 加固: can_accept_tu 统一流控, tuq_next_count 组合逻辑; UltraScale+ OOC 重新综合 | **+0.053ns** | 94+1539 |
 | **v5.7** | `v5.7` | P0 #11: TU metadata queue (4 深度), core_done_pending 计数器, it_done pulse; 新增 overlap 测试 | +0.057ns | 94+1539 |
 | **v5.6** | `v5.6` | P0 #4: 2D 变换顺序改为先垂直后水平; LFNST pipeline 修复; ROM 同步 gen_rom_coeffs.py | +0.057ns | 94+1537 |

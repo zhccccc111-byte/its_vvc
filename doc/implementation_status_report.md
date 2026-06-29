@@ -4,20 +4,20 @@
 
 本报告逐条对照 VVC (H.266) 逆变换系统 (ITS) 的当前实现与赛题技术要求，每条标注完成状态和证据链接。
 
-**基线版本：2026-06-29 (v5.8.1)**
+**基线版本：2026-06-29 (v5.9)**
 **仿真结果：singleclk 1539/1539 PASS + core_500 94/94 PASS**
-**500MHz 状态：v5.8.1 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS +0.047ns / WHS +0.034ns 达标**
+**500MHz 状态：v5.9 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS +0.047ns / WHS +0.034ns 达标**
 **推荐提交顶层：rtl/its_top_500_singleclk.v，端口与赛题 its_top 单时钟接口完全一致**
 **its_top.v：冻结为 legacy 基线（v5.5 RTL, 1444/1444 PASS），最终提交入口只认 its_top_500_singleclk**
 
-### v5.8.1 更新摘要
+### v5.9 更新摘要
 
 | 项目 | 结果 |
 |------|------|
 | P0 #4 垂直优先变换 | v5.6: ref_model + its_core_500 ✅ |
-| P0 #11 TU metadata queue | v5.7: 4 深度队列 + v5.8: can_accept_tu 加固 + v5.8.1: input closing 窗口修复 ✅ |
+| P0 #11 TU metadata queue | v5.7: 4 深度队列 + v5.8: can_accept_tu 加固 + v5.9: input closing 窗口修复 ✅ |
 | 单时钟提交顶层回归 | 1539/1539 PASS |
-| UltraScale+ OOC (v5.8.1) | WNS +0.047ns, WHS +0.034ns, 0 failing ✅ |
+| UltraScale+ OOC (v5.9) | WNS +0.047ns, WHS +0.034ns, 0 failing ✅ |
 | TU overlap 测试 | immediate overlap 4x4 + 8x8 ✅ |
 
 ---
@@ -77,7 +77,7 @@
 
 | 赛题要求 | 完成状态 | 证据 |
 |----------|----------|------|
-| 工作主频 500MHz | **已满足** | its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.047ns / WHS +0.034ns (v5.8.1) |
+| 工作主频 500MHz | **已满足** | its_top_500_singleclk OOC UltraScale+ (xcku5p-2) WNS +0.047ns / WHS +0.034ns (v5.9) |
 
 **UltraScale+ 实测数据 (its_top_500_singleclk, Kintex UltraScale+ xcku5p-ffvb676-2-e, Vivado 2024.1 OOC)：**
 
@@ -187,7 +187,7 @@ Artix-7 受 DSP48E1 固有物理特性限制，500MHz 不可达。
 | 验证 | **完成** | 最终提交顶层 1539/1539 + core_500 94/94 通过 |
 | 波形 | **完成** | 6 个关键场景 SVG 波形 (`doc/waveforms/`) |
 | PPA | **完成** | UltraScale+: CLB LUT 1801 (0.83%), RAMB36E2 12, RAMB18E2 5, DSP48E2 5 |
-| 时序 | **完成** | v5.8.1 UltraScale+ OOC WNS = +0.047ns / WHS = +0.034ns，500MHz **达标** |
+| 时序 | **完成** | v5.9 UltraScale+ OOC WNS = +0.047ns / WHS = +0.034ns，500MHz **达标** |
 | 500MHz | **已闭合** | UltraScale+ (xcku5p-2) 达标；Artix-7 不可达（DSP48E1 物理极限） |
 | 500MHz 提交顶层 | **完成** | `its_top_500_singleclk` 赛题单时钟接口完全一致，1539/1539 测试通过 |
 

@@ -11,7 +11,7 @@
 | 目标器件 | Kintex UltraScale+ xcku5p-ffvb676-2-e |
 | 时钟约束 | 500MHz (2ns) |
 | OOC 脚本 | `synth/its_top_500_singleclk_ooc_usp.tcl` |
-| WNS / WHS | +0.047ns / +0.034ns (v5.8.1) |
+| WNS / WHS | +0.047ns / +0.034ns (v5.9) |
 | Failing endpoints | 0 |
 | CLB LUT / Register | 1801 / 2117 |
 | LUT as Memory | 368 |
