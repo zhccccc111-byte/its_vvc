@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 --------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version      : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-| Date              : Sun Jun 28 23:21:43 2026
+| Date              : Mon Jun 29 13:47:23 2026
 | Host              : lab running 64-bit major release  (build 9200)
 | Command           : report_timing -setup -nworst 20 -file D:/WorkSpace/its_vvc/synth/top_500_singleclk_timing_setup_paths_usp.rpt
 | Design            : its_top_500_singleclk
@@ -13,15 +13,15 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (MET) :             0.053ns  (required time - arrival time)
+Slack (MET) :             0.047ns  (required time - arrival time)
   Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
                             (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF/I
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF/I
                             (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.822ns  (logic 0.960ns (52.698%)  route 0.862ns (47.302%))
+  Data Path Delay:        1.828ns  (logic 0.960ns (52.517%)  route 0.868ns (47.483%))
   Logic Levels:           0  
   Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
@@ -37,38 +37,38 @@ Slack (MET) :             0.053ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
                                                       0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.862     1.898    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/DIF
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF/I
+                         net (fo=117, routed)         0.868     1.904    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/DIF
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF/I
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/WCLK
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/WCLK
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y148        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF
+    SLICE_X67Y209        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
+                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF
   -------------------------------------------------------------------
                          required time                          1.951    
-                         arrival time                          -1.898    
+                         arrival time                          -1.904    
   -------------------------------------------------------------------
-                         slack                                  0.053    
+                         slack                                  0.047    
 
-Slack (MET) :             0.053ns  (required time - arrival time)
+Slack (MET) :             0.047ns  (required time - arrival time)
   Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
                             (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF/I
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF/I
                             (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.822ns  (logic 0.960ns (52.698%)  route 0.862ns (47.302%))
+  Data Path Delay:        1.828ns  (logic 0.960ns (52.517%)  route 0.868ns (47.483%))
   Logic Levels:           0  
   Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
@@ -84,38 +84,38 @@ Slack (MET) :             0.053ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
                                                       0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.862     1.898    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/DIF
-    SLICE_X71Y148        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF/I
+                         net (fo=117, routed)         0.868     1.904    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/DIF
+    SLICE_X67Y209        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF/I
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/WCLK
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/WCLK
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y148        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMF
+    SLICE_X67Y209        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
+                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMF
   -------------------------------------------------------------------
                          required time                          1.951    
-                         arrival time                          -1.898    
+                         arrival time                          -1.904    
   -------------------------------------------------------------------
-                         slack                                  0.053    
+                         slack                                  0.047    
 
-Slack (MET) :             0.054ns  (required time - arrival time)
+Slack (MET) :             0.048ns  (required time - arrival time)
   Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
                             (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME/I
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG/I
                             (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.821ns  (logic 0.960ns (52.727%)  route 0.861ns (47.273%))
+  Data Path Delay:        1.828ns  (logic 0.960ns (52.517%)  route 0.868ns (47.483%))
   Logic Levels:           0  
   Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
@@ -131,38 +131,38 @@ Slack (MET) :             0.054ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
                                                       0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.861     1.897    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/DIE
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME/I
+                         net (fo=117, routed)         0.868     1.904    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/DIG
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG/I
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/WCLK
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/WCLK
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y148        RAMD64E (Setup_E6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME
+    SLICE_X67Y209        RAMD64E (Setup_G6LUT_SLICEM_CLK_I)
+                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG
   -------------------------------------------------------------------
-                         required time                          1.951    
-                         arrival time                          -1.897    
+                         required time                          1.952    
+                         arrival time                          -1.904    
   -------------------------------------------------------------------
-                         slack                                  0.054    
+                         slack                                  0.048    
 
-Slack (MET) :             0.054ns  (required time - arrival time)
+Slack (MET) :             0.048ns  (required time - arrival time)
   Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
                             (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME/I
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG/I
                             (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.821ns  (logic 0.960ns (52.727%)  route 0.861ns (47.273%))
+  Data Path Delay:        1.828ns  (logic 0.960ns (52.517%)  route 0.868ns (47.483%))
   Logic Levels:           0  
   Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
@@ -178,38 +178,38 @@ Slack (MET) :             0.054ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
                                                       0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.861     1.897    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/DIE
-    SLICE_X71Y148        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME/I
+                         net (fo=117, routed)         0.868     1.904    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/DIG
+    SLICE_X67Y209        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG/I
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/WCLK
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/WCLK
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y148        RAMD64E (Setup_E6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAME
+    SLICE_X67Y209        RAMD64E (Setup_G6LUT_SLICEM_CLK_I)
+                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMG
   -------------------------------------------------------------------
-                         required time                          1.951    
-                         arrival time                          -1.897    
+                         required time                          1.952    
+                         arrival time                          -1.904    
   -------------------------------------------------------------------
-                         slack                                  0.054    
+                         slack                                  0.048    
 
-Slack (MET) :             0.089ns  (required time - arrival time)
+Slack (MET) :             0.085ns  (required time - arrival time)
   Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
                             (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD/I
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF/I
                             (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.785ns  (logic 0.960ns (53.784%)  route 0.825ns (46.216%))
+  Data Path Delay:        1.790ns  (logic 0.960ns (53.637%)  route 0.830ns (46.363%))
   Logic Levels:           0  
   Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
@@ -225,38 +225,226 @@ Slack (MET) :             0.089ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
                                                       0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.825     1.861    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/DID
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD/I
+                         net (fo=117, routed)         0.830     1.866    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIF
+    SLICE_X67Y207        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF/I
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/WCLK
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
+    SLICE_X67Y207        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y148        RAMD64E (Setup_D6LUT_SLICEM_CLK_I)
-                                                     -0.058     1.950    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD
+    SLICE_X67Y207        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
+                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -1.866    
+  -------------------------------------------------------------------
+                         slack                                  0.085    
+
+Slack (MET) :             0.085ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF/I
+                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
+  Data Path Delay:        1.790ns  (logic 0.960ns (53.637%)  route 0.830ns (46.363%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
+    Source Clock Delay      (SCD):    0.076ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
+                         net (fo=117, routed)         0.830     1.866    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIF
+    SLICE_X67Y207        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        2.000     2.000 r  
+                                                      0.000     2.000 r  clk (IN)
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
+    SLICE_X67Y207        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF/CLK
+                         clock pessimism              0.000     2.043    
+                         clock uncertainty           -0.035     2.008    
+    SLICE_X67Y207        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
+                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMF
+  -------------------------------------------------------------------
+                         required time                          1.951    
+                         arrival time                          -1.866    
+  -------------------------------------------------------------------
+                         slack                                  0.085    
+
+Slack (MET) :             0.088ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
+  Data Path Delay:        1.788ns  (logic 0.960ns (53.697%)  route 0.828ns (46.303%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
+    Source Clock Delay      (SCD):    0.076ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
+                         net (fo=117, routed)         0.828     1.864    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIG
+    SLICE_X67Y207        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        2.000     2.000 r  
+                                                      0.000     2.000 r  clk (IN)
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
+    SLICE_X67Y207        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG/CLK
+                         clock pessimism              0.000     2.043    
+                         clock uncertainty           -0.035     2.008    
+    SLICE_X67Y207        RAMD64E (Setup_G6LUT_SLICEM_CLK_I)
+                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG
+  -------------------------------------------------------------------
+                         required time                          1.952    
+                         arrival time                          -1.864    
+  -------------------------------------------------------------------
+                         slack                                  0.088    
+
+Slack (MET) :             0.088ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
+  Data Path Delay:        1.788ns  (logic 0.960ns (53.697%)  route 0.828ns (46.303%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
+    Source Clock Delay      (SCD):    0.076ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
+                         net (fo=117, routed)         0.828     1.864    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIG
+    SLICE_X67Y207        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        2.000     2.000 r  
+                                                      0.000     2.000 r  clk (IN)
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
+    SLICE_X67Y207        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG/CLK
+                         clock pessimism              0.000     2.043    
+                         clock uncertainty           -0.035     2.008    
+    SLICE_X67Y207        RAMD64E (Setup_G6LUT_SLICEM_CLK_I)
+                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMG
+  -------------------------------------------------------------------
+                         required time                          1.952    
+                         arrival time                          -1.864    
+  -------------------------------------------------------------------
+                         slack                                  0.088    
+
+Slack (MET) :             0.092ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD/I
+                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
+  Data Path Delay:        1.782ns  (logic 0.960ns (53.880%)  route 0.822ns (46.120%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
+    Source Clock Delay      (SCD):    0.076ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+  -------------------------------------------------------------------    -------------------
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
+                         net (fo=117, routed)         0.822     1.858    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/DID
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)        2.000     2.000 r  
+                                                      0.000     2.000 r  clk (IN)
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/WCLK
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD/CLK
+                         clock pessimism              0.000     2.043    
+                         clock uncertainty           -0.035     2.008    
+    SLICE_X67Y209        RAMD64E (Setup_D6LUT_SLICEM_CLK_I)
+                                                     -0.058     1.950    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD
   -------------------------------------------------------------------
                          required time                          1.950    
-                         arrival time                          -1.861    
+                         arrival time                          -1.858    
   -------------------------------------------------------------------
-                         slack                                  0.089    
+                         slack                                  0.092    
 
-Slack (MET) :             0.089ns  (required time - arrival time)
+Slack (MET) :             0.092ns  (required time - arrival time)
   Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
                             (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD/I
+  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD/I
                             (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.785ns  (logic 0.960ns (53.784%)  route 0.825ns (46.216%))
+  Data Path Delay:        1.782ns  (logic 0.960ns (53.880%)  route 0.822ns (46.120%))
   Logic Levels:           0  
   Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
@@ -272,42 +460,42 @@ Slack (MET) :             0.089ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
+    RAMB36_X6Y38         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
+    RAMB36_X6Y38         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
                                                       0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.825     1.861    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/DID
-    SLICE_X71Y148        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD/I
+                         net (fo=117, routed)         0.822     1.858    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/DID
+    SLICE_X67Y209        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD/I
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/WCLK
-    SLICE_X71Y148        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/WCLK
+    SLICE_X67Y209        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y148        RAMD64E (Setup_D6LUT_SLICEM_CLK_I)
-                                                     -0.058     1.950    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_64_127_7_13/RAMD
+    SLICE_X67Y209        RAMD64E (Setup_D6LUT_SLICEM_CLK_I)
+                                                     -0.058     1.950    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_64_127_7_13/RAMD
   -------------------------------------------------------------------
                          required time                          1.950    
-                         arrival time                          -1.861    
+                         arrival time                          -1.858    
   -------------------------------------------------------------------
-                         slack                                  0.089    
+                         slack                                  0.092    
 
-Slack (MET) :             0.089ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.785ns  (logic 0.960ns (53.774%)  route 0.825ns (46.226%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -319,42 +507,57 @@ Slack (MET) :             0.089ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.825     1.861    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/DIE
-    SLICE_X71Y149        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 f  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/WCLK
-    SLICE_X71Y149        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y149        RAMD64E (Setup_E6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.951    
-                         arrival time                          -1.861    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.089    
+                         slack                                  0.109    
 
-Slack (MET) :             0.089ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.785ns  (logic 0.960ns (53.774%)  route 0.825ns (46.226%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -366,42 +569,57 @@ Slack (MET) :             0.089ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.825     1.861    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/DIE
-    SLICE_X71Y149        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/WCLK
-    SLICE_X71Y149        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y149        RAMD64E (Setup_E6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAME
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.951    
-                         arrival time                          -1.861    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.089    
+                         slack                                  0.109    
 
-Slack (MET) :             0.090ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.786ns  (logic 0.960ns (53.756%)  route 0.826ns (46.244%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -413,42 +631,57 @@ Slack (MET) :             0.090ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.826     1.862    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/DIC
-    SLICE_X71Y147        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 f  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/WCLK
-    SLICE_X71Y147        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y147        RAMD64E (Setup_C6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.862    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.090    
+                         slack                                  0.109    
 
-Slack (MET) :             0.090ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.786ns  (logic 0.960ns (53.756%)  route 0.826ns (46.244%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -460,42 +693,57 @@ Slack (MET) :             0.090ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.826     1.862    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/DIC
-    SLICE_X71Y147        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/WCLK
-    SLICE_X71Y147        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y147        RAMD64E (Setup_C6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMC
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.862    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.090    
+                         slack                                  0.109    
 
-Slack (MET) :             0.093ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.783ns  (logic 0.960ns (53.846%)  route 0.823ns (46.154%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -507,42 +755,57 @@ Slack (MET) :             0.093ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.823     1.859    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/DIB
-    SLICE_X71Y147        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 f  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/WCLK
-    SLICE_X71Y147        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y147        RAMD64E (Setup_B6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.859    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.093    
+                         slack                                  0.109    
 
-Slack (MET) :             0.093ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.783ns  (logic 0.960ns (53.846%)  route 0.823ns (46.154%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -554,42 +817,57 @@ Slack (MET) :             0.093ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.823     1.859    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/DIB
-    SLICE_X71Y147        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/WCLK
-    SLICE_X71Y147        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y147        RAMD64E (Setup_B6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_128_191_7_13/RAMB
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.859    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.093    
+                         slack                                  0.109    
 
-Slack (MET) :             0.093ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.781ns  (logic 0.960ns (53.895%)  route 0.821ns (46.105%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -601,42 +879,57 @@ Slack (MET) :             0.093ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.821     1.857    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/DIF
-    SLICE_X71Y149        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 f  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/WCLK
-    SLICE_X71Y149        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y149        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.951    
-                         arrival time                          -1.857    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.093    
+                         slack                                  0.109    
 
-Slack (MET) :             0.093ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.781ns  (logic 0.960ns (53.895%)  route 0.821ns (46.105%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -648,42 +941,57 @@ Slack (MET) :             0.093ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.821     1.857    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/DIF
-    SLICE_X71Y149        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[27])
+                                                      0.505     1.281 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[27]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<27>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[27]_U_DATA[27])
+                                                      0.047     1.328 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[27]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<27>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[27]_ALU_OUT[27])
+                                                      0.585     1.913 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[27]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<27>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[27]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/WCLK
-    SLICE_X71Y149        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X71Y149        RAMD64E (Setup_F6LUT_SLICEM_CLK_I)
-                                                     -0.057     1.951    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r3_0_63_7_13/RAMF
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[27])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.951    
-                         arrival time                          -1.857    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.093    
+                         slack                                  0.109    
 
-Slack (MET) :             0.096ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[28]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.777ns  (logic 0.960ns (54.011%)  route 0.817ns (45.989%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -695,42 +1003,57 @@ Slack (MET) :             0.096ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.817     1.853    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DID
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 f  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[28])
+                                                      0.505     1.281 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[28]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<28>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[28]_U_DATA[28])
+                                                      0.047     1.328 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[28]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<28>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[28]_ALU_OUT[28])
+                                                      0.585     1.913 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[28]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<28>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[28]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X67Y154        RAMD64E (Setup_D6LUT_SLICEM_CLK_I)
-                                                     -0.058     1.950    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[28])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.950    
-                         arrival time                          -1.853    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.096    
+                         slack                                  0.109    
 
-Slack (MET) :             0.096ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+Slack (MET) :             0.109ns  (required time - arrival time)
+  Source:                 u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[28]
+                            (rising edge-triggered cell DSP_OUTPUT clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
   Path Group:             clk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.777ns  (logic 0.960ns (54.011%)  route 0.817ns (45.989%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
+  Data Path Delay:        1.883ns  (logic 1.484ns (78.800%)  route 0.399ns (21.200%))
+  Logic Levels:           5  (DSP_A_B_DATA=1 DSP_ALU=1 DSP_M_DATA=1 DSP_MULTIPLIER=1 DSP_PREADD_DATA=1)
+  Clock Path Skew:        0.013ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
+    Source Clock Delay      (SCD):    0.030ns
     Clock Pessimism Removal (CPR):    0.000ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
@@ -742,216 +1065,43 @@ Slack (MET) :             0.096ns  (required time - arrival time)
   -------------------------------------------------------------------    -------------------
                          (clock clk rise edge)        0.000     0.000 r  
                                                       0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
+                         net (fo=2707, unset)         0.030     0.030    u_wrapper/u_core/u_shared_engine/clk
+    SLICE_X66Y218        FDCE                                         r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/C
   -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.817     1.853    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DID
-    SLICE_X67Y154        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD/I
-  -------------------------------------------------------------------    -------------------
-
-                         (clock clk rise edge)        2.000     2.000 r  
-                                                      0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD/CLK
-                         clock pessimism              0.000     2.043    
-                         clock uncertainty           -0.035     2.008    
-    SLICE_X67Y154        RAMD64E (Setup_D6LUT_SLICEM_CLK_I)
-                                                     -0.058     1.950    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMD
-  -------------------------------------------------------------------
-                         required time                          1.950    
-                         arrival time                          -1.853    
-  -------------------------------------------------------------------
-                         slack                                  0.096    
-
-Slack (MET) :             0.098ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Path Group:             clk
-  Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.778ns  (logic 0.960ns (54.004%)  route 0.818ns (45.996%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
-    Clock Pessimism Removal (CPR):    0.000ns
-  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
-    Total System Jitter     (TSJ):    0.071ns
-    Total Input Jitter      (TIJ):    0.000ns
-    Discrete Jitter          (DJ):    0.000ns
-    Phase Error              (PE):    0.000ns
-
-    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
-  -------------------------------------------------------------------    -------------------
-                         (clock clk rise edge)        0.000     0.000 r  
-                                                      0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-  -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.818     1.854    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIC
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC/I
+    SLICE_X66Y218        FDCE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.079     0.109 r  u_wrapper/u_core/u_shared_engine/mac_data_r3_reg[15]/Q
+                         net (fo=15, routed)          0.399     0.508    u_wrapper/u_core/u_shared_engine/u_mac3/product0/A[26]
+    DSP48E2_X11Y87       DSP_A_B_DATA (Prop_DSP_A_B_DATA_DSP48E2_A[26]_A2_DATA[26])
+                                                      0.192     0.700 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA_INST/A2_DATA[26]
+                         net (fo=1, routed)           0.000     0.700    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_A_B_DATA.A2_DATA<26>
+    DSP48E2_X11Y87       DSP_PREADD_DATA (Prop_DSP_PREADD_DATA_DSP48E2_A2_DATA[26]_A2A1[26])
+                                                      0.076     0.776 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA_INST/A2A1[26]
+                         net (fo=1, routed)           0.000     0.776    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_PREADD_DATA.A2A1<26>
+    DSP48E2_X11Y87       DSP_MULTIPLIER (Prop_DSP_MULTIPLIER_DSP48E2_A2A1[26]_U[28])
+                                                      0.505     1.281 f  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER_INST/U[28]
+                         net (fo=1, routed)           0.000     1.281    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_MULTIPLIER.U<28>
+    DSP48E2_X11Y87       DSP_M_DATA (Prop_DSP_M_DATA_DSP48E2_U[28]_U_DATA[28])
+                                                      0.047     1.328 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA_INST/U_DATA[28]
+                         net (fo=1, routed)           0.000     1.328    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_M_DATA.U_DATA<28>
+    DSP48E2_X11Y87       DSP_ALU (Prop_DSP_ALU_DSP48E2_U_DATA[28]_ALU_OUT[28])
+                                                      0.585     1.913 r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU_INST/ALU_OUT[28]
+                         net (fo=1, routed)           0.000     1.913    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_ALU.ALU_OUT<28>
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/ALU_OUT[28]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk rise edge)        2.000     2.000 r  
                                                       0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC/CLK
+                         net (fo=2707, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/u_mac3/product0/CLK
+    DSP48E2_X11Y87       DSP_OUTPUT                                   r  u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST/CLK
                          clock pessimism              0.000     2.043    
                          clock uncertainty           -0.035     2.008    
-    SLICE_X67Y154        RAMD64E (Setup_C6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC
+    DSP48E2_X11Y87       DSP_OUTPUT (Setup_DSP_OUTPUT_DSP48E2_CLK_ALU_OUT[28])
+                                                      0.015     2.023    u_wrapper/u_core/u_shared_engine/u_mac3/product0/DSP_OUTPUT_INST
   -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.854    
+                         required time                          2.023    
+                         arrival time                          -1.913    
   -------------------------------------------------------------------
-                         slack                                  0.098    
-
-Slack (MET) :             0.098ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Path Group:             clk
-  Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.778ns  (logic 0.960ns (54.004%)  route 0.818ns (45.996%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
-    Clock Pessimism Removal (CPR):    0.000ns
-  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
-    Total System Jitter     (TSJ):    0.071ns
-    Total Input Jitter      (TIJ):    0.000ns
-    Discrete Jitter          (DJ):    0.000ns
-    Phase Error              (PE):    0.000ns
-
-    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
-  -------------------------------------------------------------------    -------------------
-                         (clock clk rise edge)        0.000     0.000 r  
-                                                      0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-  -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.818     1.854    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIC
-    SLICE_X67Y154        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC/I
-  -------------------------------------------------------------------    -------------------
-
-                         (clock clk rise edge)        2.000     2.000 r  
-                                                      0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC/CLK
-                         clock pessimism              0.000     2.043    
-                         clock uncertainty           -0.035     2.008    
-    SLICE_X67Y154        RAMD64E (Setup_C6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMC
-  -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.854    
-  -------------------------------------------------------------------
-                         slack                                  0.098    
-
-Slack (MET) :             0.101ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Path Group:             clk
-  Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.775ns  (logic 0.960ns (54.095%)  route 0.815ns (45.905%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
-    Clock Pessimism Removal (CPR):    0.000ns
-  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
-    Total System Jitter     (TSJ):    0.071ns
-    Total Input Jitter      (TIJ):    0.000ns
-    Discrete Jitter          (DJ):    0.000ns
-    Phase Error              (PE):    0.000ns
-
-    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
-  -------------------------------------------------------------------    -------------------
-                         (clock clk rise edge)        0.000     0.000 r  
-                                                      0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-  -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.815     1.851    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIB
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB/I
-  -------------------------------------------------------------------    -------------------
-
-                         (clock clk rise edge)        2.000     2.000 r  
-                                                      0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB/CLK
-                         clock pessimism              0.000     2.043    
-                         clock uncertainty           -0.035     2.008    
-    SLICE_X67Y154        RAMD64E (Setup_B6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB
-  -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.851    
-  -------------------------------------------------------------------
-                         slack                                  0.101    
-
-Slack (MET) :             0.101ns  (required time - arrival time)
-  Source:                 u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-                            (rising edge-triggered cell RAMB36E2 clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Destination:            u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB/I
-                            (rising edge-triggered cell RAMD64E clocked by clk  {rise@0.000ns fall@1.000ns period=2.000ns})
-  Path Group:             clk
-  Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            2.000ns  (clk rise@2.000ns - clk rise@0.000ns)
-  Data Path Delay:        1.775ns  (logic 0.960ns (54.095%)  route 0.815ns (45.905%))
-  Logic Levels:           0  
-  Clock Path Skew:        -0.033ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    0.043ns = ( 2.043 - 2.000 ) 
-    Source Clock Delay      (SCD):    0.076ns
-    Clock Pessimism Removal (CPR):    0.000ns
-  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
-    Total System Jitter     (TSJ):    0.071ns
-    Total Input Jitter      (TIJ):    0.000ns
-    Discrete Jitter          (DJ):    0.000ns
-    Phase Error              (PE):    0.000ns
-
-    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
-  -------------------------------------------------------------------    -------------------
-                         (clock clk rise edge)        0.000     0.000 r  
-                                                      0.000     0.000 r  clk (IN)
-                         net (fo=2704, unset)         0.076     0.076    u_wrapper/u_core/u_shared_rom/clk
-    RAMB36_X5Y30         RAMB36E2                                     r  u_wrapper/u_core/u_shared_rom/coeff_reg_1/CLKARDCLK
-  -------------------------------------------------------------------    -------------------
-    RAMB36_X5Y30         RAMB36E2 (Prop_RAMB36E2_RAMB36_CLKARDCLK_DOUTADOUT[3])
-                                                      0.960     1.036 f  u_wrapper/u_core/u_shared_rom/coeff_reg_1/DOUTADOUT[3]
-                         net (fo=117, routed)         0.815     1.851    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/DIB
-    SLICE_X67Y154        RAMD64E                                      f  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB/I
-  -------------------------------------------------------------------    -------------------
-
-                         (clock clk rise edge)        2.000     2.000 r  
-                                                      0.000     2.000 r  clk (IN)
-                         net (fo=2704, unset)         0.043     2.043    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/WCLK
-    SLICE_X67Y154        RAMD64E                                      r  u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB/CLK
-                         clock pessimism              0.000     2.043    
-                         clock uncertainty           -0.035     2.008    
-    SLICE_X67Y154        RAMD64E (Setup_B6LUT_SLICEM_CLK_I)
-                                                     -0.056     1.952    u_wrapper/u_core/u_shared_engine/coeff_buf_reg_r1_0_63_7_13/RAMB
-  -------------------------------------------------------------------
-                         required time                          1.952    
-                         arrival time                          -1.851    
-  -------------------------------------------------------------------
-                         slack                                  0.101    
+                         slack                                  0.109    
 
 
 

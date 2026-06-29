@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.1 (win64) Build 5076996 Wed May 22 18:37:14 MDT 2024
-| Date             : Sun Jun 28 23:21:46 2026
+| Date             : Mon Jun 29 13:47:27 2026
 | Host             : lab running 64-bit major release  (build 9200)
 | Command          : report_power -file D:/WorkSpace/its_vvc/synth/top_500_singleclk_power_impl_usp.rpt
 | Design           : its_top_500_singleclk
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.675        |
+| Total On-Chip Power (W)  | 0.665        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.223        |
+| Dynamic (W)              | 0.213        |
 | Device Static (W)        | 0.452        |
 | Effective TJA (C/W)      | 1.7          |
 | Max Ambient (C)          | 98.8         |
@@ -52,19 +52,19 @@ Table of Contents
 +--------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
-| Clocks                   |     0.046 |        3 |       --- |             --- |
-| CLB Logic                |     0.047 |     4781 |       --- |             --- |
-|   LUT as Logic           |     0.024 |     1508 |    216960 |            0.70 |
-|   LUT as Distributed RAM |     0.020 |      368 |     99840 |            0.37 |
-|   Register               |     0.002 |     2211 |    433920 |            0.51 |
+| Clocks                   |     0.045 |        3 |       --- |             --- |
+| CLB Logic                |     0.043 |     4789 |       --- |             --- |
+|   LUT as Logic           |     0.022 |     1520 |    216960 |            0.70 |
+|   LUT as Distributed RAM |     0.018 |      368 |     99840 |            0.37 |
+|   Register               |     0.002 |     2214 |    433920 |            0.51 |
 |   CARRY8                 |     0.001 |       69 |     27120 |            0.25 |
 |   Others                 |     0.000 |       45 |       --- |             --- |
 |   F7/F8 Muxes            |     0.000 |      192 |    216960 |            0.09 |
-| Signals                  |     0.048 |     3495 |       --- |             --- |
-| Block RAM                |     0.071 |     14.5 |       480 |            3.02 |
+| Signals                  |     0.045 |     3502 |       --- |             --- |
+| Block RAM                |     0.070 |     14.5 |       480 |            3.02 |
 | DSPs                     |     0.011 |        5 |      1824 |            0.27 |
 | Static Power             |     0.452 |          |           |                 |
-| Total                    |     0.675 |          |           |                 |
+| Total                    |     0.665 |          |           |                 |
 +--------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -74,7 +74,7 @@ Table of Contents
 +------------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source     | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +------------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint     |       0.850 |     0.396 |       0.256 |      0.139 |       NA    | Unspecified | NA         |
+| Vccint     |       0.850 |     0.385 |       0.246 |      0.139 |       NA    | Unspecified | NA         |
 | Vccint_io  |       0.850 |     0.035 |       0.000 |      0.035 |       NA    | Unspecified | NA         |
 | Vccbram    |       0.850 |     0.008 |       0.006 |      0.002 |       NA    | Unspecified | NA         |
 | Vccaux     |       1.800 |     0.128 |       0.000 |      0.128 |       NA    | Unspecified | NA         |
@@ -143,22 +143,20 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+--------------------------+-----------+
-| Name                     | Power (W) |
-+--------------------------+-----------+
-| its_top_500_singleclk    |     0.223 |
-|   u_wrapper              |     0.223 |
-|     u_cmd_fifo           |     0.003 |
-|     u_core               |     0.208 |
-|       u_in_mem           |     0.024 |
-|       u_lfnst            |     0.020 |
-|       u_lfnst_rom        |     0.009 |
-|       u_shared_engine    |     0.108 |
-|       u_shared_rom       |     0.012 |
-|     u_input_fifo         |     0.005 |
-|       mem_reg_0_15_0_13  |     0.001 |
-|       mem_reg_0_15_14_27 |     0.001 |
-|     u_output_fifo        |     0.004 |
-+--------------------------+-----------+
++-----------------------+-----------+
+| Name                  | Power (W) |
++-----------------------+-----------+
+| its_top_500_singleclk |     0.213 |
+|   u_wrapper           |     0.213 |
+|     u_cmd_fifo        |     0.002 |
+|     u_core            |     0.199 |
+|       u_in_mem        |     0.024 |
+|       u_lfnst         |     0.021 |
+|       u_lfnst_rom     |     0.009 |
+|       u_shared_engine |     0.100 |
+|       u_shared_rom    |     0.012 |
+|     u_input_fifo      |     0.004 |
+|     u_output_fifo     |     0.004 |
++-----------------------+-----------+
 
 
