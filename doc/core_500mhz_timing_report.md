@@ -118,7 +118,7 @@ in_mem (4096×16) 原使用 `(* ram_style = "block" *)` 属性，因异步读模
 | 设计 | WNS | WHS | DSP48E2 | 说明 |
 |------|-----|-----|---------|------|
 | `its_top_500_wrapper` | +0.084ns | +0.028ns | 5 | 行/列 transform engine 共享，双时钟 CDC wrapper |
-| `its_top_500_singleclk` | +0.057ns | +0.038ns | 5 | 赛题单时钟接口提交顶层，推荐交付入口 |
+| `its_top_500_singleclk` | +0.047ns | +0.034ns | 5 | v5.8.1: P0 #4 垂直优先 + P0 #11 TU queue + 500MHz 达标 |
 
 Worst path: ROM→coeff_buf (BRAM→DistRAM, 0 级逻辑, 纯路由)。
 
