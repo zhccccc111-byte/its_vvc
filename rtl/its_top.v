@@ -1,11 +1,11 @@
 // ===================================================================
-// ⚠ LEGACY — 本文件已冻结，不作为最终提交顶层。                        ⚠
-// ⚠ 最终提交入口为 its_top_500_singleclk.v (v5.8.1, 1539/1539 PASS)。   ⚠
-// ⚠ 此模块仍使用 v5.5 水平优先变换顺序 (row_tr_type=tr_type_hor)，     ⚠
-// ⚠ 与 v5.6+ 官方 Q&A 要求的垂直优先不一致。仅保留作为 Artix-7 基线。   ⚠
-// ===================================================================
-// ITS Top Level Module - With LFNST integration (v5.5 LEGACY)
-// 22-bit it_info interface per competition spec
+// ITS Top Level Module — Artix-7 single-clock baseline (v5.5)
+// 22-bit it_info interface per competition spec.
+//
+// NOTE: v5.6+ 官方 Q&A 要求垂直优先变换。本文件 tr_type 映射已修正为
+// 垂直优先 (row_tr_type=tr_type_ver, col_tr_type=tr_type_hor)，但
+// 双引擎共享 ROM 架构的尺寸/地址流水线未完成垂直优先适配。
+// **最终提交请使用 its_top_500_singleclk.v (1539/1539 PASS, 500MHz)。**
 // ===================================================================
 
 `include "its_pkg.v"
@@ -147,10 +147,10 @@ module its_top (
 
     // VVC standard: when LFNST is active, main transform must be DCT2
     wire        lfnst_active = (lfnst_idx != 2'd0);
-    // ⚠ LEGACY: v5.5 horizontal-first order.  v5.6+ uses vertical-first
-    // (row_tr_type=tr_type_ver, col_tr_type=tr_type_hor).  See its_core_500.v.
-    wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_hor;
-    wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_ver;
+    // VVC standard: when LFNST is active, main transform must be DCT2
+    // v5.6+: vertical-first order (S_ROW = vertical/columns, S_COL = horizontal/rows)
+    wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_ver;   // vertical transform
+    wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_hor;   // horizontal transform
 
     // ========================================
     // Info decode (22-bit interface)
