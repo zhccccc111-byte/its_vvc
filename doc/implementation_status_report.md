@@ -67,7 +67,7 @@
 |----------|----------|------|
 | 输入只传非零点 | **已满足** | TB 按 sparse 格式发送，DUT 按 addr 写入 in_mem |
 | 10-bit 有符号输出 Clip3(-512, 511) | **已满足** | `its_transform_engine.v` MAC 结果截取 [9:0] |
-| 先水平后垂直处理 | **已满足** | `its_top.v` S_ROW_START → S_ROW_RUN → S_COL_START → S_COL_RUN 状态流 |
+| 先垂直后水平处理 | **已满足** | `its_core_500.v` S_ROW(垂直/列) → tp_buf → S_COL(水平/行) 状态流 (v5.6 P0 #4) |
 
 ---
 
