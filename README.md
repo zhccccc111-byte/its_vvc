@@ -287,9 +287,9 @@ vsim -c -do "do run_core_500.do"
 
 | 资源 | 使用 | 说明 |
 |------|------|------|
-| CLB LUT | 1801 | 0.83% |
+| CLB LUT | 1888 | 0.87% |
 | LUT as Memory | 368 | 0.37% |
-| CLB Register | 2117 | 0.49% |
+| CLB Register | 2214 | 0.51% |
 | DSP48E2 | 5 | 行/列 transform engine 共享 |
 | RAMB36E2 | 12 | 含 in_mem 2× (XPM BRAM) |
 | RAMB18E2 | 5 | — |
@@ -429,7 +429,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 | 输出反压 | ✅ | it_data_out_req，8 个反压测试验证通过 |
 | Verilog 实现 | ✅ | |
 | it_data_end 接口 | ✅ | 赛题 4/24 更新要求 |
-| 500MHz 主频 | ✅ | v5.8: 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.053ns/WHS=+0.035ns 达标，详见 6.0 节 |
+| 500MHz 主频 | ✅ | v6.0: 推荐提交顶层 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS=+0.047ns/WHS=+0.034ns 达标，详见 6.0 节 |
 | 官方 Q&A 合规 | ✅ | v5.6: 2D 变换顺序改为先垂直后水平 (P0 #4)；v5.7/v5.8/v6.0: TU 输出未完时可接下一 TU，并修复 input end-marker closing 窗口 (P0 #11) |
 | 量化定标分析 | ✅ | 见 doc/design_doc.md 第 5.2 节 |
 | PPA 报告 | ✅ | 见 doc/ppa_report.md |

@@ -2,7 +2,7 @@
 
 ## 1. 综合配置
 
-### v5.5 UltraScale+ 500MHz 推荐提交顶层
+### v6.0 UltraScale+ 500MHz 推荐提交顶层
 
 | 项目 | 配置/结果 |
 |------|-----------|
@@ -13,7 +13,7 @@
 | OOC 脚本 | `synth/its_top_500_singleclk_ooc_usp.tcl` |
 | WNS / WHS | +0.047ns / +0.034ns (v6.0) |
 | Failing endpoints | 0 |
-| CLB LUT / Register | 1801 / 2117 |
+| CLB LUT / Register | 1888 / 2214 |
 | LUT as Memory | 368 |
 | DSP48E2 | 5 |
 | RAMB36E2 / RAMB18E2 | 12 / 5 |

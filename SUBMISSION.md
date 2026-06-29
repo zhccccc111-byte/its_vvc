@@ -61,13 +61,13 @@ Run from `synth/` with Vivado 2024.1:
 vivado -mode batch -source its_top_500_singleclk_ooc_usp.tcl
 ```
 
-Latest available UltraScale+ OOC result (v5.8) on `xcku5p-ffvb676-2-e`:
+Latest available UltraScale+ OOC result (v6.0) on `xcku5p-ffvb676-2-e`:
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| WNS | +0.053 ns | MET |
+| WNS | +0.047 ns | MET |
 | TNS | 0.000 ns | MET |
-| WHS | +0.035 ns | MET |
+| WHS | +0.034 ns | MET |
 | Failing endpoints | 0 | MET |
 | DSP48E2 | 5 | — |
 | RAMB36E2 | 12 | — |
