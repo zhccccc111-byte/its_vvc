@@ -84,5 +84,5 @@ Latest available UltraScale+ OOC result (v5.8) on `xcku5p-ffvb676-2-e`:
 
 - `its_top.v` is frozen as legacy Artix-7 baseline; submission uses `its_top_500_singleclk`.
 - `its_top_500_wrapper.v` implements the dual-clock CDC + TU queue architecture.
-- v5.8.1 functional re-verification: final single-clock submission top 1539/1539 PASS and core 94/94 PASS.
-- v5.8 timing report remains the latest available post-route report: WNS +0.053ns at 500MHz, 0 failing endpoints. Re-run Vivado after v5.8.1 in an environment where the Vivado launcher starts correctly.
+- v5.8.1: its_top_500_singleclk 1539/1539 PASS, its_core_500 94/94 PASS.
+- v5.8.1 UltraScale+ OOC: WNS +0.047ns, WHS +0.034ns at 500MHz, 0 failing endpoints.

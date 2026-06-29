@@ -6,7 +6,7 @@
 
 **基线版本：2026-06-29 (v5.8.1)**
 **仿真结果：singleclk 1539/1539 PASS + core_500 94/94 PASS**
-**500MHz 状态：v5.8 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS +0.053ns / WHS +0.035ns 达标；v5.8.1 小修后待 Vivado 复刷**
+**500MHz 状态：v5.8.1 `its_top_500_singleclk` OOC UltraScale+ (xcku5p-2) WNS +0.047ns / WHS +0.034ns 达标**
 **推荐提交顶层：rtl/its_top_500_singleclk.v，端口与赛题 its_top 单时钟接口完全一致**
 **its_top.v：冻结为 legacy 基线（v5.5 RTL, 1444/1444 PASS），最终提交入口只认 its_top_500_singleclk**
 
@@ -17,7 +17,7 @@
 | P0 #4 垂直优先变换 | v5.6: ref_model + its_core_500 ✅ |
 | P0 #11 TU metadata queue | v5.7: 4 深度队列 + v5.8: can_accept_tu 加固 + v5.8.1: input closing 窗口修复 ✅ |
 | 单时钟提交顶层回归 | 1539/1539 PASS |
-| UltraScale+ OOC (最新报告) | v5.8: WNS +0.053ns, WHS +0.035ns, 0 failing；v5.8.1 待复刷 |
+| UltraScale+ OOC (v5.8.1) | WNS +0.047ns, WHS +0.034ns, 0 failing ✅ |
 | TU overlap 测试 | immediate overlap 4x4 + 8x8 ✅ |
 
 ---

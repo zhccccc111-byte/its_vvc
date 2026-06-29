@@ -296,12 +296,12 @@ vsim -c -do "do run_core_500.do"
 
 | 指标 | 值 | 状态 |
 |------|-----|------|
-| WNS (Setup) | **+0.053 ns** | **MET** |
+| WNS (Setup) | **+0.047 ns** | **MET** |
 | TNS | 0.000 ns | — |
-| WHS (Hold) | **+0.035 ns** | **MET** |
+| WHS (Hold) | **+0.034 ns** | **MET** |
 | Failing Endpoints | **0** | — |
 
-**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz。v5.8 新增 TU metadata queue 和 can_accept_tu 流控未影响时序收敛。
+**结论**: `its_top_500_singleclk` 在 UltraScale+ 上以赛题单时钟接口形态满足 500MHz。v5.8.1 新增 input closing 窗口修复未影响时序收敛。
 
 ### 6.1 500MHz OOC 综合结果 — UltraScale+ (v5.3 its_core_500)
 
@@ -441,7 +441,7 @@ vivado -mode batch -source its_core_500_ooc.tcl
 
 | 版本 | Tag | 关键改动 | WNS | 测试 |
 |------|-----|---------|-----|------|
-| **v5.8.1** | `v5.8.1` | P0 #11 closing 窗口修复: end marker 写入后暂停新 TU data，直到 input FIFO 安全越过 TU 边界；core S_LOAD 检测 end 后立即停读 | v5.8 报告 +0.053ns，待复刷 | 94+1539 |
+| **v5.8.1** | `v5.8.1` | P0 #11 closing 窗口修复: end marker 写入后暂停新 TU data，直到 input FIFO 安全越过 TU 边界；core S_LOAD 检测 end 后立即停读 | **+0.047ns** | 94+1539 |
 | **v5.8** | `v5.8` | TU queue 加固: can_accept_tu 统一流控, tuq_next_count 组合逻辑; UltraScale+ OOC 重新综合 | **+0.053ns** | 94+1539 |
 | **v5.7** | `v5.7` | P0 #11: TU metadata queue (4 深度), core_done_pending 计数器, it_done pulse; 新增 overlap 测试 | +0.057ns | 94+1539 |
 | **v5.6** | `v5.6` | P0 #4: 2D 变换顺序改为先垂直后水平; LFNST pipeline 修复; ROM 同步 gen_rom_coeffs.py | +0.057ns | 94+1537 |
