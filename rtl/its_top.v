@@ -1,5 +1,10 @@
 // ===================================================================
-// ITS Top Level Module - With LFNST integration
+// ⚠ LEGACY — 本文件已冻结，不作为最终提交顶层。                        ⚠
+// ⚠ 最终提交入口为 its_top_500_singleclk.v (v5.8.1, 1539/1539 PASS)。   ⚠
+// ⚠ 此模块仍使用 v5.5 水平优先变换顺序 (row_tr_type=tr_type_hor)，     ⚠
+// ⚠ 与 v5.6+ 官方 Q&A 要求的垂直优先不一致。仅保留作为 Artix-7 基线。   ⚠
+// ===================================================================
+// ITS Top Level Module - With LFNST integration (v5.5 LEGACY)
 // 22-bit it_info interface per competition spec
 // ===================================================================
 
@@ -142,6 +147,8 @@ module its_top (
 
     // VVC standard: when LFNST is active, main transform must be DCT2
     wire        lfnst_active = (lfnst_idx != 2'd0);
+    // ⚠ LEGACY: v5.5 horizontal-first order.  v5.6+ uses vertical-first
+    // (row_tr_type=tr_type_ver, col_tr_type=tr_type_hor).  See its_core_500.v.
     wire [1:0]  row_tr_type = lfnst_active ? 2'd0 : tr_type_hor;
     wire [1:0]  col_tr_type = lfnst_active ? 2'd0 : tr_type_ver;
 
